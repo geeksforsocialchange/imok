@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+TWILIO_ACCOUNT_SID = 'AC4a7b7b6bc015a2fd82d3eedea46c04f0'
+TWILIO_AUTH_TOKEN = '5886fb88ba4dd6bc45da49bc9d10a449'
+TWILIO_FROM_NUMBER = '+15005550006'
+
 
 # Application definition
 
