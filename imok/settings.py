@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
+import environ
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,12 +27,12 @@ SECRET_KEY = 'vlek*n@f-!^ezbwfrris$vd6zqwza)yus44nvp28+mimi7)#i_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['imok.wheresalice.info']
 
-TWILIO_ACCOUNT_SID = 'AC4a7b7b6bc015a2fd82d3eedea46c04f0'
-TWILIO_AUTH_TOKEN = '5886fb88ba4dd6bc45da49bc9d10a449'
-TWILIO_FROM_NUMBER = '+15005550006'
-
+# Use Alice's test credentials if nothing is set in environment variables
+TWILIO_ACCOUNT_SID = env.str('TWILIO_ACCOUNT_SID', 'AC4a7b7b6bc015a2fd82d3eedea46c04f0')
+TWILIO_AUTH_TOKEN = env.str('TWILIO_AUTH_TOKEN', '5886fb88ba4dd6bc45da49bc9d10a449')
+TWILIO_FROM_NUMBER = env.str('TWILIO_FROM_NUMBER', '+15005550006')
 
 # Application definition
 
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -102,6 +105,14 @@ if os.environ.get('GITHUB_WORKFLOW'):
         }
     }
 
+# Use environment variables for the database in Dokku, and use whitenoise and prod settings
+if 'DATABASE_URL' in env:
+    DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
+    DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    DEBUG = False
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

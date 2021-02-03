@@ -30,7 +30,7 @@ If you need to use a database other than the docker postgresql container, you ca
 
 ### Testing
 
-You should be able to login to http://localhost:8000/admin using the admin user you created in step 3 above, and then register users on the system 
+You should be able to login to http://localhost:8000/ruok using the admin user you created in step 3 above, and then register users on the system 
 
 You should be able to send a mock SMS into the system with:
 
