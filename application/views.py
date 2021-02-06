@@ -1,12 +1,13 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from twilio.twiml.messaging_response import MessagingResponse
 from .models import Subscriber, Checkin, Invite
+from django.utils.translation import gettext as _
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the API index")
+    return HttpResponseNotFound("hello world")
 
 
 # @TODO verify this is from Twilio
@@ -37,8 +38,9 @@ def subscribe(message):
 
         invite = Invite.objects.get(phone_number=sender)
         invite.delete()
-
-        resp.message("Thank you for registering, please now tell us what to do if you disappear by sending 'NOTES' followed by some notes.")
+        # Translators: This message is sent when a user has registered
+        response = _("Thank you for registering, please now tell us what to do if you disappear by sending 'NOTES' followed by some notes.")
+        resp.message(response)
         return HttpResponse(resp)
     else:
         return HttpResponse({})
@@ -51,7 +53,9 @@ def checkin(message):
         subscriber = Subscriber.objects.get(phone_number=sender)
         checkin = Checkin(phone_number=subscriber)
         checkin.save()
-        resp.message("You have checked in")
+        # Translators: this is sent when a user successfully checks in
+        response = _("You have checked in")
+        resp.message(response)
     else:
         resp = {}
     return HttpResponse(resp)
@@ -64,9 +68,13 @@ def checkout(message):
         if Checkin.objects.filter(phone_number=sender).count() == 1:
             checkin = Checkin.objects.get(phone_number=sender)
             checkin.delete()
-            resp.message("You have now checked out")
+            # Translators: this is sent to confirm a user has successfully checked out
+            response = _("You have now checked out")
+            resp.message(response)
         else:
-            resp.message("You were not checked in")
+            # Translators: this is sent when a user tries to check out but wasn't checked in
+            response = _("You were not checked in")
+            resp.message(response)
     else:
         resp = {}
     return HttpResponse(resp)
@@ -79,5 +87,7 @@ def notes(message):
     subscriber = Subscriber.objects.get(phone_number=sender)
     subscriber.notes = notes
     subscriber.save()
-    resp.message("Thank you.  You may now use the service by sending 'IN' to checkin  and 'OUT' to checkout")
+    # Translators: This is sent once a user is fully registered
+    response = _("Thank you.  You may now use the service by sending 'IN' to checkin  and 'OUT' to checkout")
+    resp.message(response)
     return HttpResponse(resp)
