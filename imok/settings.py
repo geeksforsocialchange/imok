@@ -37,6 +37,11 @@ TWILIO_FROM_NUMBER = env.str('TWILIO_FROM_NUMBER', '+15005550006')
 SECURE_REFERRER_POLICY = "same-origin"
 SECURE_BROWSER_XSS_FILTER = True
 
+AIRBRAKE = dict(
+    project_id=322604,
+    project_key='9ff0640bef439bbd20ba0138374c3b01',
+)
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -120,6 +125,24 @@ if 'DATABASE_URL' in env:
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 86400
     SECURE_HSTS_PRELOAD = True
+    MIDDLEWARE.append('pybrake.django.AirbrakeMiddleware')
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'airbrake': {
+                'level': 'ERROR',
+                'class': 'pybrake.LoggingHandler',
+            },
+        },
+        'loggers': {
+            'app': {
+                'handlers': ['airbrake'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+        },
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
