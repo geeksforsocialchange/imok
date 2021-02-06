@@ -27,12 +27,15 @@ SECRET_KEY = 'vlek*n@f-!^ezbwfrris$vd6zqwza)yus44nvp28+mimi7)#i_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['imok.wheresalice.info']
+ALLOWED_HOSTS = ['imok.wheresalice.info', 'localhost']
 
 # Use Alice's test credentials if nothing is set in environment variables
 TWILIO_ACCOUNT_SID = env.str('TWILIO_ACCOUNT_SID', 'AC4a7b7b6bc015a2fd82d3eedea46c04f0')
 TWILIO_AUTH_TOKEN = env.str('TWILIO_AUTH_TOKEN', '5886fb88ba4dd6bc45da49bc9d10a449')
 TWILIO_FROM_NUMBER = env.str('TWILIO_FROM_NUMBER', '+15005550006')
+
+SECURE_REFERRER_POLICY = "same-origin"
+SECURE_BROWSER_XSS_FILTER = True
 
 # Application definition
 
@@ -113,6 +116,10 @@ if 'DATABASE_URL' in env:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
     DEBUG = False
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 86400
+    SECURE_HSTS_PRELOAD = True
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -136,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 
 TIME_ZONE = 'UTC'
 
