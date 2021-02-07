@@ -1,31 +1,24 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from twilio.rest import Client
-from imok.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER
+from django.contrib.auth.models import User
+import uuid
+
+LANGUAGES = [('en_gb', 'English')]
+SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
 
 
-class Subscriber(models.Model):
-    phone_number = PhoneNumberField(max_length=20, unique=True, primary_key=True)
-    name = models.TextField()
-    notes = models.TextField(default='')
+class Member(models.Model):
+    id = models.UUIDField(primary_key=True, unique=True, editable=False, default=uuid.uuid4)
+    name = models.TextField(default='')
+    notes = models.TextField(default='', blank=True)
+    registered_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    registered_at = models.DateTimeField(auto_now_add=True)
+    language = models.CharField(max_length=5, choices=LANGUAGES, default='en_gb')
+    registered = models.BooleanField(default=False)
+    phone_number = PhoneNumberField(max_length=20, unique=True, null=True)
+    signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
 
 
 class Checkin(models.Model):
-    phone_number = models.OneToOneField(Subscriber, on_delete=models.CASCADE)
+    member = models.OneToOneField(Member, on_delete=models.CASCADE)
     time_stamp = models.DateTimeField(auto_now_add=True)
-
-
-class Invite(models.Model):
-    phone_number = PhoneNumberField(max_length=20, unique=True, primary_key=True)
-
-    def save(self, *args, **kwargs):
-        print(f"Sending an invite to {self.phone_number.as_e164}")
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        message = client.messages.create(
-            to=self.phone_number.as_e164,
-            from_=TWILIO_FROM_NUMBER,
-            body="You have been invited to use IMOK. Please reply with 'name' and then your name, for example "
-                 "'name bob jones'."
-        )
-        print(message.sid)
-        super(Invite, self).save(*args, **kwargs)

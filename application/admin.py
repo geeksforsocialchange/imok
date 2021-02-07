@@ -1,7 +1,30 @@
 from django.contrib import admin
+from imok.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER
+from twilio.rest import Client
+from django.utils.translation import gettext as _
 
-from .models import Subscriber, Invite, Checkin
+from .models import Checkin, Member
 
-admin.site.register(Subscriber)
-admin.site.register(Invite)
-admin.site.register(Checkin)
+
+def send_invite(obj):
+    print(f"Sending an invite to {obj.phone_number.as_e164}")
+    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    message = client.messages.create(
+        to=obj.phone_number.as_e164,
+        from_=TWILIO_FROM_NUMBER,
+        body=_("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so") % {'admin': obj.registered_by.username}
+    )
+    print(message.sid)
+
+
+class MemberAdmin(admin.ModelAdmin):
+    fields = ('name', 'notes', 'language', 'registered', 'phone_number', 'signing_center')
+
+    def save_model(self, request, obj, form, change):
+        if obj.registered_by is None:
+            obj.registered_by = request.user
+            send_invite(obj)
+        obj.save()
+
+
+admin.site.register(Member, MemberAdmin)

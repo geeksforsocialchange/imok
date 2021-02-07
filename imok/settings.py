@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+from django.utils import timezone
 import os
 from pathlib import Path
 import environ
 env = environ.Env()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +43,8 @@ AIRBRAKE = dict(
     project_id=322604,
     project_key='9ff0640bef439bbd20ba0138374c3b01',
 )
+
+CHECKIN_TTL = timezone.timedelta(minutes=10)
 
 # Application definition
 

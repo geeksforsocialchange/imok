@@ -2,11 +2,14 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from twilio.twiml.messaging_response import MessagingResponse
-from .models import Subscriber, Checkin, Invite
+from .models import Member, Checkin
 from django.utils.translation import gettext as _
+from django.utils import timezone
+from imok.settings import CHECKIN_TTL
+from django.db import IntegrityError
 
 
-def index(request):
+def index(_):
     return HttpResponseNotFound("hello world")
 
 
@@ -15,79 +18,89 @@ def index(request):
 @csrf_exempt
 def twilio(request):
     message = request.POST
+    if Member.objects.filter(phone_number=message['From']).count() != 1:
+        return HttpResponse('User not found')
+
     command = message['Body'].split(' ')[0].upper()
-    if command == 'IN':
+    if command == 'YES':
+        return register(message)
+    elif command == 'IN' or command == 'I':
         return checkin(message)
-    elif command == 'OUT':
-        return checkout(message)
     elif command == 'NAME':
-        return subscribe(message)
-    elif command == 'NOTES':
-        return notes(message)
+        return name(message)
+    elif command == 'SOS' or command == 'HELP':
+        return sos(message)
+    elif command == 'O' or command == 'OUT':
+        return checkout(message)
     else:
-        return HttpResponse("Invalid command")
+        return HttpResponse('Invalid Command')
 
 
-def subscribe(message):
+def register(message):
+    sender = message['From']
+    resp = MessagingResponse()
+    member = Member.objects.filter(phone_number=sender).get()
+    member.registered = True
+    member.save()
+
+    response = " ".join([_("Thanks for registering, %(name)s!") % {'name': member.name},
+                _("To sign in, text IN or I to this number."),
+                _("To correct your name, text NAME followed by your name."),
+                _("To get emergency help, text SOS or HELP.")
+                ])
+
+    resp.message(response)
+    return HttpResponse(resp)
+
+
+def name(message):
     sender = message['From']
     name = ' '.join(message['Body'].split(' ')[1:])
-    if Invite.objects.filter(phone_number=sender).count() == 1:
-        resp = MessagingResponse()
-        subscriber = Subscriber(phone_number=sender, name=name)
-        subscriber.save()
-
-        invite = Invite.objects.get(phone_number=sender)
-        invite.delete()
-        # Translators: This message is sent when a user has registered
-        response = _("Thank you for registering, please now tell us what to do if you disappear by sending 'NOTES' followed by some notes.")
-        resp.message(response)
-        return HttpResponse(resp)
-    else:
-        return HttpResponse({})
+    member = Member.objects.get(phone_number=sender)
+    member.name = name
+    member.save()
+    resp = MessagingResponse()
+    response = _("You have set your name to %(name)s") % {'name': name}
+    resp.message(response)
+    return HttpResponse(resp)
 
 
 def checkin(message):
     sender = message['From']
-    if Subscriber.objects.filter(phone_number=sender).count() == 1:
-        resp = MessagingResponse()
-        subscriber = Subscriber.objects.get(phone_number=sender)
-        checkin = Checkin(phone_number=subscriber)
+    in_time = timezone.now()
+    out_time = in_time + CHECKIN_TTL
+    resp = MessagingResponse()
+    member = Member.objects.get(phone_number=sender)
+    checkin = Checkin(member=member, time_stamp=in_time.timestamp())
+    try:
         checkin.save()
-        # Translators: this is sent when a user successfully checks in
-        response = _("You have checked in")
+    except IntegrityError:
+        response = _("You were already checked in")
         resp.message(response)
-    else:
-        resp = {}
+        return HttpResponse(resp)
+    response = " ".join([
+        _("You signed into %(center)s at %(time)s") % {'center': member.signing_center, 'time': str(in_time.time())},
+        _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time}
+        ])
+    resp.message(response)
     return HttpResponse(resp)
 
 
 def checkout(message):
     sender = message['From']
-    if Subscriber.objects.filter(phone_number=sender).count() == 1:
-        resp = MessagingResponse()
-        if Checkin.objects.filter(phone_number=sender).count() == 1:
-            checkin = Checkin.objects.get(phone_number=sender)
-            checkin.delete()
-            # Translators: this is sent to confirm a user has successfully checked out
-            response = _("You have now checked out")
-            resp.message(response)
-        else:
-            # Translators: this is sent when a user tries to check out but wasn't checked in
-            response = _("You were not checked in")
-            resp.message(response)
-    else:
-        resp = {}
-    return HttpResponse(resp)
-
-
-def notes(message):
-    sender = message['From']
-    notes = ' '.join(message['Body'].split(' ')[1:])
     resp = MessagingResponse()
-    subscriber = Subscriber.objects.get(phone_number=sender)
-    subscriber.notes = notes
-    subscriber.save()
-    # Translators: This is sent once a user is fully registered
-    response = _("Thank you.  You may now use the service by sending 'IN' to checkin  and 'OUT' to checkout")
+    member = Member.objects.get(phone_number=sender)
+    try:
+        checkin = Checkin.objects.get(member=member)
+    except Checkin.DoesNotExist:
+        response = _("You were not signed in")
+        resp.message(response)
+        return HttpResponse(resp)
+    checkin.delete()
+    response = _("You signed out of %(center)s at %(time)s") % {'center': member.signing_center, 'time': str(timezone.now().time())}
     resp.message(response)
     return HttpResponse(resp)
+
+
+def sos(_):
+    return HttpResponse(_("Not yet implemented"))
