@@ -22,7 +22,7 @@ def twilio(request):
         return HttpResponse('User not found')
 
     command = message['Body'].split(' ')[0].upper()
-    if command == 'YES':
+    if command == 'YES' or command == 'Y':
         return register(message)
     elif command == 'IN' or command == 'I':
         return checkin(message)

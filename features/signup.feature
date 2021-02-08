@@ -1,15 +1,49 @@
-Feature: registering for the service after an admin has made me an account
-  In order that someone can be notified if I don't check in
-  As an asylum seeker
-  I want to submit enough information so that someone can raise the alarm
+Feature: registering a member
+  Scenario: register a member
+    When I create a new member
+    Then The member is not confirmed
+    And The member was created recently
 
-  Scenario: register my name
-     Given I recieve a message asking for my name
-      When I reply with my name
-      Then I recieve a confirmation that my name has been registered
-       And I recieve a message asking for my emergency contact details
+  Scenario: confirm registration
+    Given I have been registered as a member
+    When I reply <Y>
+    Then My registration is confirmed
+    And My registration time does not change
 
-  Scenario: register my emergency contact details
-     Given I recieve a message asking for my emergency contact details
-      When I reply with an email address or phone number
-      Then I recieve a confirmation that it has been saved
+  Scenario: fix my name
+    Given I have been registered as a member
+    When I reply <NAME alice>
+    Then My name is <alice>
+    And My registration time does not change
+
+  Scenario: checkin
+    Given I have been registered as a member
+    And My registration is confirmed
+    When I reply <IN>
+    Then I am checked in
+
+#  Scenario: checkin without registration
+# @TODO what happens if you try to checkin without being registered?
+
+  Scenario: checkout after checking in
+    Given I have been registered as a member
+    And My registration is confirmed
+    When I reply <IN>
+    And I reply <OUT>
+    Then I am not checked in
+
+  Scenario: double checkin
+    Given I have been registered as a member
+    And My registration is confirmed
+    When I reply <IN>
+    And I reply <IN>
+    Then I am checked in
+    And I receive a message containing <You were already checked in>
+
+  Scenario: checkout without checkin
+    Given I have been registered as a member
+    And My registration is confirmed
+    And I am not checked in
+    When I reply <OUT>
+    Then I receive a message containing <You were not signed in>
+    And I am not checked in

@@ -147,6 +147,8 @@ if 'DATABASE_URL' in env:
             },
         },
     }
+else:
+    INSTALLED_APPS += ['behave_django']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
