@@ -26,6 +26,10 @@ We are, however, not yet using any language other than en_gb.
 
 Tests are written using BDD in the features directory.
 
+To run the tests:
+
+`docker-compose run web python manage.py behave --simple`
+
 We also provide webhook.py for use with manual testing of the Twilio webhooks.  It allows you to send a message to the system as follows:
 
 ```shell
