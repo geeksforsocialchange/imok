@@ -3,7 +3,7 @@
 For local development we use docker-compose so that we don't need to configure postgresql.
 
 1. `docker-compose up` to launch a postgresql database and the webserver
-2. `docker-compose run web python manage.py migrate application` to run database migrations
+2. `docker-compose run web python manage.py migrate` to run database migrations
 3. `docker-compose run web python manage.py createsuperuser` to create an admin user
 
 You may also want to `pip install -r requirements.txt` outside of Docker to get code completion in your editor
@@ -35,7 +35,7 @@ python webhook.py -f +15005550006 -m "NAME alice"
 You can also achieve this through an HTTP Post using your favorite client:
 
 ```shell
-curl -X POST --data '{"Body": "NAME alice", "From": "+15005550006"}' localhost:8000/application/twilio`
+curl -X POST --data '{"Body": "NAME alice", "From": "+15005550006"}' localhost:8000/application/twilio
 ```
 
 ## CI/CD
