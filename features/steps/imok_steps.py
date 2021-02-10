@@ -1,6 +1,9 @@
 from behave import given, when, then
 from django.db import transaction
 from django.utils import timezone
+from freezegun import freeze_time
+from dateutil import parser
+import pytz
 
 from application.models import Member, Checkin
 
@@ -34,7 +37,16 @@ def step_impl(context):
     context.member = member
 
 
-@when(u'I reply <{text}>')
+@when(u'I send "{text}" at "{time}"')
+def step_impl(context, text, time):
+    with freeze_time(time):
+        with transaction.atomic():
+            context.response = context.test.client.post('/application/twilio',
+                                                        {'From': context.member.phone_number, 'Body': text})
+        context.test.assertEqual(context.response.status_code, 200)
+
+
+@when(u'I send "{text}"')
 def step_impl(context, text):
     with transaction.atomic():
         context.response = context.test.client.post('/application/twilio',
@@ -55,7 +67,7 @@ def step_impl(context):
     context.test.assertEqual(member.registered_at, context.member.registered_at)
 
 
-@then(u'My name is <{name}>')
+@then(u'My name is "{name}"')
 def step_impl(context, name):
     member = Member.objects.get(id=context.member.id)
     context.test.assertEqual(name, member.name)
@@ -71,7 +83,7 @@ def step_impl(context):
 def step_impl(context):
     with transaction.atomic():
         count = Checkin.objects.filter(member=context.member).count()
-        context.test.assertEqual(count, 1)
+    context.test.assertEqual(count, 1)
 
 
 @then(u'I am not checked in')
@@ -81,7 +93,15 @@ def step_impl(context):
     context.test.assertEqual(count, 0)
 
 
-@then(u'I receive a message containing <{message}>')
+@then(u'my check in record is deleted')
+def step_impl(context):
+    # The design of the system means that this is the same as "I am not checked in"
+    with transaction.atomic():
+        count = Checkin.objects.filter(member=context.member).count()
+    context.test.assertEqual(count, 0)
+
+
+@then(u'I receive a message containing "{message}"')
 def step_impl(context, message):
     # @TODO handle languages
     content = str(context.response.content, 'utf-8')
@@ -94,3 +114,30 @@ def step_impl(context):
         Checkin.objects.get(member=context.member).delete()
     except Checkin.DoesNotExist:
         pass
+
+
+@then(u'the check in time is "{time}"')
+def step_impl(context, time):
+    time = parser.parse(time).replace(tzinfo=pytz.timezone('UTC'))
+    checkin = Checkin.objects.get(member=context.member)
+    context.test.assertEqual(checkin.time_stamp, time)
+
+
+@given(u'I am checked in at "{time}"')
+def step_impl(context, time):
+    Checkin(member=context.member, time_stamp=parser.parse(time).replace(tzinfo=pytz.timezone('UTC'))).save()
+
+
+@when(u'the healthchecker runs at "{time}"')
+def step_impl(context, time):
+    raise NotImplementedError()
+
+
+@then(u'the healthchecker sends "{message}"')
+def step_impl(context, message):
+    raise NotImplementedError()
+
+
+@then(u'an admin is contacted')
+def step_impl(context):
+    raise NotImplementedError()

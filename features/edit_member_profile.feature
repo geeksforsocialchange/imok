@@ -8,6 +8,6 @@ Feature: Members can edit their profile information
     And My registration is confirmed
 
   Scenario: Update my name
-    When I send <NAME alice>
-    Then My name is <alice>
+    When I send "NAME alice"
+    Then My name is "alice"
     And My registration time does not change

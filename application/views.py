@@ -71,17 +71,16 @@ def checkin(message):
     out_time = in_time + CHECKIN_TTL
     resp = MessagingResponse()
     member = Member.objects.get(phone_number=sender)
-    checkin = Checkin(member=member, time_stamp=in_time.timestamp())
-    try:
-        checkin.save()
-    except IntegrityError:
-        response = _("You were already checked in")
-        resp.message(response)
-        return HttpResponse(resp)
-    response = " ".join([
-        _("You signed into %(center)s at %(time)s") % {'center': member.signing_center, 'time': str(in_time.time())},
-        _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time}
-        ])
+
+    checkin, created = Checkin.objects.update_or_create(member=member, defaults={'time_stamp': in_time})
+    if created:
+        response = " ".join([
+                 _("You were checked in at %(center)s at %(time)s") % {'center': member.signing_center, 'time': str(in_time.time())},
+                 _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time}
+                 ])
+    else:
+        response = _("You were already checked in. Your check in time has been updated")
+
     resp.message(response)
     return HttpResponse(resp)
 
@@ -93,11 +92,11 @@ def checkout(message):
     try:
         checkin = Checkin.objects.get(member=member)
     except Checkin.DoesNotExist:
-        response = _("You were not signed in")
+        response = _("You were not checked in. To check in message IN")
         resp.message(response)
         return HttpResponse(resp)
     checkin.delete()
-    response = _("You signed out of %(center)s at %(time)s") % {'center': member.signing_center, 'time': str(timezone.now().time())}
+    response = _("You were checked out at %(center)s at %(time)s") % {'center': member.signing_center, 'time': str(timezone.now().time())}
     resp.message(response)
     return HttpResponse(resp)
 
