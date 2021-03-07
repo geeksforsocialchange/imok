@@ -17,6 +17,7 @@ class Member(models.Model):
     registered = models.BooleanField(default=False)
     phone_number = PhoneNumberField(max_length=20, unique=True, null=True)
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
+    is_ok = models.BooleanField(null=True)
 
 
 class Checkin(models.Model):

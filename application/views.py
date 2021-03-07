@@ -6,8 +6,7 @@ from .models import Member, Checkin
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from imok.settings import CHECKIN_TTL
-from django.db import IntegrityError
-
+from application.management.commands import healthcheck
 
 def index(_):
     return HttpResponseNotFound("hello world")
@@ -72,6 +71,9 @@ def checkin(message):
     resp = MessagingResponse()
     member = Member.objects.get(phone_number=sender)
 
+    member.is_ok = True
+    member.save()
+
     checkin, created = Checkin.objects.update_or_create(member=member, defaults={'time_stamp': in_time})
     if created:
         response = " ".join([
@@ -89,6 +91,10 @@ def checkout(message):
     sender = message['From']
     resp = MessagingResponse()
     member = Member.objects.get(phone_number=sender)
+
+    member.is_ok = None
+    member.save()
+
     try:
         checkin = Checkin.objects.get(member=member)
     except Checkin.DoesNotExist:
@@ -101,5 +107,12 @@ def checkout(message):
     return HttpResponse(resp)
 
 
-def sos(_):
-    return HttpResponse(_("Not yet implemented"))
+def sos(message):
+    sender = message['From']
+    resp = MessagingResponse()
+    member = Member.objects.get(phone_number=sender)
+    healthcheck.handle_sos(member)
+    response = _("Thanks for letting us know, our staff have been notified")
+    resp.message(response)
+
+    return HttpResponse(resp)

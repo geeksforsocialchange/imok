@@ -18,9 +18,13 @@ def send_invite(obj):
 
 
 class MemberAdmin(admin.ModelAdmin):
-    fields = ('name', 'notes', 'language', 'registered', 'phone_number', 'signing_center')
+    fields = ('name', 'notes', 'language', 'registered', 'phone_number', 'signing_center', 'is_ok')
+    search_fields = ['name', 'phone_number']
+    list_display = ('phone_number', 'name', 'registered', 'is_ok')
+    list_filter = ('is_ok', 'registered', 'language', 'signing_center')
 
     def save_model(self, request, obj, form, change):
+        # @TODO send acknowledgement on changing is_ok
         if obj.registered_by is None:
             obj.registered_by = request.user
             send_invite(obj)

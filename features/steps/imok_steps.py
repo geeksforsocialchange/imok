@@ -3,6 +3,7 @@ from django.db import transaction
 from django.utils import timezone
 from freezegun import freeze_time
 from dateutil import parser
+from application.management.commands.healthcheck import healthcheck
 import pytz
 
 from application.models import Member, Checkin
@@ -125,19 +126,38 @@ def step_impl(context, time):
 
 @given(u'I am checked in at "{time}"')
 def step_impl(context, time):
-    Checkin(member=context.member, time_stamp=parser.parse(time).replace(tzinfo=pytz.timezone('UTC'))).save()
+    with freeze_time(time):
+        # @TODO consider moving member is_ok state to a function of checkin
+        context.member.is_ok = True
+        context.member.save()
+        Checkin(member=context.member).save()
 
 
 @when(u'the healthchecker runs at "{time}"')
 def step_impl(context, time):
-    raise NotImplementedError()
+    with freeze_time(time):
+        context.healthchecker = healthcheck()
 
 
-@then(u'the healthchecker sends "{message}"')
-def step_impl(context, message):
-    raise NotImplementedError()
+@then(u'there are {some} overdue checkins')
+def step_impl(context, some):
+    count = context.healthchecker
+    context.test.assertEqual(str(count), some)
 
 
-@then(u'an admin is contacted')
+@then(u'I am not ok')
 def step_impl(context):
-    raise NotImplementedError()
+    context.member.refresh_from_db()
+    context.test.assertEqual(context.member.is_ok, False)
+
+
+@then(u'I am ok')
+def step_impl(context):
+    context.member.refresh_from_db()
+    context.test.assertTrue(context.member.is_ok)
+
+
+@then(u'I might be ok')
+def step_impl(context):
+    context.member.refresh_from_db()
+    context.test.assertIn(context.member.is_ok, [True, None])
