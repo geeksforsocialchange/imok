@@ -44,7 +44,8 @@ AIRBRAKE = dict(
     project_key='9ff0640bef439bbd20ba0138374c3b01',
 )
 
-CHECKIN_TTL = timezone.timedelta(minutes=10)
+CHECKIN_TTL = timezone.timedelta(minutes=60)
+NOTIFY_EMAIL = "alice@kaerast.info"
 
 # Application definition
 
