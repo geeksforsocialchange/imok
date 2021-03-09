@@ -8,6 +8,7 @@ from django.utils import timezone
 from imok.settings import CHECKIN_TTL
 from application.management.commands import healthcheck
 
+
 def index(_):
     return HttpResponseNotFound("hello world")
 
@@ -18,7 +19,7 @@ def index(_):
 def twilio(request):
     message = request.POST
     if Member.objects.filter(phone_number=message['From']).count() != 1:
-        return HttpResponse('User not found')
+        return HttpResponseNotFound('ERROR: User not found')
 
     command = message['Body'].split(' ')[0].upper()
     if command == 'YES' or command == 'Y':
@@ -38,7 +39,7 @@ def twilio(request):
 def register(message):
     sender = message['From']
     resp = MessagingResponse()
-    member = Member.objects.filter(phone_number=sender).get()
+    member = Member.objects.get(phone_number=sender)
     member.registered = True
     member.save()
 

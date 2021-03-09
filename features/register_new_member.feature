@@ -12,7 +12,7 @@ Feature: Admins can register new members
 
   Scenario: Member confirms registration
     Given Mo Member has been registered as a member
-    And has recieved a message containing <Welcome to imok!>
+    And has received a message containing <Welcome to imok!>
     When Mo Member replies <Y>
     Then Mo Member's registration is confirmed
     And Mo Member's registration time does not change
@@ -23,6 +23,6 @@ Feature: Admins can register new members
     Then Admin Angela can see that Mo Member's account registration was confirmed
 
   Scenario: Unknown Umberto tries to register
-    Given Unknown Umberto messages the imok number <Y>
-    Then Unknown Umberto recieves no response
-    And the attempt is logged
+    Given An unknown number messages the imok number <Y>
+    Then No response is sent
+    And the admins are emailed
