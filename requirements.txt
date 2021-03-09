@@ -8,3 +8,4 @@ whitenoise
 pybrake
 behave-django
 freezegun
+Faker
