@@ -7,7 +7,8 @@ from django.utils.translation import gettext as _
 from django.utils import timezone
 from imok.settings import CHECKIN_TTL
 from application.management.commands import healthcheck
-
+from django.core import mail
+from imok.settings import NOTIFY_EMAIL
 
 def index(_):
     return HttpResponseNotFound("hello world")
@@ -19,6 +20,8 @@ def index(_):
 def twilio(request):
     message = request.POST
     if Member.objects.filter(phone_number=message['From']).count() != 1:
+        # @TODO make this email configurable
+        mail.send_mail('[IMOK] SMS From Unknown Number', f"{message['From']} send {message['Body']}", "noreply@wheresalice.info", [NOTIFY_EMAIL])
         return HttpResponseNotFound('ERROR: User not found')
 
     command = message['Body'].split(' ')[0].upper()

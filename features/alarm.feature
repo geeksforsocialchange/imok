@@ -51,9 +51,8 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
     When the healthchecker runs at "1936-07-17 11:00:00"
     Then there are 1 overdue checkins
     And I am not ok
-#    @TODO how do we test emails adequately?
 #    Then the healthchecker sends "We will now raise the alarm"
-#    And an admin is contacted
+    Then an admin is contacted
 
   Scenario: I manually raise the alarm
     When I send "SOS"

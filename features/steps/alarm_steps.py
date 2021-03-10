@@ -1,4 +1,5 @@
 from behave import given, when, then
+from django.core import mail
 from django.db import transaction
 from django.utils import timezone
 from freezegun import freeze_time
@@ -161,3 +162,9 @@ def step_impl(context):
 def step_impl(context):
     context.member.refresh_from_db()
     context.test.assertIn(context.member.is_ok, [True, None])
+
+
+@then(u'an admin is contacted')
+def step_impl(context):
+    context.test.assertEqual(len(mail.outbox), 1)
+    context.test.assertEqual(mail.outbox[0].subject, "[IMOK] Fake User is not ok")

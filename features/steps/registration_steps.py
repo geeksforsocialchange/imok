@@ -1,10 +1,6 @@
 from behave import given, when, then
 from django.db import transaction
-from django.utils import timezone
-from freezegun import freeze_time
-from dateutil import parser
-from application.management.commands.healthcheck import healthcheck
-import pytz
+from django.core import mail
 from django.contrib.auth.models import User
 from faker import Faker
 import phonenumbers
@@ -102,7 +98,7 @@ def step_impl(context):
     context.test.assertIn('ERROR', content)
 
 
-# @TODO how do we test outgoing emails?
 @then(u'the admins are emailed')
 def step_impl(context):
-    pass
+    context.test.assertEqual(len(mail.outbox), 1)
+    context.test.assertEqual(mail.outbox[0].subject, "[IMOK] SMS From Unknown Number")
