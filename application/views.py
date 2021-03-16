@@ -10,6 +10,7 @@ from application.management.commands import healthcheck
 from django.core import mail
 from imok.settings import NOTIFY_EMAIL
 
+
 def index(_):
     return HttpResponseNotFound("hello world")
 
@@ -70,22 +71,10 @@ def name(message):
 
 def checkin(message):
     sender = message['From']
-    in_time = timezone.now()
-    out_time = in_time + CHECKIN_TTL
     resp = MessagingResponse()
     member = Member.objects.get(phone_number=sender)
 
-    member.is_ok = True
-    member.save()
-
-    checkin, created = Checkin.objects.update_or_create(member=member, defaults={'time_stamp': in_time})
-    if created:
-        response = " ".join([
-                 _("You were checked in at %(center)s at %(time)s") % {'center': member.signing_center, 'time': str(in_time.time())},
-                 _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time}
-                 ])
-    else:
-        response = _("You were already checked in. Your check in time has been updated")
+    response = member.sign_in()
 
     resp.message(response)
     return HttpResponse(resp)
@@ -96,17 +85,8 @@ def checkout(message):
     resp = MessagingResponse()
     member = Member.objects.get(phone_number=sender)
 
-    member.is_ok = None
-    member.save()
+    response = member.sign_out()
 
-    try:
-        checkin = Checkin.objects.get(member=member)
-    except Checkin.DoesNotExist:
-        response = _("You were not checked in. To check in message IN")
-        resp.message(response)
-        return HttpResponse(resp)
-    checkin.delete()
-    response = _("You were checked out at %(center)s at %(time)s") % {'center': member.signing_center, 'time': str(timezone.now().time())}
     resp.message(response)
     return HttpResponse(resp)
 
@@ -115,8 +95,7 @@ def sos(message):
     sender = message['From']
     resp = MessagingResponse()
     member = Member.objects.get(phone_number=sender)
-    healthcheck.handle_sos(member)
-    response = _("Thanks for letting us know, our staff have been notified")
+    response = member.handle_sos()
     resp.message(response)
 
     return HttpResponse(resp)
