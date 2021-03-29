@@ -11,19 +11,33 @@ You will need:
 1. A [Digital Ocean account](https://www.digitalocean.com/). If you don't have one yet please consider using our [referral link](https://m.do.co/c/34b6bc6a1cf7).
 1. A [Twilio account](https://www.twilio.org/). Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
 
+## Setting up Twilio
+
+1. [Go to the Twilio console](https://www.twilio.com/console/projects/summary) and click **Create new account**
+1. Write a memorable name and click OK.
+1. Add a phone number. We recommend using a new SIM card just for this if you are doing sensitive work. Companies like GiffGaff [send them for free](https://www.giffgaff.com/free-sim-cards) (not an endorsement).
+1. Pick 'With code', 'Python' and 'No, I want to use my own hosting service'. The rest you can answer how you like.
+1. Click **Get a trial phone number** and then click 'Don't like this one? Search for a different number' in the top right (unless you are happy using a USA phone number).
+1. Make sure your country is selected, and select **SMS** in the 'capabilities' choices.
+1. Pick a phone number by pressing **buy**. This is the number that all messages from your service will come from.
+1. Go back to the project dashboard by clicking in the top left where it says your project name.
+1. Make a note of your **Account SID**, **Auth Token** and **Phone number** in a text file or notes app for later use. That's it!
+
 ## Installing imok
 
 ### Setting up a droplet
 
+A 'droplet' is Digital Ocean's term for a virtual server.
+
 Anything not listed here you can just leave as it is.
 
-1. **Create** a new droplet from the top right button
+1. Click **Create** in the top right corner, and then **Droplets**
 1. **Choose an image**
   1. Go to 'Marketplace' tab
   1. Search for 'dokku'
   1. Select 'Dokku 0.21.4 on Ubuntu 20.04' (or whatever the latest version is)
 1. **Choose a plan:** 'Basic', 'Regular intel with SSD', '$5/mo'
-1. **Choose a datacentre region:** whichever is closest to you
+1. **Choose a datacentre region:** pick whichever datacentre is closest to you
 1. **Authentication:** we recommend using an SSH key method if you are able to follow the instructions in the interface. If not then a password is totally fine but make it a strong one, ideally using a strong password generator.
 1. **Choose a hostname:** pick a memorable name for the server
 1. **Enable backups:** this is up to you but we recommend it
@@ -31,26 +45,28 @@ Anything not listed here you can just leave as it is.
 
 ### Signing into the droplet
 
-You will then see a list of droplets in your interface.
+You will then see a list of droplets in your interface. Give it a second while it sets up your new droplet.
 
 1. Copy the IP address (e.g. 123.123.123.123)
-1. In your terminal, type `ssh root@YOUR_IP`
+1. In the terminal on your computer, type `ssh root@YOUR_IP`. Type 'yes' when it asks you if you want to proceed.
 
 ### Setting up Dokku
 
-Assuming a Dokku installation is available to use, and assuming the application name is `imok`, the configuration on the server should look something like the following:
+Hopefully you're now logged into the remote server and the prompt says `root@HOSTNAME`. Type the following commands to set up the imok environment.
 
 ```shell
 # Install the postgres plugin
 sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git
 
-# Create and link a postgres database
-dokku postgres:link imok imok
+# Create the app and database and link the two
+dokku apps:create imok
 dokku postgres:create imok
+dokku postgres:link imok imok
 
-# Configure Twilio
-dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
+# Configure Twilio. Replace these values with the ones you created above.
 dokku config:set --no-restart imok TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxx
+dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
+# Make sure to add the single quotes around your phone number
 dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
 
 dokku config:set --no-restart imok DJANGO_SECRET_KEY=`pwgen 64 1`
