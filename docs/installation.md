@@ -21,7 +21,8 @@ You will need:
 1. Make sure your country is selected, and select **SMS** in the 'capabilities' choices.
 1. Pick a phone number by pressing **buy**. This is the number that all messages from your service will come from.
 1. Go back to the project dashboard by clicking in the top left where it says your project name.
-1. Make a note of your **Account SID**, **Auth Token** and **Phone number** in a text file or notes app for later use. That's it!
+1. Make a note of your **Account SID**, **Auth Token** and **Phone number** in a text file or notes app for later use.
+1. That's enough for testing, but when you're ready you will need to upgrade your account to be able to send messages using the **Upgrade project** button.
 
 ## Installing imok
 
@@ -55,21 +56,24 @@ You will then see a list of droplets in your interface. Give it a second while i
 Hopefully you're now logged into the remote server and the prompt says `root@HOSTNAME`. Type the following commands to set up the imok environment.
 
 ```shell
-# Install the postgres plugin
-sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git
+# Set up the server
+apt update && apt upgrade # Select 'yes', then select the default for all options
+apt install pwgen
 
-# Create the app and database and link the two
+# Install needed plugins
+dokku plugin:install https://github.com/dokku/dokku-postgres.git
+
+# Create the app and database, and link the two
 dokku apps:create imok
 dokku postgres:create imok
 dokku postgres:link imok imok
+dokku config:set --no-restart imok DJANGO_SECRET_KEY=`pwgen 64 1`
 
-# Configure Twilio. Replace these values with the ones you created above.
+# Configure Twilio using the information you created above.
 dokku config:set --no-restart imok TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxx
 dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
 # Make sure to add the single quotes around your phone number
 dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
-
-dokku config:set --no-restart imok DJANGO_SECRET_KEY=`pwgen 64 1`
 
 # Turn off HTTP (optional)
 dokku proxy:ports-remove imok 80
