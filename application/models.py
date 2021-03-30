@@ -2,9 +2,9 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 import uuid
-
+from twilio.rest import Client
 from django.utils import timezone
-from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL
+from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL, TWILIO_AUTH_TOKEN, TWILIO_ACCOUNT_SID, TWILIO_FROM_NUMBER
 from django.utils.translation import gettext as _
 
 from django.core.mail import send_mail
@@ -94,4 +94,12 @@ class Checkin(models.Model):
                   from_email="noreply@imok.wheresalice.info",  # @TODO make this configurable
                   recipient_list=[NOTIFY_EMAIL]  # @TODO make this configurable
                   )
-        return _("Thanks for letting us know, our staff have been notified")
+
+        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        message = client.messages.create(
+            body=_("You have failed to sign out, the admins have been notified"),
+            from_=TWILIO_FROM_NUMBER,
+            to=self.member.phone_number.as_e164
+        )
+        print(message.sid)
+
