@@ -33,7 +33,7 @@ To run the tests:
 We also provide webhook.py for use with manual testing of the Twilio webhooks.  It allows you to send a message to the system as follows:
 
 ```shell
-python webhook.py -f +15005550006 -m "NAME alice"
+python twilio_mock.py -f +15005550006 -m "NAME alice"
 ```
 
 You can also achieve this through an HTTP Post using your favorite client:
