@@ -25,6 +25,14 @@ class Member(models.Model):
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
 
+    def ok_status(self):
+        state = {
+            None: _("Maybe ok"),
+            True: _("OK"),
+            False: _("Not OK")
+        }
+        return state[self.is_ok]
+
     def sign_in(self):
         in_time = timezone.now()
         out_time = in_time + CHECKIN_TTL

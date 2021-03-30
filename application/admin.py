@@ -6,6 +6,7 @@ import django.utils.timezone as timezone
 
 from .models import Checkin, Member
 
+
 def send_invite(obj):
     print(f"Sending an invite to {obj.phone_number.as_e164}")
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
@@ -24,10 +25,17 @@ class MemberAdmin(admin.ModelAdmin):
     list_filter = ('is_ok', 'registered', 'language', 'signing_center')
 
     def save_model(self, request, obj, form, change):
-        # @TODO send acknowledgement on changing is_ok
         if obj.registered_by is None:
             obj.registered_by = request.user
             send_invite(obj)
+        if 'is_ok' in form.changed_data:
+            client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+            message = client.messages.create(
+                body=_(f"An admin has marked you as {self.ok_status}"),
+                from_=TWILIO_FROM_NUMBER,
+                to=self.phone_number.as_e164
+            )
+            print(message.sid)
         obj.save()
 
 
