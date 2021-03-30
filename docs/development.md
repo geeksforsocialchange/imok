@@ -1,10 +1,11 @@
-# Development
+# Setting up a local development environment
 
 For local development we use docker-compose so that we don't need to configure postgresql.
 
-1. `docker-compose up` to launch a postgresql database and the webserver
-2. `docker-compose run web python manage.py migrate` to run database migrations
-3. `docker-compose run web python manage.py createsuperuser` to create an admin user
+1. `git clone https://github.com/geeksforsocialchange/imok.git` to download the repository
+1. `docker-compose up` or `make run` to launch a postgresql database and the webserver
+1. `docker-compose run web python manage.py migrate` or `make install` to run database migrations
+1. `docker-compose run web python manage.py createsuperuser` or `make superuser` to create an admin user
 
 You may also want to `pip install -r requirements.txt` outside of Docker to get code completion in your editor
 
