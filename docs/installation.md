@@ -75,8 +75,12 @@ dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
 # Make sure to add the single quotes around your phone number
 dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
 
-# Provide some storage for static content
+# Provide some storage for static content and generate the static content
 dokku storage:mount imok /var/lib/dokku/data/storage:/code/static
+dokku --rm run imok python manage.py collectstatic
+
+# Allow HTTP requests to use the server IP address
+dokku config:set imok ALLOWED_HOSTS=$(curl https://icanhazip.com)
 ```
 
 Now browse to SERVER_IP in a web browser.
@@ -115,6 +119,11 @@ dokku plugin:install letsencrypt
 dokku config:set --no-restart imok DOKKU_LETSENCRYPT_EMAIL=YOUR_EMAIL
 dokku letsencrypt imok
 dokku letsencrypt:cron-job --add
+
+# Set the hostname
+dokku domains:add imok imok.example.net
+dokku config:set imok ALLOWED_HOSTS="$(curl https://icanhazip.com),imok.example.net"
+
 # Turn off HTTP (optional)
 dokku proxy:ports-remove imok 80
 ```
