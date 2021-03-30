@@ -29,7 +29,7 @@ SECRET_KEY = 'vlek*n@f-!^ezbwfrris$vd6zqwza)yus44nvp28+mimi7)#i_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['imok.wheresalice.info', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Use Alice's test credentials if nothing is set in environment variables
 TWILIO_ACCOUNT_SID = env.str('TWILIO_ACCOUNT_SID', 'AC4a7b7b6bc015a2fd82d3eedea46c04f0')
@@ -120,6 +120,7 @@ if os.environ.get('GITHUB_WORKFLOW'):
 
 # Use environment variables for the database in Dokku, and use whitenoise and prod settings
 if 'DATABASE_URL' in env:
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
     DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
     DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
     DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
