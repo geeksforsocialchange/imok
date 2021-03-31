@@ -9,7 +9,7 @@ from django.utils.translation import gettext as _
 
 from django.core.mail import send_mail
 
-LANGUAGES = [('en_gb', 'English')]
+LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
 
 

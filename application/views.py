@@ -6,6 +6,8 @@ from .models import Member
 from django.utils.translation import gettext as _
 from django.core import mail
 from imok.settings import NOTIFY_EMAIL, MAIL_FROM
+from django.utils import translation
+import imok.settings
 
 
 def index(_):
@@ -20,6 +22,10 @@ def twilio(request):
     if Member.objects.filter(phone_number=message['From']).count() != 1:
         mail.send_mail('SMS From Unknown Number', f"{message['From']} send {message['Body']}", MAIL_FROM, [NOTIFY_EMAIL])
         return HttpResponseNotFound('ERROR: User not found')
+
+    member = Member.objects.get(phone_number=message['From'])
+    user_language = member.language
+    translation.activate(user_language)
 
     command = message['Body'].split(' ')[0].upper()
     if command == 'YES' or command == 'Y':

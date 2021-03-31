@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"Project-Id-Version: IMOK\n"
+"Language: cy\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+
+#: application/admin.py:16
+msgid ""
+"Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n"
+"\n"
+"Reply YES if so"
+msgstr ""
+"Croeso i imok! Ychwanegwyd eich rhif gan %(admin)s. Hoffech chi gofrestru ar gyfer y gwasanaeth hwn?\n"
+"\n"
+"Ateb YES os felly"
+
+#: application/admin.py:34
+msgid "An admin has marked you as {self.ok_status}"
+msgstr "Mae gweinyddwr wedi eich marcio fel {self.ok_status}"
+
+#: application/models.py:31
+msgid "Maybe ok"
+msgstr "Efallai iawn"
+
+#: application/models.py:32
+msgid "OK"
+msgstr "iawn"
+
+#: application/models.py:33
+msgid "Not OK"
+msgstr "Ddim yn iawn"
+
+#: application/models.py:47
+msgid "You were checked in at %(center)s at %(time)s"
+msgstr "Fe'ch gwiriwyd i mewn yn %(center)s ar %(time)s"
+
+#: application/models.py:49
+msgid "We will alert our team if we don’t hear from you by %(time)s"
+msgstr "Byddwn yn rhybuddio ein tîm os na fyddwn yn clywed gennych gan %(time)s"
+
+#: application/models.py:52
+msgid "You were already checked in. Your check in time has been updated"
+msgstr "Fe'ch gwiriwyd eisoes. Mae eich siec mewn pryd wedi'i diweddaru"
+
+#: application/models.py:63
+msgid "You were not checked in. To check in message IN"
+msgstr "Ni chawsoch eich gwirio i mewn. I wirio neges IN"
+
+#: application/models.py:65
+msgid "You were checked out at %(center)s at %(time)s"
+msgstr "Fe'ch gwiriwyd ar %(center) ar %(time)"
+
+#: application/models.py:85
+msgid "Thanks for letting us know, our staff have been notified"
+msgstr "Diolch am roi gwybod i ni, mae ein staff wedi cael eu hysbysu"
+
+#: application/models.py:100
+msgid "Are you OK? The alarm is about to be raised. Text OUT if you’re OK."
+msgstr "Wyt ti'n iawn? Mae'r larwm ar fin cael ei godi. Tecstiwch OUT os ydych chi'n iawn."
+
+#: application/models.py:127
+msgid "You have failed to sign out, the admins have been notified"
+msgstr "Rydych wedi methu â llofnodi allan, mae'r edmygwyr wedi cael eu hysbysu"
+
+#: application/views.py:46
+msgid "Thanks for registering, %(name)s!"
+msgstr "Diolch am gofrestru, %(name)s!"
+
+#: application/views.py:47
+msgid "To sign in, text IN or I to this number."
+msgstr "I fewngofnodi, tecstiwch IN neu I i'r rhif hwn."
+
+#: application/views.py:48
+msgid "To correct your name, text NAME followed by your name."
+msgstr "I gywiro'ch enw, tecstiwch NAME ac yna'ch enw."
+
+#: application/views.py:49
+msgid "To get emergency help, text SOS or HELP."
+msgstr "I gael cymorth brys, tecstiwch SOS neu HELP."
+
+#: application/views.py:63
+msgid "You have set your name to %(name)s"
+msgstr "Rydych chi wedi gosod eich enw i %(name)s"
