@@ -7,7 +7,6 @@ from django.utils.translation import gettext as _
 from django.core import mail
 from imok.settings import NOTIFY_EMAIL, MAIL_FROM
 from django.utils import translation
-import imok.settings
 
 
 def index(_):

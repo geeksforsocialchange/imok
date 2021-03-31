@@ -6,7 +6,7 @@ from twilio.rest import Client
 from django.utils import timezone
 from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL, MAIL_FROM, TWILIO_AUTH_TOKEN, TWILIO_ACCOUNT_SID, TWILIO_FROM_NUMBER
 from django.utils.translation import gettext as _
-
+from django.utils import translation
 from django.core.mail import send_mail
 
 LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
@@ -92,6 +92,9 @@ class Checkin(models.Model):
     def warn(self):
         # Only send a warning if we haven't already done so:
         if not self.member.is_warning:
+            user_language = self.member.language
+            translation.activate(user_language)
+
             self.member.is_warning = True
             self.member.save()
 
@@ -110,12 +113,16 @@ class Checkin(models.Model):
         if self.member.is_ok == False:
             return
 
+        user_language = self.member.language
+        translation.activate(user_language)
+
         self.member.is_ok = False
         self.member.is_warning = False
         self.member.save()
 
         subject = f"[IMOK] {self.member.name} is not ok"
         body = f"{self.member.name} failed to sign out at {self.member.signing_center}. They signed in at {self.time_stamp}. Here are their notes:\n\n{self.member.notes}."
+        print(body)
         send_mail(subject,
                   body,
                   from_email=MAIL_FROM,

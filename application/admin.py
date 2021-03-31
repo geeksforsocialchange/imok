@@ -3,7 +3,7 @@ from imok.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUM
 from twilio.rest import Client
 from django.utils.translation import gettext as _
 import django.utils.timezone as timezone
-
+from django.utils import translation
 from .models import Checkin, Member
 
 
@@ -25,6 +25,9 @@ class MemberAdmin(admin.ModelAdmin):
     list_filter = ('is_ok', 'registered', 'language', 'signing_center')
 
     def save_model(self, request, obj, form, change):
+        user_language = obj.language
+        translation.activate(user_language)
+
         if obj.registered_by is None:
             obj.registered_by = request.user
             send_invite(obj)
