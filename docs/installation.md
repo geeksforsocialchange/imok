@@ -124,6 +124,15 @@ dokku config:set --no-restart imok EMAIL_USE_TLS=True
 dokku ps:restart imok
 ```
 
+### Optional: Configuring airbrake
+
+If you want application errors to appear in an airbrake project, you can define the project and project key:
+
+```shell
+dokku config:set --no-restart imok AIRBRAKE_PROJECT=123456
+dokku config:set --no-restart imok AIRBRAKE_PROJECT_KEY='780740ee075aeedacbbe794517ce64f2'
+```
+
 ### WIP: Setting up a domain name
 
 _This section is incomplete_

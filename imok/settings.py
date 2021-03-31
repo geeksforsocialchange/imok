@@ -39,11 +39,6 @@ TWILIO_FROM_NUMBER = env.str('TWILIO_FROM_NUMBER', '+15005550006')
 SECURE_REFERRER_POLICY = "same-origin"
 SECURE_BROWSER_XSS_FILTER = True
 
-AIRBRAKE = dict(
-    project_id=322604,
-    project_key='9ff0640bef439bbd20ba0138374c3b01',
-)
-
 CHECKIN_TTL = timezone.timedelta(minutes=60)
 WARNING_TTL = timezone.timedelta(minutes=55)
 
@@ -142,24 +137,32 @@ if 'DATABASE_URL' in env:
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 86400
     SECURE_HSTS_PRELOAD = True
-    MIDDLEWARE.append('pybrake.django.AirbrakeMiddleware')
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'airbrake': {
-                'level': 'ERROR',
-                'class': 'pybrake.LoggingHandler',
+
+    AIRBRAKE_PROJECT = os.environ.get('AIRBRAKE_PROJECT', 0)
+    AIRBRAKE_PROJECT_KEY = os.environ.get('AIRBRAKE_PROJECT_KEY', '')
+    if AIRBRAKE_PROJECT_KEY != '':
+        AIRBRAKE = dict(
+            project_id=AIRBRAKE_PROJECT,
+            project_key=AIRBRAKE_PROJECT_KEY,
+        )
+        MIDDLEWARE.append('pybrake.django.AirbrakeMiddleware')
+        LOGGING = {
+            'version': 1,
+            'disable_existing_loggers': False,
+            'handlers': {
+                'airbrake': {
+                    'level': 'ERROR',
+                    'class': 'pybrake.LoggingHandler',
+                },
             },
-        },
-        'loggers': {
-            'app': {
-                'handlers': ['airbrake'],
-                'level': 'ERROR',
-                'propagate': True,
+            'loggers': {
+                'app': {
+                    'handlers': ['airbrake'],
+                    'level': 'ERROR',
+                    'propagate': True,
+                },
             },
-        },
-    }
+        }
 else:
     INSTALLED_APPS += ['behave_django']
 
