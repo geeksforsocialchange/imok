@@ -1,19 +1,51 @@
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from twilio.twiml.messaging_response import MessagingResponse
 from .models import Member
 from django.utils.translation import gettext as _
 from django.core import mail
-from imok.settings import NOTIFY_EMAIL, MAIL_FROM
+from imok.settings import NOTIFY_EMAIL, MAIL_FROM, TWILIO_AUTH_TOKEN, DEBUG
 from django.utils import translation
+from twilio.request_validator import RequestValidator
+from functools import wraps
 
 
 def index(_):
     return HttpResponseNotFound("hello world")
 
 
-# @TODO verify this is from Twilio
+def validate_twilio_request(f):
+    """Validates that incoming requests genuinely originated from Twilio"""
+    @wraps(f)
+    def decorated_function(request, *args, **kwargs):
+        # Create an instance of the RequestValidator class
+        validator = RequestValidator(TWILIO_AUTH_TOKEN)
+
+        url = request.build_absolute_uri()
+        from urllib.parse import urlsplit, urlunsplit
+        url = list(urlsplit(url))
+        url[0] = request.META.get('HTTP_X_FORWARDED_PROTO', 'http')
+        url[1] = f"{request.META.get('HTTP_HOST')}:{request.META.get('HTTP_X_FORWARDED_PORT', 80)}"
+        original_url = urlunsplit(url)
+
+        # Validate the request using its URL, POST data,
+        # and X-TWILIO-SIGNATURE header
+        request_valid = validator.validate(
+            original_url,
+            request.POST,
+            request.META.get('HTTP_X_TWILIO_SIGNATURE', ''))
+
+        # Continue processing the request if it's valid, return a 403 error if
+        # it's not
+        if request_valid or DEBUG:
+            return f(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden()
+    return decorated_function
+
+
+@validate_twilio_request
 @require_POST
 @csrf_exempt
 def twilio(request):
