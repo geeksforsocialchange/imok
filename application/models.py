@@ -90,6 +90,11 @@ class Checkin(models.Model):
     time_stamp = models.DateTimeField(auto_now_add=True)
 
     def warn(self):
+        # Don't send a warning if the member is already not ok
+        # This may look like it can be simplified, but it can't
+        if self.member.is_ok == False:
+            return
+
         # Only send a warning if we haven't already done so:
         if not self.member.is_warning:
             user_language = self.member.language
