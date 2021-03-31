@@ -45,8 +45,8 @@ class Member(models.Model):
         if created:
             response = " ".join([
                 _("You were checked in at %(center)s at %(time)s") % {'center': self.signing_center,
-                                                                      'time': str(in_time.time())},
-                _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time}
+                                                                      'time': str(in_time.time().strftime('%H:%M:%S'))},
+                _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time.strftime('%H:%M:%S')}
             ])
         else:
             response = _("You were already checked in. Your check in time has been updated")
@@ -63,7 +63,7 @@ class Member(models.Model):
             return _("You were not checked in. To check in message IN")
         checkin.delete()
         return _("You were checked out at %(center)s at %(time)s") % {'center': self.signing_center,
-                                                                      'time': str(timezone.now().time())}
+                                                                      'time': str(timezone.now().time().strftime('%H:%M:%S'))}
 
     def handle_sos(self):
         # Expression cannot be simplified as this is actually Optional[boolean]
@@ -121,7 +121,7 @@ class Checkin(models.Model):
         self.member.save()
 
         subject = f"[IMOK] {self.member.name} is not ok"
-        body = f"{self.member.name} failed to sign out at {self.member.signing_center}. They signed in at {self.time_stamp}. Here are their notes:\n\n{self.member.notes}."
+        body = f"{self.member.name} failed to sign out at {self.member.signing_center}. They signed in at {self.time_stamp.strftime('%Y-%m-%d %H:%M:%S')}. Here are their notes:\n\n{self.member.notes}."
         print(body)
         send_mail(subject,
                   body,
