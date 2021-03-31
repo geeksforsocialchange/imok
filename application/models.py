@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 import uuid
 from twilio.rest import Client
 from django.utils import timezone
-from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL, TWILIO_AUTH_TOKEN, TWILIO_ACCOUNT_SID, TWILIO_FROM_NUMBER
+from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL, MAIL_FROM, TWILIO_AUTH_TOKEN, TWILIO_ACCOUNT_SID, TWILIO_FROM_NUMBER
 from django.utils.translation import gettext as _
 
 from django.core.mail import send_mail
@@ -79,8 +79,8 @@ class Member(models.Model):
         body = f"{self.name} sent an SOS from {self.signing_center}.  Here are their notes:\n\n{self.notes}."
         send_mail(subject,
                   body,
-                  from_email="noreply@imok.wheresalice.info",  # @TODO make this configurable
-                  recipient_list=[NOTIFY_EMAIL]  # @TODO make this configurable
+                  from_email=MAIL_FROM,
+                  recipient_list=[NOTIFY_EMAIL]
                   )
         return _("Thanks for letting us know, our staff have been notified")
 
@@ -118,8 +118,8 @@ class Checkin(models.Model):
         body = f"{self.member.name} failed to sign out at {self.member.signing_center}. They signed in at {self.time_stamp}. Here are their notes:\n\n{self.member.notes}."
         send_mail(subject,
                   body,
-                  from_email="noreply@imok.wheresalice.info",  # @TODO make this configurable
-                  recipient_list=[NOTIFY_EMAIL]  # @TODO make this configurable
+                  from_email=MAIL_FROM,
+                  recipient_list=[NOTIFY_EMAIL]
                   )
 
         client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)

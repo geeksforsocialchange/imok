@@ -2,13 +2,10 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from twilio.twiml.messaging_response import MessagingResponse
-from .models import Member, Checkin
+from .models import Member
 from django.utils.translation import gettext as _
-from django.utils import timezone
-from imok.settings import CHECKIN_TTL
-from application.management.commands import healthcheck
 from django.core import mail
-from imok.settings import NOTIFY_EMAIL
+from imok.settings import NOTIFY_EMAIL, MAIL_FROM
 
 
 def index(_):
@@ -21,8 +18,7 @@ def index(_):
 def twilio(request):
     message = request.POST
     if Member.objects.filter(phone_number=message['From']).count() != 1:
-        # @TODO make this email configurable
-        mail.send_mail('[IMOK] SMS From Unknown Number', f"{message['From']} send {message['Body']}", "noreply@wheresalice.info", [NOTIFY_EMAIL])
+        mail.send_mail('SMS From Unknown Number', f"{message['From']} send {message['Body']}", MAIL_FROM, [NOTIFY_EMAIL])
         return HttpResponseNotFound('ERROR: User not found')
 
     command = message['Body'].split(' ')[0].upper()

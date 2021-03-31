@@ -47,7 +47,16 @@ AIRBRAKE = dict(
 CHECKIN_TTL = timezone.timedelta(minutes=60)
 WARNING_TTL = timezone.timedelta(minutes=55)
 
-NOTIFY_EMAIL = "alice@kaerast.info"
+NOTIFY_EMAIL = os.environ.get('NOTIFY_EMAIL', 'root@localhost')
+MAIL_FROM = os.environ.get('MAIL_FROM', 'root@localhost')
+EMAIL_SUBJECT_PREFIX = '[IMOK] '
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = bool(os.environ.get('EMAIL_USE_TLS', False))
+EMAIL_USE_SSL = bool(os.environ.get('EMAIL_USE_SSL', False))
+
 
 # Application definition
 

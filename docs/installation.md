@@ -109,6 +109,21 @@ dokku --rm run imok python manage.py createsuperuser
 
 Follow the instructions on screen to create your root user login. Make sure to use a secure password.
 
+### Configuring email
+
+By default imok will try and email root@localhost using a local SMTP server.  To get email notifications you will need to configure a few things.
+
+```shell
+dokku config:set --no-restart imok NOTIFY_EMAIL='alice@example.net'
+dokku config:set --no-restart imok MAIL_FROM='alice@example.net'
+dokku config:set --no-restart imok EMAIL_HOST='mail.example.com'
+dokku config:set --no-restart imok EMAIL_PORT=587
+dokku config:set --no-restart imok EMAIL_HOST_USER='alice'
+dokku config:set --no-restart imok EMAIL_HOST_PASSWORD='Password123'
+dokku config:set --no-restart imok EMAIL_USE_TLS=True
+dokku ps:restart imok
+```
+
 ### WIP: Setting up a domain name
 
 _This section is incomplete_
