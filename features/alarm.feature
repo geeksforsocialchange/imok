@@ -41,17 +41,16 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
 
   Scenario: When time is nearly up, send a reminder
     Given I am checked in at "1886-05-04 22:00:00"
-    When the healthchecker runs at "1886-05-04 22:28:00"
+    When the healthchecker runs at "1886-05-04 22:58:00"
     Then there are 0 overdue checkins
     And I am ok
-#    Then the healthchecker sends "Are you OK? The alarm will be raised in 2 minutes. Text OUT if you’re OK."
+    And there are 1 warning checkins
 
   Scenario: When time is up, alert the admin team
     Given I am checked in at "1936-07-17 10:00:00"
     When the healthchecker runs at "1936-07-17 11:00:00"
     Then there are 1 overdue checkins
     And I am not ok
-#    Then the healthchecker sends "We will now raise the alarm"
     Then an admin is contacted
 
   Scenario: I manually raise the alarm

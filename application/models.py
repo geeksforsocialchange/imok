@@ -24,6 +24,7 @@ class Member(models.Model):
     phone_number = PhoneNumberField(max_length=20, unique=True, null=True)
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
+    is_warning = models.BooleanField(null=False, default=False)
 
     def ok_status(self):
         state = {
@@ -38,6 +39,7 @@ class Member(models.Model):
         out_time = in_time + CHECKIN_TTL
 
         self.is_ok = True
+        self.is_warning = False
         self.save()
         checkin, created = Checkin.objects.update_or_create(member=self, defaults={'time_stamp': in_time})
         if created:
@@ -52,6 +54,7 @@ class Member(models.Model):
 
     def sign_out(self):
         self.is_ok = None
+        self.is_warning = False
         self.save()
 
         try:
@@ -86,6 +89,21 @@ class Checkin(models.Model):
     member = models.OneToOneField(Member, on_delete=models.CASCADE)
     time_stamp = models.DateTimeField(auto_now_add=True)
 
+    def warn(self):
+        # Only send a warning if we haven't already done so:
+        if not self.member.is_warning:
+            self.member.is_warning = True
+            self.member.save()
+
+            client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+            message = client.messages.create(
+                body=_("Are you OK? The alarm is about to be raised. Text OUT if you’re OK."),
+                from_=TWILIO_FROM_NUMBER,
+                to=self.member.phone_number.as_e164
+            )
+            print(message.sid)
+
+
     def timeout(self):
         # Have we already handled this timeout?
         # Your IDE may say we can simplify this, but we can't
@@ -93,6 +111,7 @@ class Checkin(models.Model):
             return
 
         self.member.is_ok = False
+        self.member.is_warning = False
         self.member.save()
 
         subject = f"[IMOK] {self.member.name} is not ok"

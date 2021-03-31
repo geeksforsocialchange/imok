@@ -143,7 +143,13 @@ def step_impl(context, time):
 @then(u'there are {some} overdue checkins')
 def step_impl(context, some):
     count = context.healthchecker
-    context.test.assertEqual(str(count), some)
+    context.test.assertEqual(str(count[0]), some)
+
+
+@then(u'there are {some} warning checkins')
+def step_impl(context, some):
+    count = context.healthchecker
+    context.test.assertEqual(str(count[1]), some)
 
 
 @then(u'I am not ok')
