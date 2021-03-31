@@ -55,7 +55,7 @@ msgstr "Ni chawsoch eich gwirio i mewn. I wirio neges IN"
 
 #: application/models.py:65
 msgid "You were checked out at %(center)s at %(time)s"
-msgstr "Fe'ch gwiriwyd ar %(center) ar %(time)"
+msgstr "Fe'ch gwiriwyd ar %(center)s ar %(time)s"
 
 #: application/models.py:85
 msgid "Thanks for letting us know, our staff have been notified"
