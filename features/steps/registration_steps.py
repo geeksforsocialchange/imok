@@ -101,4 +101,4 @@ def step_impl(context):
 @then(u'the admins are emailed')
 def step_impl(context):
     context.test.assertEqual(len(mail.outbox), 1)
-    context.test.assertEqual(mail.outbox[0].subject, "[IMOK] SMS From Unknown Number")
+    context.test.assertEqual(mail.outbox[0].subject, "SMS From Unknown Number")
