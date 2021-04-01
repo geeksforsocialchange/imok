@@ -156,8 +156,6 @@ Deploying Dokku is out of scope for this documentation, see the Dokku installati
 
 ### WIP: Setting up Telegram
 
-_Telegram support is under development, it does not yet work_
-
 Send `/newbot` to @BotFather and follow the instructions. It will give you a token to use.
 
 You need this token to configure IMOK to use the token to send replies

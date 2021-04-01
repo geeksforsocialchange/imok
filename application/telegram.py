@@ -33,7 +33,7 @@ def telegram_receive(request):
         chat_id = body['message']['chat']['id']
         message_text = body['message']['text']
 
-        member = Member.objects.get(telegram_username=body['from']['username'])
+        member = Member.objects.get(telegram_username=body['message']['from']['username'])
         user_language = member.language
         translation.activate(user_language)
         response = handle_command(message_text, member)
