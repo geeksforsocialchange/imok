@@ -19,9 +19,9 @@ def send_invite(obj):
 
 
 class MemberAdmin(admin.ModelAdmin):
-    fields = ('name', 'notes', 'language', 'registered', 'phone_number', 'signing_center', 'is_ok')
-    search_fields = ['name', 'phone_number']
-    list_display = ('phone_number', 'name', 'registered', 'is_ok')
+    fields = ('name', 'notes', 'language', 'registered', 'phone_number', 'telegram_username', 'signing_center', 'is_ok')
+    search_fields = ['name', 'phone_number', 'telegram_username']
+    list_display = ('phone_number', 'telegram_username', 'name', 'registered', 'is_ok')
     list_filter = ('is_ok', 'registered', 'language', 'signing_center')
 
     def save_model(self, request, obj, form, change):
@@ -32,6 +32,7 @@ class MemberAdmin(admin.ModelAdmin):
             obj.registered_by = request.user
             send_invite(obj)
         if 'is_ok' in form.changed_data:
+            # @TODO choose between phone number and telegram
             client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
             message = client.messages.create(
                 body=_(f"An admin has marked you as {self.ok_status}"),
@@ -43,10 +44,10 @@ class MemberAdmin(admin.ModelAdmin):
 
 
 class CheckinAdmin(admin.ModelAdmin):
-    list_display = ['checkin_user', 'checkin_phone_number', 'time_stamp', 'overdue', 'is_ok']
+    list_display = ['checkin_user', 'checkin_phone_number', 'checkin_telegram_username', 'time_stamp', 'overdue', 'is_ok']
     list_filter = ['member__is_ok']
     list_select_related = True
-    search_fields = ['member__name', 'member__phone_number']
+    search_fields = ['member__name', 'member__phone_number', 'member__telegram_username']
     empty_value_display = 'unknown'
     list_display_links = None
     ordering = ['time_stamp']
@@ -56,6 +57,9 @@ class CheckinAdmin(admin.ModelAdmin):
 
     def checkin_phone_number(self, obj):
         return obj.member.phone_number
+
+    def checkin_telegram_username(self, obj):
+        return obj.member.telegram_username
 
     def overdue(self, obj):
         return obj.time_stamp < timezone.now() - CHECKIN_TTL

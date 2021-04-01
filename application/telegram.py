@@ -1,7 +1,10 @@
-from imok.settings import TELEGRAM_TOKEN
+from imok.settings import TELEGRAM_TOKEN, NOTIFY_EMAIL
 import requests
 import json
 from django.http import HttpResponse
+from django.utils import translation
+from .models import Member
+from .commands import handle_command
 
 BOT_URL = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/'
 
@@ -29,5 +32,10 @@ def telegram_receive(request):
     if body['message']['chat']['type'] == 'private':
         chat_id = body['message']['chat']['id']
         message_text = body['message']['text']
-        telegram_reply(chat_id, message_text)
+
+        member = Member.objects.get(telegram_username=body['from']['username'])
+        user_language = member.language
+        translation.activate(user_language)
+        response = handle_command(message_text, member)
+        telegram_reply(chat_id, response)
     return HttpResponse('{}')

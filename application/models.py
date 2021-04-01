@@ -25,6 +25,7 @@ class Member(models.Model):
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)
+    telegram_username = models.TextField(default='')
 
     def ok_status(self):
         state = {
