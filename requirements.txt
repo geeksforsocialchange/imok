@@ -9,3 +9,4 @@ pybrake
 behave-django
 freezegun
 Faker
+requests
