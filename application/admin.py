@@ -25,6 +25,7 @@ class MemberAdmin(admin.ModelAdmin):
     list_filter = ('is_ok', 'registered', 'language', 'signing_center')
 
     def save_model(self, request, obj, form, change):
+        cur_language = translation.get_language()
         user_language = obj.language
         translation.activate(user_language)
 
@@ -40,6 +41,7 @@ class MemberAdmin(admin.ModelAdmin):
                 to=self.phone_number.as_e164
             )
             print(message.sid)
+        translation.activate(cur_language)
         obj.save()
 
 
