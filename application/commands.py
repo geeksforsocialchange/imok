@@ -35,7 +35,7 @@ def register(member):
 def name(member, params):
     member.name = params
     member.save()
-    response = _("You have set your name to %(name)s") % {'name': name}
+    response = _("You have set your name to %(name)s") % {'name': params}
     return response
 
 

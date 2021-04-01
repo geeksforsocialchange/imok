@@ -10,4 +10,5 @@ Feature: Members can edit their profile information
   Scenario: Update my name
     When I send "NAME alice"
     Then My name is "alice"
+    And I receive a message containing "alice"
     And My registration time does not change
