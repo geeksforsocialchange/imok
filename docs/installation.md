@@ -153,3 +153,27 @@ dokku proxy:ports-remove imok 80
 ```
 
 Deploying Dokku is out of scope for this documentation, see the Dokku installation documentation and pick Debian as the base OS for simplicity.
+
+### WIP: Setting up Telegram
+
+_Telegram support is under development, it does not yet work_
+
+Send `/newbot` to @BotFather and follow the instructions. It will give you a token to use.
+
+You need this token to configure IMOK to use the token to send replies
+
+You also need to use this token to tell your bot about IMOK
+
+On the server:
+
+```shell
+export BOT_TOKEN='123:abc'
+# Only the hostname should need changing here
+export WEBHOOK='https://imok.example.com/application/telegram'
+
+curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
+
+dokku config:set imok TELEGRAM_TOKEN="${BOT_TOKEN}"
+```
+
+You can then start messaging your new bot and it will reply (currently it just repeats what you have sent)

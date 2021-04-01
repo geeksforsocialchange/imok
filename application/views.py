@@ -1,72 +1,28 @@
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from twilio.twiml.messaging_response import MessagingResponse
 from .models import Member
 from django.utils.translation import gettext as _
 from django.core import mail
-from imok.settings import NOTIFY_EMAIL, MAIL_FROM, TWILIO_AUTH_TOKEN, DEBUG
+from imok.settings import NOTIFY_EMAIL, MAIL_FROM
 from django.utils import translation
-from twilio.request_validator import RequestValidator
-from functools import wraps
-from .telegram import telegram_post
-import json
+from .twilio import validate_twilio_request
+from .telegram import telegram_receive
 
 
 def index(_):
     return HttpResponseNotFound("hello world")
 
 
+# @TODO all this does at the moment is reply to private messages with what was sent
 @csrf_exempt
 @require_POST
 def telegram(request):
-    body = json.loads(request.body)
-
-    # Do nothing with group invites:
-    if 'my_chat_member' in body.keys():
-        return HttpResponse('{}')
-    # Do nothing with messages in group chat:
-    if body['message']['chat']['type'] == 'group':
-        return HttpResponse('{}')
-
-    # Only respond to private messages:
-    if body['message']['chat']['type'] == 'private':
-        chat_id = body['message']['chat']['id']
-        message_text = body['message']['text']
-        telegram_post(chat_id, message_text)
-    return HttpResponse('{}')
+    return telegram_receive(request)
 
 
-def validate_twilio_request(f):
-    """Validates that incoming requests genuinely originated from Twilio"""
-    @wraps(f)
-    def decorated_function(request, *args, **kwargs):
-        # Create an instance of the RequestValidator class
-        validator = RequestValidator(TWILIO_AUTH_TOKEN)
-
-        url = request.build_absolute_uri()
-        from urllib.parse import urlsplit, urlunsplit
-        url = list(urlsplit(url))
-        url[0] = request.META.get('HTTP_X_FORWARDED_PROTO', 'http')
-        url[1] = f"{request.META.get('HTTP_HOST')}:{request.META.get('HTTP_X_FORWARDED_PORT', 80)}"
-        original_url = urlunsplit(url)
-
-        # Validate the request using its URL, POST data,
-        # and X-TWILIO-SIGNATURE header
-        request_valid = validator.validate(
-            original_url,
-            request.POST,
-            request.META.get('HTTP_X_TWILIO_SIGNATURE', ''))
-
-        # Continue processing the request if it's valid, return a 403 error if
-        # it's not
-        if request_valid or DEBUG:
-            return f(request, *args, **kwargs)
-        else:
-            return HttpResponseForbidden()
-    return decorated_function
-
-
+# @TODO move this to twilio.py and refactor all other commands to be independent of channel
 @validate_twilio_request
 @require_POST
 @csrf_exempt
