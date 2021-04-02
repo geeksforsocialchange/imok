@@ -1,11 +1,10 @@
 from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse
+from twilio.rest import Client
 from functools import wraps
-from django.http import HttpResponseForbidden, HttpResponseNotFound, HttpResponse
-from django.core import mail
+from django.http import HttpResponseForbidden, HttpResponse
 from django.utils import translation
-from imok.settings import TWILIO_AUTH_TOKEN, DEBUG, MAIL_FROM, NOTIFY_EMAIL
-from .models import Member
+from imok.settings import TWILIO_AUTH_TOKEN, TWILIO_ACCOUNT_SID, TWILIO_FROM_NUMBER, DEBUG, MAIL_FROM, NOTIFY_EMAIL
 from .commands import handle_command
 
 
@@ -39,13 +38,9 @@ def validate_twilio_request(f):
     return decorated_function
 
 
-def twilio_receive(request):
+def twilio_receive(request, member):
     message = request.POST
-    if Member.objects.filter(phone_number=message['From']).count() != 1:
-        mail.send_mail('SMS From Unknown Number', f"{message['From']} send {message['Body']}", MAIL_FROM, [NOTIFY_EMAIL])
-        return HttpResponseNotFound('ERROR: User not found')
 
-    member = Member.objects.get(phone_number=message['From'])
     user_language = member.language
     translation.activate(user_language)
 
@@ -56,3 +51,12 @@ def twilio_receive(request):
     resp.message(reply)
     return HttpResponse(resp)
 
+
+def twilio_send(phone_number, message):
+    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    message = client.messages.create(
+        body=message,
+        from_=TWILIO_FROM_NUMBER,
+        to=phone_number
+    )
+    print(message.sid)

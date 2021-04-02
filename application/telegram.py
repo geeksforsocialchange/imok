@@ -1,9 +1,8 @@
-from imok.settings import TELEGRAM_TOKEN, NOTIFY_EMAIL
+from imok.settings import TELEGRAM_TOKEN
 import requests
 import json
 from django.http import HttpResponse
 from django.utils import translation
-from .models import Member
 from .commands import handle_command
 
 BOT_URL = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/'
@@ -18,7 +17,13 @@ def telegram_reply(chat_id, message_text):
     requests.post(message_url, json=response)
 
 
-def telegram_receive(request):
+def telegram_send(username, message_text):
+    if not username.startswith('@'):
+        username = '@' + username
+    telegram_reply(chat_id=username, message_text=message_text)
+
+
+def telegram_receive(request, member):
     body = json.loads(request.body)
 
     # Do nothing with group invites:
@@ -33,7 +38,6 @@ def telegram_receive(request):
         chat_id = body['message']['chat']['id']
         message_text = body['message']['text']
 
-        member = Member.objects.get(telegram_username=body['message']['from']['username'])
         user_language = member.language
         translation.activate(user_language)
         response = handle_command(message_text, member)

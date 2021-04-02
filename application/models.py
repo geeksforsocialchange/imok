@@ -2,12 +2,13 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 import uuid
-from twilio.rest import Client
 from django.utils import timezone
-from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL, MAIL_FROM, TWILIO_AUTH_TOKEN, TWILIO_ACCOUNT_SID, TWILIO_FROM_NUMBER
+from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL, MAIL_FROM
 from django.utils.translation import gettext as _
 from django.utils import translation
 from django.core.mail import send_mail
+from .twilio import twilio_send
+from .telegram import telegram_send
 
 LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
@@ -85,6 +86,12 @@ class Member(models.Model):
                   )
         return _("Thanks for letting us know, our staff have been notified")
 
+    def send_message(self, message):
+        if self.telegram_username != '':
+            telegram_send(self.telegram_username, message)
+        else:
+            twilio_send(self.phone_number.as_e164, message)
+
 
 class Checkin(models.Model):
     member = models.OneToOneField(Member, on_delete=models.CASCADE)
@@ -104,14 +111,7 @@ class Checkin(models.Model):
             self.member.is_warning = True
             self.member.save()
 
-            client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-            message = client.messages.create(
-                body=_("Are you OK? The alarm is about to be raised. Text OUT if you’re OK."),
-                from_=TWILIO_FROM_NUMBER,
-                to=self.member.phone_number.as_e164
-            )
-            print(message.sid)
-
+            self.member.send_message(_("Are you OK? The alarm is about to be raised. Text OUT if you’re OK."))
 
     def timeout(self):
         # Have we already handled this timeout?
@@ -134,12 +134,5 @@ class Checkin(models.Model):
                   from_email=MAIL_FROM,
                   recipient_list=[NOTIFY_EMAIL]
                   )
-
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        message = client.messages.create(
-            body=_("You have failed to sign out, the admins have been notified"),
-            from_=TWILIO_FROM_NUMBER,
-            to=self.member.phone_number.as_e164
-        )
-        print(message.sid)
+        self.member.send_message(_("You have failed to sign out, the admins have been notified"))
 
