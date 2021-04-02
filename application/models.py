@@ -7,11 +7,20 @@ from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL, MAIL_FROM
 from django.utils.translation import gettext as _
 from django.utils import translation
 from django.core.mail import send_mail
+from django.core.exceptions import ValidationError
 from .twilio import twilio_send
 from .telegram import telegram_send
 
 LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
+
+
+def validate_telegram_username(value):
+    if value.startswith("@"):
+        raise ValidationError(
+            _('%(value)s should not include the "@"'),
+            params={'value': value},
+        )
 
 
 class Member(models.Model):
@@ -26,7 +35,7 @@ class Member(models.Model):
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)
-    telegram_username = models.TextField(default='')
+    telegram_username = models.TextField(default='', validators=[validate_telegram_username])
 
     def ok_status(self):
         state = {
