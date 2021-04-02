@@ -174,4 +174,4 @@ curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
 dokku config:set imok TELEGRAM_TOKEN="${BOT_TOKEN}"
 ```
 
-You can then start messaging your new bot and it will reply (currently it just repeats what you have sent)
+You can now use Telegram as you would SMS/Twilio.  If a user has a telegram username set then we will use Telegram to communicate with them.  A phone number is still required as a backup mechanism for admins to call them.
