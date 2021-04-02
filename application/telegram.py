@@ -15,6 +15,7 @@ def telegram_reply(chat_id, message_text):
     }
     message_url = BOT_URL + 'sendMessage'
     requests.post(message_url, json=response)
+    return '{}'
 
 
 def telegram_send(username, message_text):
