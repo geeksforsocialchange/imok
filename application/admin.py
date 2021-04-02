@@ -1,6 +1,5 @@
 from django.contrib import admin
-from imok.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER, CHECKIN_TTL
-from twilio.rest import Client
+from django.conf import settings
 from django.utils.translation import gettext as _
 import django.utils.timezone as timezone
 from django.utils import translation
@@ -8,14 +7,7 @@ from .models import Checkin, Member
 
 
 def send_invite(obj):
-    print(f"Sending an invite to {obj.phone_number.as_e164}")
-    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    message = client.messages.create(
-        to=obj.phone_number.as_e164,
-        from_=TWILIO_FROM_NUMBER,
-        body=_("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so") % {'admin': obj.registered_by.username}
-    )
-    print(message.sid)
+    obj.send_message(_("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so"))
 
 
 class MemberAdmin(admin.ModelAdmin):
@@ -33,14 +25,7 @@ class MemberAdmin(admin.ModelAdmin):
             obj.registered_by = request.user
             send_invite(obj)
         if 'is_ok' in form.changed_data:
-            # @TODO choose between phone number and telegram
-            client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-            message = client.messages.create(
-                body=_(f"An admin has marked you as {self.ok_status}"),
-                from_=TWILIO_FROM_NUMBER,
-                to=self.phone_number.as_e164
-            )
-            print(message.sid)
+            obj.send_message(_(f"An admin has marked you as {obj.ok_status}"))
         translation.activate(cur_language)
         obj.save()
 
@@ -64,7 +49,7 @@ class CheckinAdmin(admin.ModelAdmin):
         return obj.member.telegram_username
 
     def overdue(self, obj):
-        return obj.time_stamp < timezone.now() - CHECKIN_TTL
+        return obj.time_stamp < timezone.now() - settings.CHECKIN_TTL
 
     def is_ok(self, obj):
         return obj.member.is_ok

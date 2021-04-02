@@ -37,6 +37,7 @@ TWILIO_AUTH_TOKEN = env.str('TWILIO_AUTH_TOKEN', '5886fb88ba4dd6bc45da49bc9d10a4
 TWILIO_FROM_NUMBER = env.str('TWILIO_FROM_NUMBER', '+15005550006')
 
 TELEGRAM_TOKEN = env.str('TELEGRAM_TOKEN', '')
+TELEGRAM_GROUP = env.str('TELEGRAM_GROUP', '')
 
 SECURE_REFERRER_POLICY = "same-origin"
 SECURE_BROWSER_XSS_FILTER = True
@@ -44,7 +45,7 @@ SECURE_BROWSER_XSS_FILTER = True
 CHECKIN_TTL = timezone.timedelta(minutes=60)
 WARNING_TTL = timezone.timedelta(minutes=55)
 
-NOTIFY_EMAIL = os.environ.get('NOTIFY_EMAIL', 'root@localhost')
+NOTIFY_EMAIL = os.environ.get('NOTIFY_EMAIL', '')
 MAIL_FROM = os.environ.get('MAIL_FROM', 'root@localhost')
 EMAIL_SUBJECT_PREFIX = '[IMOK] '
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')

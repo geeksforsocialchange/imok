@@ -14,6 +14,12 @@ def random_phone_number():
     return phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
 
 
+@given(u'email is configured')
+def step_impl(context):
+    from django.conf import settings
+    context.test.assertEqual(settings.NOTIFY_EMAIL, 'root@localhost')
+
+
 @given(u'{username} has logged in with an admin account')
 def step_impl(context, username):
     user = User(username=username, is_staff=True, is_superuser=True)

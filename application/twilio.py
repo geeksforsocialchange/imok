@@ -2,9 +2,9 @@ from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
 from functools import wraps
+from django.conf import settings
 from django.http import HttpResponseForbidden, HttpResponse
 from django.utils import translation
-from imok.settings import TWILIO_AUTH_TOKEN, TWILIO_ACCOUNT_SID, TWILIO_FROM_NUMBER, DEBUG, MAIL_FROM, NOTIFY_EMAIL
 from .commands import handle_command
 
 
@@ -13,7 +13,7 @@ def validate_twilio_request(f):
     @wraps(f)
     def decorated_function(request, *args, **kwargs):
         # Create an instance of the RequestValidator class
-        validator = RequestValidator(TWILIO_AUTH_TOKEN)
+        validator = RequestValidator(settings.TWILIO_AUTH_TOKEN)
 
         url = request.build_absolute_uri()
         from urllib.parse import urlsplit, urlunsplit
@@ -31,7 +31,7 @@ def validate_twilio_request(f):
 
         # Continue processing the request if it's valid, return a 403 error if
         # it's not
-        if request_valid or DEBUG:
+        if request_valid or settings.DEBUG is True:
             return f(request, *args, **kwargs)
         else:
             return HttpResponseForbidden()
@@ -53,10 +53,10 @@ def twilio_receive(request, member):
 
 
 def twilio_send(phone_number, message):
-    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     message = client.messages.create(
         body=message,
-        from_=TWILIO_FROM_NUMBER,
+        from_=settings.TWILIO_FROM_NUMBER,
         to=phone_number
     )
     print(message.sid)

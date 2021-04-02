@@ -111,7 +111,7 @@ Follow the instructions on screen to create your root user login. Make sure to u
 
 ### Configuring email
 
-By default imok will try and email root@localhost using a local SMTP server.  To get email notifications you will need to configure a few things.
+By default, imok will not send notification emails to admins.  To configure this you will need to set a few things:
 
 ```shell
 dokku config:set --no-restart imok NOTIFY_EMAIL='alice@example.net'
@@ -172,6 +172,12 @@ export WEBHOOK='https://imok.example.com/application/telegram'
 curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
 
 dokku config:set imok TELEGRAM_TOKEN="${BOT_TOKEN}"
+```
+
+If you want admin notifications into a Telegram group then invite the bot into that group and then set the environment variable TELEGRAM_GROUP.  You will still receive email notifications to NOTIFY_EMAIL as long as that is non-blank.
+
+```shell
+dokku config:set imok TELEGRAM_GROUP="example-group"
 ```
 
 You can now use Telegram as you would SMS/Twilio.  If a user has a telegram username set then we will use Telegram to communicate with them.  A phone number is still required as a backup mechanism for admins to call them.

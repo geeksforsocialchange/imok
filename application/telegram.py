@@ -1,11 +1,11 @@
-from imok.settings import TELEGRAM_TOKEN
+from django.conf import settings
 import requests
 import json
 from django.http import HttpResponse
 from django.utils import translation
 from .commands import handle_command
 
-BOT_URL = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/'
+BOT_URL = f'https://api.telegram.org/bot{settings.TELEGRAM_TOKEN}/'
 
 
 def telegram_reply(chat_id, message_text):

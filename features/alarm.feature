@@ -8,6 +8,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
   Background: I have a registered confirmed account
     Given I have been registered as a member
     And My registration is confirmed
+    And email is configured
 
   Scenario: I can check in
     When I send "IN" at "1919-12-21 20:00:00"

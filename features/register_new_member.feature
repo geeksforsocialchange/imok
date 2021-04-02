@@ -4,6 +4,9 @@ Feature: Admins can register new members
   I want to register a new member on imok
   And have confirmation when they are successfully registered
 
+  Background: Email is configured
+    Given email is configured
+
   Scenario: Admin sends an invitation to member
     Given Admin Angela has logged in with an admin account
     When Admin Angela creates a new member

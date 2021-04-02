@@ -1,13 +1,12 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse, HttpResponseNotFound
-from django.core import mail
 import json
 
 from .twilio import validate_twilio_request, twilio_receive
 from .telegram import telegram_receive
 from .models import Member
-from imok.settings import MAIL_FROM, NOTIFY_EMAIL
+from .contact_admins import notify_admins
 
 
 @csrf_exempt
@@ -28,7 +27,7 @@ def telegram(request):
 def twilio(request):
     message = request.POST
     if Member.objects.filter(phone_number=message['From']).count() != 1:
-        mail.send_mail('SMS From Unknown Number', f"{message['From']} send {message['Body']}", MAIL_FROM, [NOTIFY_EMAIL])
+        notify_admins('SMS From Unknown Number', f"{message['From']} send {message['Body']}")
         return HttpResponseNotFound('ERROR: User not found')
 
     member = Member.objects.get(phone_number=message['From'])

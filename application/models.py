@@ -1,15 +1,16 @@
 from django.db import models
+from django.conf import settings
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 import uuid
 from django.utils import timezone
-from imok.settings import CHECKIN_TTL, NOTIFY_EMAIL, MAIL_FROM
 from django.utils.translation import gettext as _
 from django.utils import translation
-from django.core.mail import send_mail
 from django.core.exceptions import ValidationError
+
 from .twilio import twilio_send
 from .telegram import telegram_send
+from .contact_admins import notify_admins
 
 LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
@@ -47,7 +48,7 @@ class Member(models.Model):
 
     def sign_in(self):
         in_time = timezone.now()
-        out_time = in_time + CHECKIN_TTL
+        out_time = in_time + settings.CHECKIN_TTL
 
         self.is_ok = True
         self.is_warning = False
@@ -85,14 +86,10 @@ class Member(models.Model):
         self.is_ok = False
         self.save()
 
-        # send an email
+        # send notifications
         subject = f"[IMOK] {self.name} sent an SOS"
         body = f"{self.name} sent an SOS from {self.signing_center}.  Here are their notes:\n\n{self.notes}."
-        send_mail(subject,
-                  body,
-                  from_email=MAIL_FROM,
-                  recipient_list=[NOTIFY_EMAIL]
-                  )
+        notify_admins(subject, body)
         return _("Thanks for letting us know, our staff have been notified")
 
     def send_message(self, message):
@@ -138,10 +135,6 @@ class Checkin(models.Model):
         subject = f"[IMOK] {self.member.name} is not ok"
         body = f"{self.member.name} failed to sign out at {self.member.signing_center}. They signed in at {self.time_stamp.strftime('%Y-%m-%d %H:%M:%S')}. Here are their notes:\n\n{self.member.notes}."
         print(body)
-        send_mail(subject,
-                  body,
-                  from_email=MAIL_FROM,
-                  recipient_list=[NOTIFY_EMAIL]
-                  )
+        notify_admins(subject, body)
         self.member.send_message(_("You have failed to sign out, the admins have been notified"))
 
