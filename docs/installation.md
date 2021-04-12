@@ -176,6 +176,10 @@ dokku config:set imok TELEGRAM_TOKEN="${BOT_TOKEN}"
 
 If you want admin notifications into a Telegram group then invite the bot into that group and then set the environment variable TELEGRAM_GROUP.  You will still receive email notifications to NOTIFY_EMAIL as long as that is non-blank.
 
+The Telegram group name should be hard to guess so that the bot doesn't get invited into a group of the same name.
+
+Be careful about the security of the group because all alerts get sent there.
+
 ```shell
 dokku config:set imok TELEGRAM_GROUP="example-group"
 ```

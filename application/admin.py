@@ -25,7 +25,7 @@ class MemberAdmin(admin.ModelAdmin):
             obj.registered_by = request.user
             send_invite(obj)
         if 'is_ok' in form.changed_data:
-            obj.send_message(_(f"An admin has marked you as {obj.ok_status}"))
+            obj.send_message(_(f"An admin has marked you as {obj.ok_status()}"))
         translation.activate(cur_language)
         obj.save()
 

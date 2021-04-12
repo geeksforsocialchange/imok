@@ -2,6 +2,7 @@ from django.core.mail import send_mail
 
 from django.conf import settings
 from .telegram import telegram_send
+from .telegram_group import TelegramGroup
 
 
 def notify_admins(subject, message):
@@ -20,4 +21,5 @@ def mail_admins(subject, message):
 
 
 def telegram_admins(message):
-    telegram_send(settings.TELEGRAM_GROUP, message)
+    group = TelegramGroup.objects.filter(title=settings.TELEGRAM_GROUP).first()
+    telegram_send(group.chat_id, message)

@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 from django.utils import translation
 from django.core.exceptions import ValidationError
 
+from .telegram_group import TelegramGroup
 from .twilio import twilio_send
 from .telegram import telegram_send
 from .contact_admins import notify_admins
@@ -37,6 +38,7 @@ class Member(models.Model):
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)
     telegram_username = models.TextField(default='', validators=[validate_telegram_username])
+    telegram_chat_id = models.BigIntegerField(default=0)
 
     def ok_status(self):
         state = {
@@ -93,8 +95,8 @@ class Member(models.Model):
         return _("Thanks for letting us know, our staff have been notified")
 
     def send_message(self, message):
-        if self.telegram_username != '':
-            telegram_send(self.telegram_username, message)
+        if self.telegram_chat_id != 0:
+            telegram_send(self.telegram_chat_id, message)
         else:
             twilio_send(self.phone_number.as_e164, message)
 
@@ -137,4 +139,3 @@ class Checkin(models.Model):
         print(body)
         notify_admins(subject, body)
         self.member.send_message(_("You have failed to sign out, the admins have been notified"))
-
