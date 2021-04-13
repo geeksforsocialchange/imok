@@ -10,6 +10,7 @@ You will need:
 
 1. A [Digital Ocean account](https://www.digitalocean.com/). If you don't have one yet please consider using our [referral link](https://m.do.co/c/34b6bc6a1cf7).
 1. A [Twilio account](https://www.twilio.org/). Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
+1. A domain name to use with the service, a subdomain is fine (e.g. `imok.mydomain.com`).
 
 ## Setting up Twilio
 
@@ -57,7 +58,7 @@ Hopefully you're now logged into the remote server and the prompt says `root@HOS
 
 ```shell
 # Set up the server
-apt update && apt upgrade # Select 'yes', then select the default for all options
+apt update && apt upgrade --assume-yes # Select the default for all options that pop up
 apt install pwgen
 
 # Install needed plugins
@@ -75,16 +76,13 @@ dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
 # Make sure to add the single quotes around your phone number
 dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
 
-# Provide some storage for static content and generate the static content
-dokku storage:mount imok /var/lib/dokku/data/storage:/code/static
-dokku --rm run imok python manage.py collectstatic
-
 # Allow HTTP requests to use the server IP address
 dokku config:set imok ALLOWED_HOSTS=$(curl https://icanhazip.com)
 ```
 
 Now browse to SERVER_IP in a web browser.
 
+1. Set **Hostname** to the domain name you want to use, e.g. `imok.mydomain.com`.
 1. Select **Use virtualhost naming for apps**.
 1. Click **Finish Setup**.
 
@@ -99,15 +97,63 @@ git remote add dokku dokku@SERVER_IP:imok
 git push dokku
 ```
 
-### Create a superuser to login with
+This will take a little while to run as it pushes the code to the remote server and sets up the Dokku app.
+
+### Create a superuser to login with and set up server storage
 
 Back on your server run the following to set up an admin account.
 
 ```shell
 dokku --rm run imok python manage.py createsuperuser
 ```
+Provide some storage for static content and generate the static content
+
+```shell
+dokku storage:mount imok /var/lib/dokku/data/storage:/code/static
+dokku --rm run imok python manage.py collectstatic
+
+```
 
 Follow the instructions on screen to create your root user login. Make sure to use a secure password.
+
+### Configuring a domain name
+
+Setting up a domain name is mandatory for imok in order to ensure https security for users.
+
+In your domain name config you need to add an A record for the subdomain you want to use that points to the IP address of your server.
+
+* Type: A Record
+* Host: imok
+* Value: YOUR_IP
+* TTL: Automatic
+
+On Namecheap this will look something like this:
+
+![Example screenshot on Namecheap](dns-config.png)
+
+Back on your imok server:
+
+```shell
+# Set the hostname
+dokku domains:add imok imok.example.net
+dokku config:set imok ALLOWED_HOSTS="$(curl https://icanhazip.com),imok.mydomain.com"
+
+# Install letsencrypt
+dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+dokku config:set --no-restart imok DOKKU_LETSENCRYPT_EMAIL=YOUR_EMAIL
+dokku letsencrypt:enable imok
+dokku letsencrypt:cron-job --add
+
+# Turn off HTTP and only allow HTTPS (optional but highly recommended)
+dokku proxy:ports-remove imok 80
+```
+
+That's it! You've finished the basic setup. You can now log into your site at https://imok.mydomain.com/ruok.
+
+
+## Optional steps
+
+You might want to add a few extra features if you're going to use this in a production setting.
 
 ### Configuring email
 
@@ -124,7 +170,7 @@ dokku config:set --no-restart imok EMAIL_USE_TLS=True
 dokku ps:restart imok
 ```
 
-### Optional: Configuring airbrake
+### Configuring airbrake
 
 If you want application errors to appear in an airbrake project, you can define the project and project key:
 
@@ -132,27 +178,6 @@ If you want application errors to appear in an airbrake project, you can define 
 dokku config:set --no-restart imok AIRBRAKE_PROJECT=123456
 dokku config:set --no-restart imok AIRBRAKE_PROJECT_KEY='780740ee075aeedacbbe794517ce64f2'
 ```
-
-### WIP: Setting up a domain name
-
-_This section is incomplete_
-
-```shell
-# Install letsencrypt
-dokku plugin:install letsencrypt
-dokku config:set --no-restart imok DOKKU_LETSENCRYPT_EMAIL=YOUR_EMAIL
-dokku letsencrypt imok
-dokku letsencrypt:cron-job --add
-
-# Set the hostname
-dokku domains:add imok imok.example.net
-dokku config:set imok ALLOWED_HOSTS="$(curl https://icanhazip.com),imok.example.net"
-
-# Turn off HTTP (optional)
-dokku proxy:ports-remove imok 80
-```
-
-Deploying Dokku is out of scope for this documentation, see the Dokku installation documentation and pick Debian as the base OS for simplicity.
 
 ### WIP: Setting up Telegram
 
