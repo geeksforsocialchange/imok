@@ -11,8 +11,8 @@ install:
 test:
 	docker-compose run web python manage.py behave
 
-.PHONY: createadmin
-createadmin:
+.PHONY: superuser
+superuser:
 	docker-compose run web python manage.py createsuperuser
 
 .PHONY: clean
