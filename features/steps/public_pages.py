@@ -4,22 +4,20 @@ from application.models import Member
 
 @when(u'I request \'/\'')
 def step_impl(context):
-    # context.browser.get('http://localhost:8000/')
-    raise NotImplementedError(u'STEP: When I request \'/\'')
+    context.response = context.test.client.get('/')
 
 @when(u'there are no members')
 def step_impl(context):
-    raise NotImplementedError(u'STEP: When there are no members')
+    Member.objects.all().delete()
 
 @then(u'I see \'Welcome to imok\'')
 def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I see \'Welcome to imok\'')
+    context.test.assertIn('Welcome to imok', str(context.response.content, 'utf-8'))
 
 @when(u'there are members')
 def step_impl(context):
-    raise NotImplementedError(u'STEP: When there are members')
-
+    Member.objects.create(name='Test user')
 
 @then(u'I do not see \'Welcome to imok\'')
 def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I do not see \'Welcome to imok\'')
+    context.test.assertNotIn('Welcome to imok', str(context.response.content, 'utf-8'))
