@@ -10,7 +10,7 @@ You will need:
 
 1. A [Digital Ocean account](https://www.digitalocean.com/). If you don't have one yet please consider using our [referral link](https://m.do.co/c/34b6bc6a1cf7).
 1. A [Twilio account](https://www.twilio.org/). Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
-1. A domain name to use with the service, a subdomain is fine (e.g. `imok.mydomain.com`).
+1. A domain name to use with the service. This guide assumes you will install imok on a subdomain, e.g. `imok.mydomain.com`.
 
 ## Setting up Twilio
 
@@ -60,6 +60,10 @@ Hopefully you're now logged into the remote server and the prompt says `root@HOS
 # Set up the server
 apt update && apt upgrade --assume-yes # Select the default for all options that pop up
 apt install pwgen
+
+# Add your locale
+locale-gen en_GB en_GB.UTF-8
+dpkg-reconfigure locales # We recommend defaulting to en_GB.UTF-8 for UK installations
 
 # Install needed plugins
 dokku plugin:install https://github.com/dokku/dokku-postgres.git
