@@ -27,17 +27,17 @@ def validate_telegram_username(value):
 
 class Member(models.Model):
     id = models.UUIDField(primary_key=True, unique=True, editable=False, default=uuid.uuid4)
-    name = models.TextField(default='')
+    name = models.CharField(default='', max_length=50)
     notes = models.TextField(default='', blank=True)
     registered_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     registered_at = models.DateTimeField(auto_now_add=True)
     language = models.CharField(max_length=5, choices=LANGUAGES, default='en_gb')
     registered = models.BooleanField(default=False)
-    phone_number = PhoneNumberField(max_length=20, unique=True, null=True)
+    phone_number = PhoneNumberField(max_length=20, unique=True, null=True, blank=True)
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)
-    telegram_username = models.TextField(default='', validators=[validate_telegram_username])
+    telegram_username = models.CharField(default='', validators=[validate_telegram_username], blank=True, max_length=50)
     telegram_chat_id = models.BigIntegerField(default=0)
 
     def ok_status(self):
