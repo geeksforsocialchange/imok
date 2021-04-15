@@ -7,7 +7,7 @@ from .models import Checkin, Member
 
 
 def send_invite(obj, user):
-    obj.send_message(_("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so" % user))
+    obj.send_message(_("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so" % {'admin': user}))
 
 
 class MemberAdmin(admin.ModelAdmin):
@@ -23,9 +23,9 @@ class MemberAdmin(admin.ModelAdmin):
 
         if obj.registered_by is None:
             obj.registered_by = request.user
-            send_invite(obj, request.user)
+            send_invite(obj, request.user.username)
         if 'is_ok' in form.changed_data:
-            obj.send_message(_(f"An admin has marked you as {obj.ok_status()}"))
+            obj.send_message(_("An admin has marked you as %(status)s" % {'status': obj.ok_status()}))
         translation.activate(cur_language)
         obj.save()
 
