@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+admin.site.site_header = "imok admin"
+admin.site.site_title = "imok admin"
+admin.site.index_title = "Welcome to the imok admin interface!"
+
 urlpatterns = [
     path('application/', include('application.urls')),
     path('ruok/', admin.site.urls),
