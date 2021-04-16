@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 def telegram(request):
     body = json.loads(request.body)
     if 'my_chat_member' in body.keys():
-        if body['my_chat_member']['chat']['title'] == TELEGRAM_GROUP:
-            TelegramGroup.objects.update_or_create(chat_id=body['my_chat_member']['chat']['id'], defaults={'title': TELEGRAM_GROUP})
+        if body['my_chat_member']['chat']['title'] == TELEGRAM_GROUP and TelegramGroup.objects.count() == 0:
+            TelegramGroup.objects.create(chat_id=body['my_chat_member']['chat']['id'], title=TELEGRAM_GROUP)
             return HttpResponse('{}')
         else:
             logger.error("Somebody invited the Telegram bot into an unknown group")
