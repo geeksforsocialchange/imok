@@ -7,7 +7,9 @@ from .models import Checkin, Member
 
 
 def send_invite(obj, user):
-    obj.send_message(_("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so" % {'admin': user}))
+    message = _("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so" % {'admin': user})
+    obj.send_message(message)
+    return message
 
 
 class MemberAdmin(admin.ModelAdmin):

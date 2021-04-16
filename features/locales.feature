@@ -4,13 +4,41 @@ Feature: Members can receive messages in their own language
     I want to specify a member's language
     And the member will receive messages in that language
 
-    Background: I have a registered confirmed account
-        Given I have been registered as a member who speaks cy-GB
-        And My registration is confirmed
+    Scenario Outline:
+        Given I have been registered as a member who speaks <language>
+        When I send "IN"
+        Then I receive a message containing "<reply>"
 
-    Scenario: I can check in
-        When I send "IN" at "1919-12-21 20:00:00"
-        Then I am checked in
-        And the check in time is "1919-12-21 20:00:00"
-        And I receive a message containing "Fe'ch gwiriwyd i mewn yn"
-        And I am ok
+        Examples:
+            | language | reply                    |
+            | cy-gb    | Fe'ch gwiriwyd i mewn yn |
+
+    Scenario Outline:
+        Given I have been registered as a member who speaks <language>
+        When I send "OUT"
+        Then I receive a message containing "<reply>"
+        Examples:
+            | language | reply                          |
+            | cy-gb    | Ni chawsoch eich gwirio i mewn |
+
+    Scenario Outline:
+        Given I have been registered as a member who speaks <language>
+        When I send "IN"
+        And I send "OUT"
+        Then I receive a message containing "<reply>"
+        Examples:
+            | language | reply                          |
+            | cy-gb    | Fe'ch gwiriwyd ar dallas court |
+
+    Scenario Outline:
+        Given I have been registered as a member who speaks <language>
+        When I send the command <command>
+        Then it returns <response>
+        Examples:
+            | language | command | response                         |
+            | cy-gb    | sos     | Diolch am roi gwybod i ni        |
+            | cy-gb    | name    | Rydych chi wedi gosod eich enw i |
+            | cy-gb    | yes     | Diolch am gofrestru              |
+            | en-gb    | sos     | Thanks for letting us know       |
+            | en-gb    | name    | You have set your name to        |
+            | en-gb    | yes     | Thanks for registering           |
