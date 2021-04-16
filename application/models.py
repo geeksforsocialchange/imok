@@ -40,6 +40,10 @@ class Member(models.Model):
     telegram_username = models.CharField(default='', validators=[validate_telegram_username], blank=True, max_length=50)
     telegram_chat_id = models.BigIntegerField(default=0)
 
+    def __str__(self):
+        return self.name
+
+
     def ok_status(self):
         state = {
             None: _("Maybe ok"),
@@ -97,10 +101,9 @@ class Member(models.Model):
     def send_message(self, message):
         if self.telegram_chat_id != 0:
             telegram_send(self.telegram_chat_id, message)
-        else:
+        elif self.phone_number:
             twilio_send(self.phone_number.as_e164, message)
-
-
+            
 class Checkin(models.Model):
     member = models.OneToOneField(Member, on_delete=models.CASCADE)
     time_stamp = models.DateTimeField(auto_now_add=True)
