@@ -13,6 +13,8 @@ from django.utils import timezone
 import os
 from pathlib import Path
 import environ
+import socket
+
 env = environ.Env()
 
 
@@ -130,6 +132,7 @@ if os.environ.get('GITHUB_WORKFLOW'):
 # Use environment variables for the database in Dokku, and use whitenoise and prod settings
 if 'DATABASE_URL' in env:
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+    ALLOWED_HOSTS.append(socket.getaddrinfo(socket.gethostname(), 'http')[0][4][0])
     DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
     DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
     DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405

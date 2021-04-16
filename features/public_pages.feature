@@ -12,3 +12,7 @@ Feature: Public pages
         When there are members
         And I request '/'
         Then I do not see 'Welcome to imok'
+
+    Scenario: healthz can be used for CHECKS
+        When I request '/healthz'
+        Then I see 'OK'
