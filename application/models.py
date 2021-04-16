@@ -53,7 +53,7 @@ class Member(models.Model):
         return state[self.is_ok]
 
     def sign_in(self):
-        in_time = timezone.now()
+        in_time = timezone.localtime()
         out_time = in_time + settings.CHECKIN_TTL
 
         self.is_ok = True
@@ -63,8 +63,8 @@ class Member(models.Model):
         if created:
             response = " ".join([
                 _("You were checked in at %(center)s at %(time)s") % {'center': self.signing_center,
-                                                                      'time': str(in_time.time().strftime('%H:%M:%S'))},
-                _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time.strftime('%H:%M:%S')}
+                                                                      'time': str(in_time.time().strftime('%X'))},
+                _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time.strftime('%X')}
             ])
         else:
             response = _("You were already checked in. Your check in time has been updated")
@@ -81,7 +81,7 @@ class Member(models.Model):
             return _("You were not checked in. To check in message IN")
         checkin.delete()
         return _("You were checked out at %(center)s at %(time)s") % {'center': self.signing_center,
-                                                                      'time': str(timezone.now().time().strftime('%H:%M:%S'))}
+                                                                      'time': str(timezone.localtime().time().strftime('%H:%M:%S'))}
 
     def handle_sos(self):
         # Expression cannot be simplified as this is actually Optional[boolean]

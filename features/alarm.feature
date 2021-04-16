@@ -15,6 +15,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
     Then I am checked in
     And the check in time is "1919-12-21 20:00:00"
     And I receive a message containing "You were checked in at"
+    And I receive a message containing "at 20:00:00"
     And I am ok
 
   Scenario: I check out after checking in

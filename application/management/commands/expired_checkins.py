@@ -7,7 +7,7 @@ from application.models import Checkin
 
 class Command(BaseCommand):
     def handle(self, **options):
-        time = timezone.now() - settings.CHECKIN_TTL
+        time = timezone.localtime() - settings.CHECKIN_TTL
         checkins = list(Checkin.objects.filter(time_stamp__lte=time))
         if len(checkins) == 0:
             print("There are no overdue checkouts")

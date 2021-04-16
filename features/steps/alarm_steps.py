@@ -11,7 +11,7 @@ from application.models import Member, Checkin
 
 
 def time_within(timestamp, timedelta):
-    now = timezone.now()
+    now = timezone.localtime()
     return now - timedelta < timestamp < now + timedelta
 
 

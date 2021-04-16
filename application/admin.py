@@ -49,7 +49,7 @@ class CheckinAdmin(admin.ModelAdmin):
         return obj.member.telegram_username
 
     def overdue(self, obj):
-        return obj.time_stamp < timezone.now() - settings.CHECKIN_TTL
+        return obj.time_stamp < timezone.localtime() - settings.CHECKIN_TTL
 
     def is_ok(self, obj):
         return obj.member.is_ok
