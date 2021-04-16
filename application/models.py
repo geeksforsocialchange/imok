@@ -103,9 +103,10 @@ class Member(models.Model):
             telegram_send(self.telegram_chat_id, message)
         elif self.phone_number:
             twilio_send(self.phone_number.as_e164, message)
-            
+
+
 class Checkin(models.Model):
-    member = models.OneToOneField(Member, on_delete=models.CASCADE)
+    member = models.OneToOneField(Member, on_delete=models.CASCADE, primary_key=True)
     time_stamp = models.DateTimeField(auto_now_add=True)
 
     def warn(self):
