@@ -58,4 +58,4 @@ See [development.md](docs/development.md) for how to set up a development enviro
 
 Imok has been developed entirely by volunteers. If you'd like to support imok and more software like it, please consider sending us a one-off or regular donation.
 
-<script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support imok on ko-fi', '#29abe0', 'M4M43THUM');kofiwidget2.draw();</script>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M43THUM)
