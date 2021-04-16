@@ -24,12 +24,38 @@ See [installation.md](docs/installation.md) for more information.
 
 We can also set up an installation for you for a fee. All funds raised go towards improving imok. Email [kim@gfsc.studio](mailto:kim@gfsc.studio) if you'd like to chat about this.
 
-## How it works (users)
-
 ## How it works (admins)
+
+Imok currently works on an 'allowlist' basis, where you will identify individuals through real-life interactions and then add them to your imok server. This cuts down on your costs and keeps the installation more secure.
+
+1. You add people you want to support in the imok admin interface ('members')
+1. imok will send an SMS inviting the person to register
+1. You can then see who is currently signed in using the imok admin interface
+1. If the alarm is tripped, administrators receive an email
+
+We will be further developing admin documentation as the project develops.
+
+We are planning to allow public instances that anyone can register on at a later date.
+
+## How it works (member)
+
+As a member of an imok instance:
+
+1. You will receive a text asking if you want to join the server
+1. You can then text the number `IN` to register that you may be in danger
+1. If you text `OUT` within the designated time period, nothing happens
+1. If you don't, the administrator is notified and can begin to find out what happened
+
+That's it! There are a few more commands that we will be listing on the project wiki in due course.
 
 ## Contributing
 
 We welcome contributors to help with this project. Imok is written in Django.
 
 See [development.md](docs/development.md) for how to set up a development environment.
+
+## Donations
+
+Imok has been developed entirely by volunteers. If you'd like to support imok and more software like it, please consider sending us a one-off or regular donation.
+
+<script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support imok on ko-fi', '#29abe0', 'M4M43THUM');kofiwidget2.draw();</script>
