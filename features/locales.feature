@@ -6,7 +6,7 @@ Feature: Members can receive messages in their own language
 
     Scenario Outline:
         Given I have been registered as a member who speaks <language>
-        When I send "IN"
+        When I send "IN" via twilio
         Then I receive a message containing "<reply>"
 
         Examples:
@@ -15,7 +15,7 @@ Feature: Members can receive messages in their own language
 
     Scenario Outline:
         Given I have been registered as a member who speaks <language>
-        When I send "OUT"
+        When I send "OUT" via twilio
         Then I receive a message containing "<reply>"
         Examples:
             | language | reply                          |
@@ -23,8 +23,8 @@ Feature: Members can receive messages in their own language
 
     Scenario Outline:
         Given I have been registered as a member who speaks <language>
-        When I send "IN"
-        And I send "OUT"
+        When I send "IN" via twilio
+        And I send "OUT" via twilio
         Then I receive a message containing "<reply>"
         Examples:
             | language | reply                          |

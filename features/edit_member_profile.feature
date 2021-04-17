@@ -8,7 +8,7 @@ Feature: Members can edit their profile information
     And My registration is confirmed
 
   Scenario: Update my name
-    When I send "NAME alice"
+    When I send "NAME alice" via twilio
     Then My name is "alice"
     And I receive a message containing "alice"
     And My registration time does not change

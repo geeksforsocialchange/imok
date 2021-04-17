@@ -39,7 +39,7 @@ def step_impl(context):
     context.member = member
 
 
-@when(u'I send "{text}" at "{time}"')
+@when(u'I send "{text}" via twilio at "{time}"')
 def step_impl(context, text, time):
     with freeze_time(time):
         with transaction.atomic():
@@ -48,7 +48,7 @@ def step_impl(context, text, time):
         context.test.assertEqual(context.response.status_code, 200)
 
 
-@when(u'I send "{text}"')
+@when(u'I send "{text}" via twilio')
 def step_impl(context, text):
     with transaction.atomic():
         context.response = context.test.client.post('/application/twilio',

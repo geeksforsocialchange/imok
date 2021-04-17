@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 @csrf_exempt
 @require_POST
 def telegram(request):
+    print(request.body)
     body = json.loads(request.body)
     if 'my_chat_member' in body.keys():
         if body['my_chat_member']['chat']['title'] == TELEGRAM_GROUP and TelegramGroup.objects.count() == 0:
