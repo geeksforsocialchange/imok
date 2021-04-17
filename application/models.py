@@ -7,11 +7,14 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import translation
 from django.core.exceptions import ValidationError
+from django.db.utils import ProgrammingError
 
 from .telegram_group import TelegramGroup
 from .twilio import twilio_send
 from .telegram import telegram_send
 from .contact_admins import notify_admins
+
+from codename_generator import generator
 
 LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
@@ -25,8 +28,13 @@ def validate_telegram_username(value):
         )
 
 
+def generate_codename():
+    return '-'.join(generator())
+
+
 class Member(models.Model):
     id = models.UUIDField(primary_key=True, unique=True, editable=False, default=uuid.uuid4)
+    codename = models.CharField(max_length=64, editable=False, null=True)
     name = models.CharField(default='', max_length=50)
     notes = models.TextField(default='', blank=True)
     registered_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -43,6 +51,13 @@ class Member(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.codename:
+            # Generate codename once, then check the db. If exists, keep trying.
+            self.codename = generate_codename()
+            while Member.objects.filter(codename=self.codename).exists():
+                self.codename = generate_codename()
+        super(Member, self).save()
 
     def ok_status(self):
         state = {
@@ -81,7 +96,8 @@ class Member(models.Model):
             return _("You were not checked in. To check in message IN")
         checkin.delete()
         return _("You were checked out at %(center)s at %(time)s") % {'center': self.signing_center,
-                                                                      'time': str(timezone.localtime().time().strftime('%H:%M:%S'))}
+                                                                      'time': str(timezone.localtime().time().strftime(
+                                                                          '%H:%M:%S'))}
 
     def handle_sos(self):
         # Expression cannot be simplified as this is actually Optional[boolean]

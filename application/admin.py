@@ -13,9 +13,10 @@ def send_invite(obj, user):
 
 
 class MemberAdmin(admin.ModelAdmin):
-    fields = ('name', 'phone_number', 'telegram_username', 'notes', 'language',  'signing_center')
-    search_fields = ['name', 'phone_number', 'telegram_username']
-    list_display = ('id', 'name', 'phone_number', 'telegram_username', 'registered', 'is_ok')
+    fields = ('codename', 'name', 'phone_number', 'telegram_username', 'notes', 'language',  'signing_center')
+    readonly_fields = ('codename',)
+    search_fields = ['codename', 'name', 'phone_number', 'telegram_username']
+    list_display = ('codename', 'name', 'phone_number', 'telegram_username', 'registered', 'is_ok')
     list_filter = ('is_ok', 'registered', 'language', 'signing_center')
 
     def save_model(self, request, obj, form, change):

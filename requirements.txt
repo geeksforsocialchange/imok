@@ -10,3 +10,4 @@ behave-django
 freezegun
 Faker
 requests
+codename-generator
