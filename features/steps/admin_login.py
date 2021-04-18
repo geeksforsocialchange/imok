@@ -1,6 +1,6 @@
 from behave import given, when, then
 
-from application.models import Member, Checkin
+from application.models import Member, Checkin, MetricHour
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -150,3 +150,17 @@ def step_impl(context):
     data['is_ok'] = True
     response = context.test.client.post("/ruok/application/member/add/", data)
     context.test.assertEqual(response.status_code, 200)
+
+
+@given(u'I have permission to view metrichour')
+def step_impl(context):
+    content_type = ContentType.objects.get_for_model(MetricHour)
+    permission = Permission.objects.get(content_type=content_type, codename='view_metrichour')
+    context.adminuser.user_permissions.add(permission)
+
+
+@given(u'I do not have permission to view metrichour')
+def step_impl(context):
+    content_type = ContentType.objects.get_for_model(MetricHour)
+    permission = Permission.objects.get(content_type=content_type, codename='view_metrichour')
+    context.adminuser.user_permissions.remove(permission)

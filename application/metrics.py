@@ -5,9 +5,9 @@ from django.utils import timezone
 
 class MetricHour(models.Model):
     id = models.fields.UUIDField(primary_key=True, unique=True, editable=False, default=uuid.uuid4)
-    metric = models.CharField(max_length=60, unique=True, db_index=True)
-    value = models.CharField(max_length=50)
-    num = models.IntegerField(default=0)
+    metric = models.CharField(max_length=60, db_index=True)
+    value = models.CharField(max_length=50, db_index=True)
+    num = models.IntegerField('count', default=0)
     date = models.DateField()
     hour = models.IntegerField(default=-1)
 

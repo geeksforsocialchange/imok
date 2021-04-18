@@ -8,15 +8,17 @@ Feature: Admins can see information about members
         When I login
         Then I can see <object>
         Examples:
-            | object  |
-            | member  |
-            | checkin |
+            | object     |
+            | member     |
+            | checkin    |
+            | metrichour |
 
     Scenario Outline:
         Given I do not have permission to view <object>
         When I login
         Then I can not see <object>
         Examples:
-            | object  |
-            | member  |
-            | checkin |
+            | object     |
+            | member     |
+            | checkin    |
+            | metrichour |

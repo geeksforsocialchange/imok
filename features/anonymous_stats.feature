@@ -1,7 +1,17 @@
-Feature: Admins can see anonymous stats
-  In order that I can keep track of what’s happening at the signing in centre
-  And find out what times and days are most likely to require support
-  And have an overview for my team
-  As a project admin
-  I want an overview of who is registered
-  And who is currently signed in
+Feature: Metrics on number of checkins are tracked
+    In order that I can keep track of busy periods
+    As a project admin
+    I want a count of checkins by hour and signing center
+
+    Background: There are members
+        Given Mo Member has been registered as a member
+        And has received a message containing <Welcome to imok!>
+
+    Scenario: Single checkin
+        When Mo Member replies <IN>
+        Then There is 1 checkin
+
+    Scenario: Two checkins
+        When Mo Member replies <IN>
+        And Mo Member replies <IN>
+        Then There are 2 checkins

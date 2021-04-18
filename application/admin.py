@@ -4,12 +4,33 @@ from django.utils.translation import gettext as _
 import django.utils.timezone as timezone
 from django.utils import translation
 from .models import Checkin, Member, MetricHour
+from django.http import HttpResponse
+import csv
 
 
 def send_invite(obj, user):
     message = _("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so" % {'admin': user})
     obj.send_message(message)
     return message
+
+
+class ExportCsvMixin:
+    def export_as_csv(self, request, queryset):
+
+        meta = self.model._meta
+        field_names = [field.name for field in meta.fields]
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
+        writer = csv.writer(response)
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            row = writer.writerow([getattr(obj, field) for field in field_names])
+
+        return response
+
+    export_as_csv.short_description = "Export Selected"
 
 
 class MemberAdmin(admin.ModelAdmin):
@@ -70,10 +91,11 @@ class CheckinAdmin(admin.ModelAdmin):
     is_ok.boolean = True
 
 
-class MetricAdmin(admin.ModelAdmin):
+class MetricAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['metric', 'value', 'num', 'date', 'hour']
     list_filter = ['metric', 'value']
     list_display_links = None
+    actions = ["export_as_csv"]
 
     def has_add_permission(self, request):
         return False
