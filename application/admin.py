@@ -34,7 +34,16 @@ class ExportCsvMixin:
 
 
 class MemberAdmin(admin.ModelAdmin):
-    fields = ('codename', 'name', 'phone_number', 'telegram_username', 'notes', 'language',  'signing_center')
+    fieldsets = (
+        ('Member', {
+            'fields': ('codename', 'name', 'notes', 'language',  'signing_center'),
+            'description': ""
+        }),
+        ('Contact Details', {
+            'fields': ('phone_number', 'telegram_username'),
+            'description': 'If you provide a phone number then the member will automatically receive an invite to use the system via SMS, but only on initial creation.<br>If you (only) provide a telegram username then you must tell the user to add the bot.'
+        })
+    )
     readonly_fields = ('codename',)
     search_fields = ['codename', 'name', 'phone_number', 'telegram_username']
     list_display = ('codename', 'name', 'phone_number', 'telegram_username', 'registered', 'is_ok')
