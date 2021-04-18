@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import gettext as _
 import django.utils.timezone as timezone
 from django.utils import translation
-from .models import Checkin, Member
+from .models import Checkin, Member, MetricHour
 
 
 def send_invite(obj, user):
@@ -70,5 +70,21 @@ class CheckinAdmin(admin.ModelAdmin):
     is_ok.boolean = True
 
 
+class MetricAdmin(admin.ModelAdmin):
+    list_display = ['metric', 'value', 'num', 'date', 'hour']
+    list_filter = ['metric', 'value']
+    list_display_links = None
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 admin.site.register(Member, MemberAdmin)
 admin.site.register(Checkin, CheckinAdmin)
+admin.site.register(MetricHour, MetricAdmin)

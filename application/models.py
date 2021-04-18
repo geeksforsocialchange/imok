@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import ProgrammingError
 
 from .telegram_group import TelegramGroup
+from .metrics import MetricHour, increment_hourly_metric
 from .twilio import twilio_send
 from .telegram import telegram_send
 from .contact_admins import notify_admins
@@ -159,3 +160,12 @@ class Checkin(models.Model):
         print(body)
         notify_admins(subject, body)
         self.member.send_message(_("You have failed to sign out, the admins have been notified"))
+
+    def save(self, *args, **kwargs):
+        increment_hourly_metric('checkin', self.member.signing_center)
+        super(Checkin, self).save()
+
+    def delete(self, *args, **kwargs):
+        increment_hourly_metric('checkout', self.member.signing_center)
+        super(Checkin, self).delete()
+
