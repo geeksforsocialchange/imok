@@ -42,7 +42,7 @@ class Member(models.Model):
     registered_at = models.DateTimeField(auto_now_add=True)
     language = models.CharField(max_length=5, choices=LANGUAGES, default='en_gb')
     registered = models.BooleanField(default=False)
-    phone_number = PhoneNumberField(max_length=20, unique=True, null=True, blank=True)
+    phone_number = PhoneNumberField(max_length=20, unique=True, null=True, blank=True, help_text="Enter a valid phone number (e.g. 0121 234 5678) or a number with an international call prefix.")
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)

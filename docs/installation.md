@@ -79,6 +79,8 @@ dokku config:set --no-restart imok TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxx
 dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
 # Make sure to add the single quotes around your phone number
 dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
+# If you are running somewhere other than Great Britain then set the country
+dokku config:set --no-restart imok PHONENUMBER_DEFAULT_REGION=US
 
 # Allow HTTP requests to use the server IP address
 dokku config:set imok ALLOWED_HOSTS=$(curl https://icanhazip.com)
