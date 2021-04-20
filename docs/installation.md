@@ -216,3 +216,17 @@ dokku config:set imok TELEGRAM_GROUP="example-group"
 ```
 
 You can now use Telegram as you would SMS/Twilio.  If a user has a telegram username set then we will use Telegram to communicate with them.  A phone number is still required as a backup mechanism for admins to call them.
+
+### Debugging
+
+You can turn on debugging in production by setting 'DEBUG=True' (case-sensitive):
+
+```shell
+dokku config:set imok DEBUG=True
+```
+
+This will give you helpful errors, but should be turned off when the site is live:
+
+```shell
+dokku config:unset imok DEBUG
+```
