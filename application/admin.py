@@ -40,8 +40,7 @@ class MemberAdmin(admin.ModelAdmin):
             'description': ""
         }),
         ('Contact Details', {
-            'fields': ('phone_number', 'telegram_username'),
-            'description': 'If you provide a phone number then the member will automatically receive an invite to use the system via SMS, but only on initial creation.<br>If you (only) provide a telegram username then you must tell the user to add the bot.'
+            'fields': ('phone_number', 'telegram_username', 'preferred_channel')
         })
     )
     readonly_fields = ('codename',)
@@ -49,18 +48,29 @@ class MemberAdmin(admin.ModelAdmin):
     list_display = ('codename', 'name', 'phone_number', 'telegram_username', 'registered', 'is_ok')
     list_filter = ('is_ok', 'registered', 'language', 'signing_center')
 
+    def resend_invite(self, request, queryset):
+        for member in queryset:
+            send_invite(member, request.user.username)
+        print("sent invite")
+
     def save_model(self, request, obj, form, change):
         cur_language = translation.get_language()
         user_language = obj.language
         translation.activate(user_language)
 
         if obj.registered_by is None:
+            if not settings.REQUIRE_INVITE:
+                obj.registered = True
             obj.registered_by = request.user
             send_invite(obj, request.user.username)
         if 'is_ok' in form.changed_data:
             obj.send_message(_("An admin has marked you as %(status)s" % {'status': obj.ok_status()}))
         translation.activate(cur_language)
         obj.save()
+
+    if settings.REQUIRE_INVITE:
+        resend_invite.short_description = "Re-send SMS Invite"
+        actions = ["resend_invite"]
 
 
 class CheckinAdmin(admin.ModelAdmin):

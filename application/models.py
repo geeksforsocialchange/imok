@@ -3,11 +3,12 @@ from django.conf import settings
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
 import uuid
+import logging
+
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import translation
-from django.core.exceptions import ValidationError
-from django.db.utils import ProgrammingError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 
 from .telegram_group import TelegramGroup
 from .metrics import MetricHour, increment_hourly_metric
@@ -17,8 +18,11 @@ from .contact_admins import notify_admins
 
 from codename_generator import generator
 
+logger = logging.getLogger(__name__)
+
 LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
+SUPPORTED_CHANNELS = list(map(lambda c: (c, c.title()), settings.SUPPORTED_CHANNELS))
 
 
 def validate_telegram_username(value):
@@ -46,8 +50,9 @@ class Member(models.Model):
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)
-    telegram_username = models.CharField(default='', validators=[validate_telegram_username], blank=True, max_length=50)
+    telegram_username = models.CharField(default='', validators=[validate_telegram_username], blank=True, max_length=50, help_text="Without the initial '@'")
     telegram_chat_id = models.BigIntegerField(default=0)
+    preferred_channel = models.CharField(choices=SUPPORTED_CHANNELS, default=settings.PREFERRED_CHANNEL, max_length=8, help_text="Which channel should the app contact the user via?")
 
     def __str__(self):
         return self.name
@@ -116,10 +121,15 @@ class Member(models.Model):
         return _("Thanks for letting us know, our staff have been notified")
 
     def send_message(self, message):
-        if self.telegram_chat_id != 0:
+        if self.preferred_channel == 'TELEGRAM':
+            if self.telegram_chat_id == 0:
+                logger.error(f"Cannot message {self.telegram_username}, the member hasn't added the bot.")
+                return
             telegram_send(self.telegram_chat_id, message)
-        elif self.phone_number:
+        elif self.preferred_channel == 'TWILIO':
             twilio_send(self.phone_number.as_e164, message)
+        else:
+            raise ImproperlyConfigured("Member uses an unsupported channel")
 
 
 class Checkin(models.Model):

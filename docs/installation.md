@@ -9,21 +9,27 @@ We use the open source Heroku clone [Dokku](http://dokku.viewdocs.io/dokku/) and
 You will need:
 
 1. A [Digital Ocean account](https://www.digitalocean.com/). If you don't have one yet please consider using our [referral link](https://m.do.co/c/34b6bc6a1cf7).
-1. A [Twilio account](https://www.twilio.org/). Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
+1. A Telegram account to use for creating a Telegram bot.  This enables the system to run for almost free.
+1. (optional) A [Twilio account](https://www.twilio.org/) for using imok via SMS. Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
 1. A domain name to use with the service. This guide assumes you will install imok on a subdomain, e.g. `imok.mydomain.com`.
 
-## Setting up Twilio
+### Setting up Telegram
 
-1. [Go to the Twilio console](https://www.twilio.com/console/projects/summary) and click **Create new account**
-1. Write a memorable name and click OK.
-1. Add a phone number. We recommend using a new SIM card just for this if you are doing sensitive work. Companies like GiffGaff [send them for free](https://www.giffgaff.com/free-sim-cards) (not an endorsement).
-1. Pick 'With code', 'Python' and 'No, I want to use my own hosting service'. The rest you can answer how you like.
-1. Click **Get a trial phone number** and then click 'Don't like this one? Search for a different number' in the top right (unless you are happy using a USA phone number).
-1. Make sure your country is selected, and select **SMS** in the 'capabilities' choices.
-1. Pick a phone number by pressing **buy**. This is the number that all messages from your service will come from.
-1. Go back to the project dashboard by clicking in the top left where it says your project name.
-1. Make a note of your **Account SID**, **Auth Token** and **Phone number** in a text file or notes app for later use.
-1. That's enough for testing, but when you're ready you will need to upgrade your account to be able to send messages using the **Upgrade project** button.
+Send `/newbot` to @BotFather and follow the instructions. It will give you a token to use.
+
+You need this token to configure IMOK to use the token to send replies
+
+You also need to use this token to tell your bot about IMOK
+
+On the server:
+
+```shell
+export BOT_TOKEN='123:abc'
+# Only the hostname should need changing here
+export WEBHOOK='https://imok.example.com/application/telegram'
+
+curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
+```
 
 ## Installing imok
 
@@ -74,13 +80,10 @@ dokku postgres:create imok
 dokku postgres:link imok imok
 dokku config:set --no-restart imok DJANGO_SECRET_KEY=`pwgen 64 1`
 
-# Configure Twilio using the information you created above.
-dokku config:set --no-restart imok TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxx
-dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
-# Make sure to add the single quotes around your phone number
-dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
-# If you are running somewhere other than Great Britain then set the country
-dokku config:set --no-restart imok PHONENUMBER_DEFAULT_REGION=US
+# Configure Telegram using the information you created above.
+dokku config:set --no-restart imok TELEGRAM_TOKEN="${BOT_TOKEN}"
+# Configure imok to send admin notifications to a telegram group
+dokku config:set imok TELEGRAM_GROUP="example-group"
 
 # Allow HTTP requests to use the server IP address
 dokku config:set imok ALLOWED_HOSTS=$(curl https://icanhazip.com)
@@ -161,6 +164,14 @@ That's it! You've finished the basic setup. You can now log into your site at ht
 
 You might want to add a few extra features if you're going to use this in a production setting.
 
+### Turn off invites
+
+By default, users must be invited before they can use the service.  You can turn this off and allow anyone to use it:
+
+```shell
+dokku config:set imok REQUIRE_INVITE=False
+```
+
 ### Configuring email
 
 By default, imok will not send notification emails to admins.  To configure this you will need to set a few things:
@@ -185,37 +196,40 @@ dokku config:set --no-restart imok AIRBRAKE_PROJECT=123456
 dokku config:set --no-restart imok AIRBRAKE_PROJECT_KEY='780740ee075aeedacbbe794517ce64f2'
 ```
 
-### WIP: Setting up Telegram
+## Setting up Twilio
 
-Send `/newbot` to @BotFather and follow the instructions. It will give you a token to use.
-
-You need this token to configure IMOK to use the token to send replies
-
-You also need to use this token to tell your bot about IMOK
-
-On the server:
-
-```shell
-export BOT_TOKEN='123:abc'
-# Only the hostname should need changing here
-export WEBHOOK='https://imok.example.com/application/telegram'
-
-curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
-
-dokku config:set imok TELEGRAM_TOKEN="${BOT_TOKEN}"
-```
-
-If you want admin notifications into a Telegram group then invite the bot into that group and then set the environment variable TELEGRAM_GROUP.  You will still receive email notifications to NOTIFY_EMAIL as long as that is non-blank.
-
-The Telegram group name should be hard to guess so that the bot doesn't get invited into a group of the same name.
-
-Be careful about the security of the group because all alerts get sent there.
+1. [Go to the Twilio console](https://www.twilio.com/console/projects/summary) and click **Create new account**
+1. Write a memorable name and click OK.
+1. Add a phone number. We recommend using a new SIM card just for this if you are doing sensitive work. Companies like GiffGaff [send them for free](https://www.giffgaff.com/free-sim-cards) (not an endorsement).
+1. Pick 'With code', 'Python' and 'No, I want to use my own hosting service'. The rest you can answer how you like.
+1. Click **Get a trial phone number** and then click 'Don't like this one? Search for a different number' in the top right (unless you are happy using a USA phone number).
+1. Make sure your country is selected, and select **SMS** in the 'capabilities' choices.
+1. Pick a phone number by pressing **buy**. This is the number that all messages from your service will come from.
+1. Go back to the project dashboard by clicking in the top left where it says your project name.
+1. Make a note of your **Account SID**, **Auth Token** and **Phone number** in a text file or notes app for later use.
+1. That's enough for testing, but when you're ready you will need to upgrade your account to be able to send messages using the **Upgrade project** button.
 
 ```shell
-dokku config:set imok TELEGRAM_GROUP="example-group"
+# Configure Twilio using the information you created above.
+dokku config:set --no-restart imok TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxx
+dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
+# Make sure to add the single quotes around your phone number
+dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
+# If you are running somewhere other than Great Britain then set the country
+dokku config:set --no-restart imok PHONENUMBER_DEFAULT_REGION=US
+
 ```
 
-You can now use Telegram as you would SMS/Twilio.  If a user has a telegram username set then we will use Telegram to communicate with them.  A phone number is still required as a backup mechanism for admins to call them.
+### Communication Channels
+
+By default, both Twilio and Telegram are assumed to be supported and Telegram is the preferred channel.
+
+You can override this:
+
+```shell
+dokku config:set imok SUPPORTED_CHANNELS=TELEGRAM,TWILIO
+dokku config:set imok PREFERRED_CHANNEL=TELEGRAM
+```
 
 ### Debugging
 
