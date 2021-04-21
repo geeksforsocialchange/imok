@@ -9,6 +9,7 @@ from imok.settings import TELEGRAM_GROUP
 BOT_URL = f'https://api.telegram.org/bot{settings.TELEGRAM_TOKEN}/'
 
 
+
 def telegram_reply(chat_id, message_text):
     response = {
         "chat_id": chat_id,

@@ -54,10 +54,14 @@ EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-EMAIL_USE_TLS = bool(os.environ.get('EMAIL_USE_TLS', False))
-EMAIL_USE_SSL = bool(os.environ.get('EMAIL_USE_SSL', False))
+EMAIL_USE_TLS = (os.environ.get('EMAIL_USE_TLS', 'False') == 'True')
+EMAIL_USE_SSL = (os.environ.get('EMAIL_USE_SSL', 'False') == 'True')
 
 PHONENUMBER_DEFAULT_REGION = os.environ.get("PHONENUMBER_DEFAULT_REGION", "GB")
+
+SUPPORTED_CHANNELS = os.environ.get("SUPPORTED_CHANNELS", "TELEGRAM,TWILIO").split(",")
+PREFERRED_CHANNEL = os.environ.get("PREFERRED_CHANNEL", "TELEGRAM")
+REQUIRE_INVITE = (os.environ.get('REQUIRE_INVITE', 'True') == 'True')
 
 # Application definition
 
