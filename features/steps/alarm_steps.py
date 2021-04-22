@@ -105,7 +105,6 @@ def step_impl(context):
 
 @then(u'I receive a message containing "{message}"')
 def step_impl(context, message):
-    # @TODO handle languages
     content = str(context.response.content, 'utf-8')
     context.test.assertIn(message, content)
 
@@ -128,7 +127,6 @@ def step_impl(context, time):
 @given(u'I am checked in at "{time}"')
 def step_impl(context, time):
     with freeze_time(time):
-        # @TODO consider moving member is_ok state to a function of checkin
         context.member.is_ok = True
         context.member.save()
         Checkin(member=context.member).save()

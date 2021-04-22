@@ -25,7 +25,6 @@ def step_impl(context, username):
     user = User(username=username, is_staff=True, is_superuser=True)
     user.save()
     context.users[username] = user
-    # @TODO actually login?
 
 
 @when(u'{username} creates a new member')
@@ -83,8 +82,6 @@ def step_impl(context, membername):
         context.members[membername] = member
 
 
-# @TODO this only tests that username has any permissions in 'application'
-# This works because we use superadmin users everywhere at the moment
 @then(u'{username} can see that {membername}\'s account registration was confirmed')
 def step_impl(context, username, membername):
     user = context.users[username]
