@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.utils.translation import gettext as _
 
 
@@ -17,7 +16,7 @@ def handle_command(message, member):
     elif command == 'O' or command == 'OUT':
         return checkout(member)
     else:
-        return HttpResponse('Invalid Command')
+        return 'Invalid Command'
 
 
 def register(member):
