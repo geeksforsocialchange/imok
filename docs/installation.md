@@ -152,10 +152,9 @@ dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
 dokku config:set --no-restart imok DOKKU_LETSENCRYPT_EMAIL=YOUR_EMAIL
 dokku letsencrypt:enable imok
 dokku letsencrypt:cron-job --add
-
-# Turn off HTTP and only allow HTTPS (optional but highly recommended)
-dokku proxy:ports-remove imok 80
 ```
+
+HTTP traffic will be automatically redirected to HTTPS.  You need to leave the HTTP port in place because LetsEncrypt uses this for certificate renewals.
 
 That's it! You've finished the basic setup. You can now log into your site at https://imok.mydomain.com/ruok.
 
