@@ -6,7 +6,7 @@ def handle_command(message, member):
     command = message.split(' ')[0].upper()
     params = " ".join(message.split(' ')[1:])
 
-    if command == 'YES' or command == 'Y' or command == '/start':
+    if command == 'YES' or command == 'Y' or command == '/START':
         return register(member)
     elif command == 'IN' or command == 'I':
         return checkin(member)
