@@ -10,13 +10,13 @@ Examples use cases are:
 
 We do not currently offer a public instance of imok so it is currently aimed mostly at local mutual aid and support groups with the capacity to set up a version for their local community.
 
-Imok was initially developed for the latter use case of and is a collaboration between [No Borders Manchester](https://nobordersmcr.com/), [Resistance Lab](https://resistancelab.network) and [Geeks for Social Change](https://gfsc.studio).
+Imok is currently optimised for the latter use case. It is a collaboration between [No Borders Manchester](https://nobordersmcr.com/) and [Geeks for Social Change](https://gfsc.studio) that emerged from the [Resistance Lab](https://resistancelab.network) collective.
 
 We currently support SMS and Telegram. We are looking to support WhatsApp and Signal soon.
 
 ## Installation
 
-Setting up imok currently requires a little bit of technical know-how. You'll need to be comfortable setting up a virtual server (we use Digital Ocean), running some commands in the terminal, and generally have some confidence deploying web applications. You'll also need to register for a Twilio account and set up an API key. We hope to make this easier in the future.
+Setting up imok currently requires a little bit of technical know-how. You'll need to be comfortable setting up a virtual server (we use Digital Ocean), running some commands in the terminal, and generally have some confidence deploying web applications. In order to support SMS you'll also need to register for a Twilio account and set up an API key. We hope to make this easier in the future.
 
 Imok is potentially expensive to run due to the cost of SMS messages which cost about 4p at the time of writing. With a few dozen users using it multiple times per day this can quickly add up. If your intended users are able to access this entirely through Telegram the cost is nearly zero.
 
@@ -53,6 +53,14 @@ That's it! There are a few more commands that we will be listing on the project 
 We welcome contributors to help with this project. Imok is written in Django.
 
 See [development.md](docs/development.md) for how to set up a development environment.
+
+## Translations
+
+Imok allows language selection for end users. Currently available translations are in the `locale` directory. We welcome translation into other languages.
+
+[Sign up on POEditor](https://poeditor.com/projects/view?id=428751) to submit a translation.
+
+Translations will be periodically reviewed and added to the project by the project maintainers. If you'd like to add translations yourself see [translation.md](docs/translation.md).
 
 ## Donations
 

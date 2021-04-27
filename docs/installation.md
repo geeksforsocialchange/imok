@@ -10,16 +10,22 @@ You will need:
 
 1. A [Digital Ocean account](https://www.digitalocean.com/). If you don't have one yet please consider using our [referral link](https://m.do.co/c/34b6bc6a1cf7).
 1. A Telegram account to use for creating a Telegram bot.  This enables the system to run for almost free.
-1. (optional) A [Twilio account](https://www.twilio.org/) for using imok via SMS. Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
 1. A domain name to use with the service. This guide assumes you will install imok on a subdomain, e.g. `imok.mydomain.com`.
+1. (optional) A [Twilio account](https://www.twilio.org/) for using imok via SMS. Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
+
+It might help to make a copy of [settings.md](settings.md) on your computer to keep all your information in.
+
+## Installing imok
 
 ### Setting up Telegram
 
+We use Telegram by default as it's free and easy to set up.
+
 Send `/newbot` to @BotFather and follow the instructions. It will give you a token to use.
 
-You need this token to configure IMOK to use the token to send replies
+You need this token to configure imok to use the token to send replies
 
-You also need to use this token to tell your bot about IMOK
+You also need to use this token to tell your bot about imok
 
 On the server:
 
@@ -30,8 +36,6 @@ export WEBHOOK='https://imok.example.com/application/telegram'
 
 curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
 ```
-
-## Installing imok
 
 ### Setting up a droplet
 
