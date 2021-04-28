@@ -5,7 +5,7 @@ import json
 import logging
 
 from .twilio import validate_twilio_request, twilio_receive
-from .telegram import telegram_receive
+from .telegram import telegram_receive, telegram_reply
 from .models import Member, TelegramGroup
 from .contact_admins import notify_admins
 from imok.settings import TELEGRAM_GROUP
@@ -30,8 +30,12 @@ def telegram(request):
         username = body['message']['from']['username']
     except (TypeError, KeyError):
         return HttpResponse()
-    member = Member.objects.get(telegram_username=username)
-    return telegram_receive(request, member)
+    try:
+        member = Member.objects.get(telegram_username=username)
+        return telegram_receive(request, member)
+    except(Member.DoesNotExist):
+        telegram_reply(body['message']['chat']['id'], "Your username is not registered with imok")
+        return HttpResponse('{}')
 
 
 @validate_twilio_request
