@@ -21,8 +21,6 @@ myvar = _("A string that a user or administrator will see")
 print(myvar)
 ```
 
-We are, however, not yet using any language other than en_gb.
-
 ## Testing
 
 Tests are written using BDD in the features directory.
@@ -31,7 +29,7 @@ To run the tests:
 
 `docker-compose run web python manage.py behave --simple`
 
-We also provide webhook.py for use with manual testing of the Twilio webhooks.  It allows you to send a message to the system as follows:
+We also provide twilio_mock.py for use with manual testing of the Twilio webhooks.  It allows you to send a message to the system as follows:
 
 ```shell
 python twilio_mock.py -f +15005550006 -m "NAME alice"
@@ -43,6 +41,24 @@ You can also achieve this through an HTTP Post using your favorite client:
 curl -X POST --data '{"Body": "NAME alice", "From": "+15005550006"}' localhost:8000/application/twilio
 ```
 
-## CI/CD
+## Pull Requests
 
-We use Github Actions to run the BDD tests on push. There is currently no automation to deploy anywhere.
+We encourage contributions and are open to pull requests for improvements to imok.
+
+If you follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for your commit messages then your PRs will be automatically labeled which helps with the release process, but this isn't a hard requirement.
+
+Once you have submitted any pull request the test suite will automatically run against it.  These tests need to pass before your change can be merged, but don't be afraid to raise a PR with broken tests - we can help you make them pass.
+
+## Releases
+
+We use [Release-Drafter](https://github.com/release-drafter/release-drafter) to maintain releases.  Repository administrators can see an unpublished release which gets automatically updated with release notes and suggested next version whenever PRs are merged.
+
+A new release can be made at any point by editing the draft release and pressing `Publish release`.
+
+We use [Semantic Versioning](https://semver.org/) for our releases.  Release-Drafter should automatically pick a sensible next release version number based on commit messages, but this can be overridden.
+
+Given a version number MAJOR.MINOR.PATCH, releases should increment the:
+
+* MAJOR version when you make incompatible API changes,
+* MINOR version when you add functionality in a backwards compatible manner, and
+* PATCH version when you make backwards compatible bug fixes.
