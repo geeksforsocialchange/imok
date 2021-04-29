@@ -1,0 +1,24 @@
+template: |
+    ## What’s Changed
+
+    $CHANGES
+categories:
+    -   title: '🚀 Features'
+        labels:
+            - 'enhancement'
+    -   title: '🐛 Bug Fixes'
+        labels:
+            - 'bug'
+    -   title: '🧰 Maintenance'
+        label: 'chore'
+version-resolver:
+    major:
+        labels:
+            - 'major'
+    minor:
+        labels:
+            - 'minor'
+    patch:
+        labels:
+            - 'patch'
+    default: patch
