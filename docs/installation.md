@@ -216,8 +216,9 @@ dokku config:set --no-restart imok TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxx
 dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
 # If you are running somewhere other than Great Britain then set the country
 dokku config:set --no-restart imok PHONENUMBER_DEFAULT_REGION=US
-
 ```
+
+Configuring Twilio to use WhatsApp is still in preview, and requires you to sign up with your Facebook Business account.  We have tested imok with the [sandbox](https://www.twilio.com/console/sms/whatsapp/sandbox) but not a full integration.
 
 ### Communication Channels
 
