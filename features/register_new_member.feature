@@ -23,7 +23,7 @@ Feature: Admins can register new members
       """
       Welcome to 1312 Collective's imok server, Mo Member!
 
-      You can send me the following commands, or text +447740000000:
+      You can send me the following commands, or text +447741231234:
 
       IN: Check in to Government Facility
 
@@ -36,7 +36,7 @@ Feature: Admins can register new members
       INFO: Get this message again
       """
       And this message only uses 2 SMS messages to send
-      Then Admin Angela recieves a message in a Telegram group containing: "Mo Member (+447743917404) successfully activated their account at at 05:10 on 10:10:1999."
+      Then Admin Angela recieves a message in a Telegram group containing: "Mo Member (+447740000000) successfully activated their account at at 05:10 on 10:10:1999."
 
   Scenario: Admin can see that member is registered
       Given Admin Angela has logged in with an admin account
