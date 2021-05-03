@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
     path('twilio', views.twilio, ),
-    path('telegram', views.telegram, )
+    path('telegram', views.telegram, ),
+    path('varz', views.varz, )
 ]
