@@ -8,7 +8,7 @@ We use the open source Heroku clone [Dokku](http://dokku.viewdocs.io/dokku/) and
 
 You will need:
 
-1. A [Digital Ocean account](https://www.digitalocean.com/). If you don't have one yet please consider using our [referral link](https://m.do.co/c/34b6bc6a1cf7).
+1. A server.  We'll walk you through some different options for that later in the document.
 1. A Telegram account to use for creating a Telegram bot.  This enables the system to run for almost free.
 1. (optional) A [Twilio account](https://www.twilio.org/) for using imok via SMS. Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
 1. A domain name to use with the service. This guide assumes you will install imok on a subdomain, e.g. `imok.mydomain.com`.
@@ -33,30 +33,16 @@ curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
 
 ## Installing imok
 
-### Setting up a droplet
+Follow the hosting-specific instructions to setup your server.
 
-A 'droplet' is Digital Ocean's term for a virtual server.
+For development, we recommend Digital Ocean as we have the most experience with them and the server is charged on a per-minute basis.
 
-Anything not listed here you can just leave as it is.
+For production, you may want to use a server in a more legally-friendly country, such as 1984.is
 
-1. Click **Create** in the top right corner, and then **Droplets**
-1. **Choose an image**
-  1. Go to 'Marketplace' tab
-  1. Search for 'dokku'
-  1. Select 'Dokku 0.21.4 on Ubuntu 20.04' (or whatever the latest version is)
-1. **Choose a plan:** 'Basic', 'Regular intel with SSD', '$5/mo'
-1. **Choose a datacentre region:** pick whichever datacentre is closest to you
-1. **Authentication:** we recommend using an SSH key method if you are able to follow the instructions in the interface. If not then a password is totally fine but make it a strong one, ideally using a strong password generator.
-1. **Choose a hostname:** pick a memorable name for the server
-1. **Enable backups:** this is up to you but we recommend it
-1. Click **'Create Droplet'** and you're done!
+If you are using a server provider not listed here, then follow the [1984.is installation documentation](installation-1984.md) because it includes steps to install Dokku which isn't necessary on Digital Ocean.
 
-### Signing into the droplet
-
-You will then see a list of droplets in your interface. Give it a second while it sets up your new droplet.
-
-1. Copy the IP address (e.g. 123.123.123.123)
-1. In the terminal on your computer, type `ssh root@YOUR_IP`. Type 'yes' when it asks you if you want to proceed.
+* [Digital Ocean](installation-digital-ocean.md)
+* [1984.is](installation-1984.md)
 
 ### Setting up Dokku
 
@@ -115,15 +101,16 @@ Back on your server run the following to set up an admin account.
 ```shell
 dokku --rm run imok python manage.py createsuperuser
 ```
+
+Follow the instructions on screen to create your root user login. Make sure to use a secure password.
+
 Provide some storage for static content and generate the static content
 
 ```shell
 dokku storage:mount imok /var/lib/dokku/data/storage:/code/static
 dokku --rm run imok python manage.py collectstatic
-
+dokku ps:restart imok # you'll get a 500 error if you don't restart after generating static content
 ```
-
-Follow the instructions on screen to create your root user login. Make sure to use a secure password.
 
 ### Configuring a domain name
 
@@ -144,8 +131,8 @@ Back on your imok server:
 
 ```shell
 # Set the hostname
-dokku domains:add imok imok.example.net
-dokku config:set imok ALLOWED_HOSTS="$(curl https://icanhazip.com),imok.mydomain.com"
+dokku domains:set imok imok.example.net
+dokku config:set imok ALLOWED_HOSTS="$(curl https://icanhazip.com),imok.example.net"
 
 # Install letsencrypt
 dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
