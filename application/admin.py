@@ -9,7 +9,7 @@ import csv
 
 
 def send_invite(obj, user):
-    message = _("Welcome to imok! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so" % {'admin': user})
+    message = _("Welcome to %(servername)s! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so" % {'admin': user, 'servername': settings.SERVER_NAME})
     obj.send_message(message)
     return message
 
