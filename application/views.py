@@ -47,8 +47,9 @@ def telegram(request):
 @csrf_exempt
 def twilio(request):
     message = request.POST
-    if Member.objects.filter(phone_number=message['From']).count() != 1:
-        logger.error(f"SMS from unkown number {message['From']}")
+    from_number = message['From'].replace("whatsapp:", "")  # handle whatsapp by stripping the prefix before a lookup
+    if Member.objects.filter(phone_number=from_number).count() != 1:
+        logger.error(f"SMS from unknown number {message['From']}")
         notify_admins('SMS From Unknown Number', f"{message['From']} send {message['Body']}")
         return HttpResponseNotFound('ERROR: User not found')
 
