@@ -83,7 +83,7 @@ class Member(models.Model):
         checkin, created = Checkin.objects.update_or_create(member=self, defaults={'time_stamp': in_time})
         if created:
             response = " ".join([
-                _("You were checked in at %(center)s at %(time)s") % {'center': self.signing_center,
+                _("Your check in time at %(center)s at %(time)s") % {'center': self.signing_center,
                                                                       'time': str(in_time.time().strftime('%X'))},
                 _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time.strftime('%X')}
             ])
