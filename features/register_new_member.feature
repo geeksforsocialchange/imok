@@ -19,7 +19,7 @@ Feature: Admins can register new members
       When Mo Member replies <Y> at "1999-10-10 05:10:10"
       Then Mo Member's registration is confirmed
       And Mo Member's registration time does not change
-      And Mo Member recieves a message containing:
+      And Mo Member receives a message containing:
       """
       Welcome to 1312 Collective's imok server, Mo Member!
 

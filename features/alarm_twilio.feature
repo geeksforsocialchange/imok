@@ -11,27 +11,29 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
         And email is configured
 
     Scenario: I can check in
+        Given my signing center is "Processing Facility"
         When I send "IN" via twilio at "1919-12-21 20:00:00"
         Then I am checked in
         And the check in time is "1919-12-21 20:00:00"
         And I receive a message containing:
           """
-          Your check in time at Processing Facility is 20:00.
+          Your check in time at Processing Facility is 20:00:00.
 
-          I will raise the alarm if you don't check out by 21:00.
+          I will raise the alarm if you don't check out by 21:00:00.
 
           I will update your check in time if you message IN again.
           """
         And I am ok
 
     Scenario: I check out after checking in
+        Given my signing center is "Processing Facility"
         When I send "IN" via twilio
         And I send "OUT" via twilio at "1919-12-21 20:30:00"
         Then I am not checked in
         And my check in record is deleted
         And I receive a message containing:
           """
-          Your check out time from Processing Facility is 20:30.
+          Your check out time from Processing Facility is 20:30:00.
 
           I hope you have a lovely day!
           """
@@ -46,7 +48,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
          """
          You were already checked in.
 
-         I updated your check in time to 20:20.
+         I updated your check in time to 20:20:00.
          """
         And the check in time is "1983-07-08 20:20:00"
         # TODO: Shouldn't this be "maybe ok"?
@@ -66,29 +68,34 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
         And I am not checked in
 
     Scenario: When time is nearly up, send a reminder
-        Given I am checked in at "1886-05-04 22:00:00"
+        Given my signing center is "Government Facility"
+        And I am checked in at "1886-05-04 22:00:00"
+        And my signing center is "Government Facility"
         When the healthchecker runs at "1886-05-04 22:58:00"
         Then there are 0 overdue checkins
-        And I recieve a message containing:
-        """
-        Have you forgotten to sign out? I am about to notify the admins.
-
-        Please send OUT if you have left Government Facility.
-        """
+#        @TODO: This would need mocking somewhere
+#        And I am sent:
+#        """
+#        Have you forgotten to sign out? I am about to notify the admins.
+#
+#        Please send OUT if you have left Government Facility.
+#        """
         # TODO: Shouldn't this be "maybe ok"?
         And I am ok
         And there are 1 warning checkins
 
     Scenario: When time is up, alert the admin team
+        Given my signing center is "Government Facility"
         Given I am checked in at "1936-07-17 10:00:00"
         When the healthchecker runs at "1936-07-17 11:00:00"
         Then there are 1 overdue checkins
-        And I recieve a message containing:
-        """
-        You didn't check out of %(signing centre).
-
-        I notified the admins at 11:00.
-        """
+#        @TODO: This would need mocking somewhere
+#        And I am sent:
+#        """
+#        You didn't check out of Government Facility.
+#
+#        I notified the admins at 11:00.
+#        """
         And I am not ok
         Then an admin is contacted
 
@@ -98,13 +105,13 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
           """
           Thank you for letting me know.
 
-          I notified the admins at 08:10.
+          I notified the admins at 08:10
           """
         And I am not ok
 
     Scenario: I send an invalid command
         When I send "Asdasdf" via twilio
-        Then I recieve a message containing:
+        Then I receive a message containing:
         """
         Sorry, I didn't understand that message.
 
@@ -112,12 +119,13 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
         """
 
     Scenario: I request the server commands again
+        Given my signing center is "Government Facility"
         When I send "INFO" via twilio
-        Then I recieve a message containing:
+        Then I receive a message containing:
         """
-        Welcome to 1312 Collective's imok server, Mo Member!
+        Welcome to imok development, Fake User!
 
-        You can send me the following commands, or text +447740000000:
+        You can send me the following commands, or text +15005550006:
 
         IN: Check in to Government Facility
 
