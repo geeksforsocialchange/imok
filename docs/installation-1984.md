@@ -1,6 +1,8 @@
-[1984](https://www.1984.is/) are independent and based in Iceland.  They use 100% green energy and strong on privacy and civil rights.  We have no relationship with them, but they are recommended from many sources.
+# Setting up imok on 1984.is
 
-While GFSC do not advocate the use of cryptocurrency for environmental reasons, if you are absolutely determined to conceal your identity you can pay for 1984 services anonymously with Bitcoin or Monero.  Obtaining and paying with Bitcoin or Monero is out of scope for this document.
+[1984](https://www.1984.is/) are independent and based in Iceland. They use 100% green energy and strong on privacy and civil rights. We have no relationship with them, but they are recommended from many sources.
+
+While GFSC do not advocate the use of cryptocurrency for environmental reasons, if you are absolutely determined to conceal your identity you can pay for 1984 services anonymously with Bitcoin or Monero. Obtaining and paying with Bitcoin or Monero is out of scope for this document.
 
 Unlike [Digital Ocean](installation-digital-ocean.md), 1984 do not provide a pre-configured Dokku server.  So the work is slightly more involved.
 

@@ -1,8 +1,8 @@
 # Setting up an imok server
 
-These instructions focus on Digital Ocean but should work for any VPS service. This guide currently assumes you are developing imok locally.
+This guide currently assumes you are developing imok locally and are able to push to it from a local git clone of the repository.
 
-We use the open source Heroku clone [Dokku](http://dokku.viewdocs.io/dokku/) and a Postgresql database.
+We use the open source Heroku clone [Dokku](http://dokku.viewdocs.io/dokku/) and a PostgreSQL database.
 
 ## Getting started
 
@@ -11,42 +11,23 @@ You will need:
 1. A server.  We'll walk you through some different options for that later in the document.
 1. A Telegram account to use for creating a Telegram bot.  This enables the system to run for almost free.
 1. A domain name to use with the service. This guide assumes you will install imok on a subdomain, e.g. `imok.mydomain.com`.
-1. (optional) A [Twilio account](https://www.twilio.org/) for using imok via SMS. Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
+1. (optional) A [Twilio account](https://www.twilio.org/) for using imok via SMS and WhatsApp. Twilio give generous credits to registered charities. [You can check your eligibility here](https://www.twilio.org/check-eligibility/).
 
 It might help to make a copy of [settings.md](settings.md) on your computer to keep all your information in.
 
-### Setting up Telegram
-
-We use Telegram by default as it's free and easy to set up.
-
-Send `/newbot` to @BotFather and follow the instructions. It will give you a token to use.
-
-You need this token to configure imok to use the token to send replies
-
-You also need to use this token to tell your bot about imok
-
-On the server:
-
-```shell
-export BOT_TOKEN='123:abc'
-# Only the hostname should need changing here
-export WEBHOOK='https://imok.example.com/application/telegram'
-
-curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
-```
 
 ## Installing imok
 
-Follow the hosting-specific instructions to setup your server.
+For development we recommend Digital Ocean as it's really easy to get up and running with due to pre-configured server images, and is billed per-minute.
 
-For development, we recommend Digital Ocean as we have the most experience with them and the server is charged on a per-minute basis.
-
-For production, you may want to use a server in a more legally-friendly country, such as 1984.is
+For production environments we recommend a VPS service in a country with strong privacy laws such as 1984.is, which is based in Iceland and runs on green energy.
 
 If you are using a server provider not listed here, then follow the [1984.is installation documentation](installation-1984.md) because it includes steps to install Dokku which isn't necessary on Digital Ocean.
 
-* [Digital Ocean](installation-digital-ocean.md)
-* [1984.is](installation-1984.md)
+- [Digital Ocean install instructions](installation-digital-ocean.md)
+- [1984.is install instructions](installation-1984.md)
+
+After you've followed one of these guides come back here to continue the guide.
 
 ### Setting up Dokku
 
@@ -98,7 +79,7 @@ git push dokku
 
 This will take a little while to run as it pushes the code to the remote server and sets up the Dokku app.
 
-### Create a superuser to login with and set up server storage
+### Create a superuser account
 
 Back on your server run the following to set up an admin account.
 
@@ -108,12 +89,33 @@ dokku --rm run imok python manage.py createsuperuser
 
 Follow the instructions on screen to create your root user login. Make sure to use a secure password.
 
+### Set up server storage
+
 Provide some storage for static content and generate the static content
 
 ```shell
 dokku storage:mount imok /var/lib/dokku/data/storage:/code/static
 dokku --rm run imok python manage.py collectstatic
 dokku ps:restart imok # you'll get a 500 error if you don't restart after generating static content
+```
+
+### Setting up Telegram
+
+We use Telegram as the default message service as it's free and easy to set up.
+
+1. Start a chat with [@BotFather using this link](https://t.me/botfather) on Telegram Desktop or the mobile app
+1. Type `/newbot` and follow the instructions. The bot name and username will be visible to your end users so pick carefully.
+1. It will give you a token to use - make a note of this
+1. (Optional) You can also add a description, about and profile text by following the bot instructions. You are welcome to use imok assets for this which are in the `assets` folder.
+
+On the server:
+
+```shell
+export BOT_TOKEN='123:abc'
+# Only the hostname should need changing here
+export WEBHOOK='https://imok.example.com/application/telegram'
+
+curl "https://api.telegram.org/bot${BOT_TOKEN}/setWebHook?url=${WEBHOOK}"
 ```
 
 ### Configuring a domain name
@@ -147,46 +149,16 @@ dokku letsencrypt:cron-job --add
 
 HTTP traffic will be automatically redirected to HTTPS.  You need to leave the HTTP port in place because LetsEncrypt uses this for certificate renewals.
 
-That's it! You've finished the basic setup. You can now log into your site at https://imok.mydomain.com/ruok.
+Well done! You've finished the basic setup. You can now log into your site at https://imok.mydomain.com/ruok.
 
 
 ## Optional steps
 
 You might want to add a few extra features if you're going to use this in a production setting.
 
-### Turn off invites
+### Setting up SMS and WhatsApp
 
-By default, users must be invited before they can use the service.  You can turn this off and allow anyone to use it:
-
-```shell
-dokku config:set imok REQUIRE_INVITE=False
-```
-
-### Configuring email
-
-By default, imok will not send notification emails to admins.  To configure this you will need to set a few things:
-
-```shell
-dokku config:set --no-restart imok NOTIFY_EMAIL='alice@example.net'
-dokku config:set --no-restart imok MAIL_FROM='alice@example.net'
-dokku config:set --no-restart imok EMAIL_HOST='mail.example.com'
-dokku config:set --no-restart imok EMAIL_PORT=587
-dokku config:set --no-restart imok EMAIL_HOST_USER='alice'
-dokku config:set --no-restart imok EMAIL_HOST_PASSWORD='Password123'
-dokku config:set --no-restart imok EMAIL_USE_TLS=True
-dokku ps:restart imok
-```
-
-### Configuring airbrake
-
-If you want application errors to appear in an airbrake project, you can define the project and project key:
-
-```shell
-dokku config:set --no-restart imok AIRBRAKE_PROJECT=123456
-dokku config:set --no-restart imok AIRBRAKE_PROJECT_KEY='780740ee075aeedacbbe794517ce64f2'
-```
-
-## Setting up Twilio
+We support Twilio for SMS and WhatsApp integration.
 
 1. [Go to the Twilio console](https://www.twilio.com/console/projects/summary) and click **Create new account**
 1. Write a memorable name and click OK.
@@ -209,9 +181,41 @@ dokku config:set --no-restart imok TWILIO_FROM_NUMBER='+15005550000'
 dokku config:set --no-restart imok PHONENUMBER_DEFAULT_REGION=US
 ```
 
-Configuring Twilio to use WhatsApp is still in preview, and requires you to sign up with your Facebook Business account.  We have tested imok with the [sandbox](https://www.twilio.com/console/sms/whatsapp/sandbox) but not a full integration.
+Configuring Twilio to use WhatsApp is still in preview, and requires you to sign up with your Facebook Business account. We have tested imok with the [sandbox](https://www.twilio.com/console/sms/whatsapp/sandbox) but not a full integration.
 
-### Communication Channels
+### Allow anyone to register
+
+By default, users must be invited before they can use the service.  You can turn this off and allow anyone to use it:
+
+```shell
+dokku config:set imok REQUIRE_INVITE=False
+```
+
+### Configuring email
+
+By default, imok will not send notification emails to admins.  To configure this you will need to set a few things:
+
+```shell
+dokku config:set --no-restart imok NOTIFY_EMAIL='alice@example.net'
+dokku config:set --no-restart imok MAIL_FROM='alice@example.net'
+dokku config:set --no-restart imok EMAIL_HOST='mail.example.com'
+dokku config:set --no-restart imok EMAIL_PORT=587
+dokku config:set --no-restart imok EMAIL_HOST_USER='alice'
+dokku config:set --no-restart imok EMAIL_HOST_PASSWORD='Password123'
+dokku config:set --no-restart imok EMAIL_USE_TLS=True
+dokku ps:restart imok
+```
+
+### Configuring Airbrake
+
+Airbrake is a monitoring service that alerts you if anything goes wrong. To use it, [register for an Airbrake account](https://airbrake.io/), create a project, and add the information as below.
+
+```shell
+dokku config:set --no-restart imok AIRBRAKE_PROJECT=123456
+dokku config:set --no-restart imok AIRBRAKE_PROJECT_KEY='780740ee075aeedacbbe794517ce64f2'
+```
+
+### Setting default and supported services
 
 By default, both Twilio and Telegram are assumed to be supported and Telegram is the preferred channel.
 

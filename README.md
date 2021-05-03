@@ -50,11 +50,13 @@ That's it! There are a few more commands that we will be listing on the project 
 
 ## Contributing
 
+### Software development
+
 We welcome contributors to help with this project. Imok is written in Django.
 
 See [development.md](docs/development.md) for how to set up a development environment.
 
-## Translations
+### Translations
 
 Imok allows language selection for users. Currently available translations are in the [locales](locales) directory. We welcome translation into other languages.
 
