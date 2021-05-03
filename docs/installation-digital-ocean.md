@@ -1,6 +1,8 @@
+# Setting up imok on Digital Ocean
+
 For this you will need a Digital Ocean account.  If you don't have one yet, please consider using our [referral link](https://m.do.co/c/34b6bc6a1cf7) which will give you more than enough credits to run this for 60 days.
 
-### Setting up a droplet
+## Setting up a droplet
 
 A 'droplet' is Digital Ocean's term for a virtual server.
 
@@ -18,7 +20,7 @@ Anything not listed here you can just leave as it is.
 1. **Enable backups:** this is up to you but we recommend it
 1. Click **'Create Droplet'** and you're done!
 
-### Signing into the droplet
+## Signing into the droplet
 
 You will then see a list of droplets in your interface. Give it a second while it sets up your new droplet.
 
