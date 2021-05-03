@@ -1,4 +1,7 @@
 from django.utils.translation import gettext as _
+from django.utils import timezone
+
+from .contact_admins import notify_admins
 
 
 def handle_command(message, member):
@@ -22,6 +25,10 @@ def handle_command(message, member):
 def register(member):
     member.registered = True
     member.save()
+    time = timezone.localtime().strftime('%X')
+    date = timezone.localdate().strftime('%x')
+    notify_admins("New Member",
+                  f"{member.name} ({member.phone_number}) successfully activated their account at {time} on {date}")
 
     response = " ".join([_("Thanks for registering, %(name)s!") % {'name': member.name},
                 _("To sign in, text IN or I to this number."),
