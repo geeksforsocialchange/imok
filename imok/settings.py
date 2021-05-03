@@ -33,6 +33,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+SERVER_NAME = env.str('SERVER_NAME', 'imok')
+
 # Use Alice's test credentials if nothing is set in environment variables
 TWILIO_ACCOUNT_SID = env.str('TWILIO_ACCOUNT_SID', 'AC4a7b7b6bc015a2fd82d3eedea46c04f0')
 TWILIO_AUTH_TOKEN = env.str('TWILIO_AUTH_TOKEN', '5886fb88ba4dd6bc45da49bc9d10a449')

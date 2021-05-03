@@ -13,12 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-admin.site.site_header = "imok admin"
-admin.site.site_title = "imok admin"
-admin.site.index_title = "Welcome to the imok admin interface!"
+admin.site.site_header = f"{settings.SERVER_NAME} admin"
+admin.site.site_title = f"{settings.SERVER_NAME} admin"
+admin.site.index_title = f"Welcome to the ${settings.SERVER_NAME} admin interface!"
 
 urlpatterns = [
     path('application/', include('application.urls')),

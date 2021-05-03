@@ -240,3 +240,11 @@ This will give you helpful errors, but should be turned off when the site is liv
 ```shell
 dokku config:unset imok DEBUG
 ```
+
+### Overriding the server name
+
+Your members should be welcomed by something familiar-sounding.  To set the name of the server that both members and administrators see, set the SERVER_NAME environment variable.
+
+```shell
+dokku config:set imok SERVER_NAME="1312 Support Group's imok server"
+```

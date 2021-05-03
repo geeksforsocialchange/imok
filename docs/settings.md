@@ -24,6 +24,7 @@ These settings are specific to imok.
 | TWILIO_FROM_NUMBER   | ''              | The phone number you have registered to use in Twilio |
 | SUPPORTED_CHANNELS   | TELEGRAM,TWILIO | A comma separated list of channels you want to support (currently only telegram and twilio) |
 | PREFERRED_CHANNEL    | TELEGRAM        | The default channel to contact members through (can be overridden by member) |
+| SERVER_NAME          | 'imok'          | Used in the admin screen and initial welcome message ('Welcome to SERVER_NAME') |
 
 ## Dokku
 
