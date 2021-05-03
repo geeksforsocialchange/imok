@@ -4,15 +4,15 @@ Imok is a simple bot to support people undertaking potentially risky activities.
 
 The bot lets users 'check in' to the service with a messaging app or SMS message. If users don't 'check out' after 30 minutes (for example), it will raise an alarm in a Telegram groupchat.
 
-Examples use cases are:
+Example use cases are:
 
 - Supporting protestors at risk of arrest or kidnapping
 - Supporting women and gender minorities walking home at night, or going on dates
 - Supporting asylum seekers through 'signing in' processes (see #AbolishReporting on Twitter).
 
-We do not currently offer a public instance of imok, and so you will need to set up your own server to use it. The target audience is therefore local mutual aid and community support groups with the capacity and confidence to run a web service.
-
 Imok is currently optimised for the latter use case. It is a collaboration between [No Borders Manchester](https://nobordersmcr.com/) and [Geeks for Social Change](https://gfsc.studio) that emerged from the [Resistance Lab](https://resistancelab.network) collective.
+
+We do not currently offer a public instance of imok, and so you will need to set up your own server to use it. The target audience is therefore local mutual aid and community support groups with the capacity and confidence to run a web service.
 
 We currently support SMS and Telegram. We are looking to support WhatsApp and Signal soon.
 

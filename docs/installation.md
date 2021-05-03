@@ -151,6 +151,7 @@ HTTP traffic will be automatically redirected to HTTPS.  You need to leave the H
 
 Well done! You've finished the basic setup. You can now log into your site at https://imok.mydomain.com/ruok.
 
+If you're running a real-world instance we've provided [some tips on running a more secure deployment](deployment.md).
 
 ## Optional steps
 
