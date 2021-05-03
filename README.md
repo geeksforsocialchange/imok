@@ -14,7 +14,7 @@ Imok is currently optimised for the latter use case. It is a collaboration betwe
 
 We do not currently offer a public instance of imok, and so you will need to set up your own server to use it. The target audience is therefore local mutual aid and community support groups with the capacity and confidence to run a web service.
 
-We currently support SMS, Telegram and WhatsApp. We are looking to support other services too.
+We currently support SMS, Telegram and WhatsApp.
 
 ## Installation
 
