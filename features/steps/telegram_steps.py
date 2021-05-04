@@ -1,12 +1,10 @@
 import json
 
 from behave import given, when, then
-from django.core import mail
 from django.db import transaction
-from django.utils import timezone
+from django.conf import settings
 from freezegun import freeze_time
 from dateutil import parser
-from application.management.commands.healthcheck import healthcheck
 import pytz
 
 from application.models import Member, Checkin
@@ -26,7 +24,8 @@ def step_impl(context):
 
 @when(u'I send "{message}" via telegram at "{time}"')
 def step_impl(context, message, time):
-    with freeze_time(time):
+    dt = parser.parse(time).astimezone(tz=pytz.timezone(settings.TIME_ZONE))
+    with freeze_time(dt):
         with transaction.atomic():
             context.response = context.test.client.post('/application/telegram',
                                                         telegram_message(message), content_type="application/json")

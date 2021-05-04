@@ -28,17 +28,11 @@ def handle_command(message, member):
 def register(member):
     member.registered = True
     member.save()
-    time = timezone.localtime().strftime('%X')
-    date = timezone.localdate().strftime('%x')
+    time = timezone.localtime().time()
+    date = timezone.localtime().date()
     notify_admins("New Member",
-                  f"{member.name} ({member.phone_number}) successfully activated their account at {time} on {date}")
-
-    response = " ".join([_("Thanks for registering, %(name)s!") % {'name': member.name},
-                         _("To sign in, text IN or I to this number."),
-                         _("To correct your name, text NAME followed by your name."),
-                         _("To get emergency help, text SOS or HELP.")
-                         ])
-    return response
+                  f"{member.name} ({member.phone_number}) successfully activated their account at {time} on {date}.")
+    return info(member)
 
 
 def name(member, params):

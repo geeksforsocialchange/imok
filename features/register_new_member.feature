@@ -16,14 +16,15 @@ Feature: Admins can register new members
   Scenario: Member confirms registration
       Given Mo Member has been registered as a member
       And has received a message containing <Welcome to imok!>
+      And Mo Member's signing center is Government Facility
       When Mo Member replies <Y> at "1999-10-10 05:10:10"
       Then Mo Member's registration is confirmed
       And Mo Member's registration time does not change
       And Mo Member receives a message containing:
       """
-      Welcome to 1312 Collective's imok server, Mo Member!
+      Welcome to imok development, Mo Member!
 
-      You can send me the following commands, or text +447741231234:
+      You can send me the following commands, or text +15005550006:
 
       IN: Check in to Government Facility
 
@@ -36,7 +37,7 @@ Feature: Admins can register new members
       INFO: Get this message again
       """
       And this message only uses 2 SMS messages to send
-      Then Admin Angela recieves a message in a Telegram group containing: "Mo Member (+447740000000) successfully activated their account at at 05:10 on 10:10:1999."
+      Then Admin Angela recieves a message in a Telegram group containing: "Mo Member (+447740000000) successfully activated their account at 05:10:10 on 1999-10-10."
 
   Scenario: Admin can see that member is registered
       Given Admin Angela has logged in with an admin account
