@@ -3,8 +3,6 @@ from django.conf import settings
 from django.utils import timezone
 from .contact_admins import notify_admins
 
-
-
 def handle_command(message, member):
     command = message.split(' ')[0].upper()
     params = " ".join(message.split(' ')[1:])

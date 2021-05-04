@@ -36,7 +36,7 @@ Imok currently requires an admin to invite new users to the system. We expect th
 
 We will be further developing admin documentation as the project develops.
 
-## How it works (member)
+## How it works (members)
 
 As a member of an imok instance:
 
