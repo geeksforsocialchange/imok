@@ -37,6 +37,14 @@ def step_impl(context, membername):
     member.save()
     context.members[membername] = member
 
+
+@given(u'{membername} has been welcomed with')
+def step_impl(context, membername):
+    from application.admin import send_invite
+    invite = send_invite(context.members[membername])
+    context.test.assertEqual(invite, context.text)
+
+
 @given(u'{membername}\'s signing center is {location}')
 def step_impl(context, membername, location):
     context.members[membername].signing_center = location
