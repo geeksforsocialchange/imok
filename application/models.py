@@ -17,6 +17,7 @@ from .telegram import telegram_send
 from .contact_admins import notify_admins
 
 from codename_generator import generator
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +32,12 @@ def validate_telegram_username(value):
             _('%(value)s should not include the "@"'),
             params={'value': value},
         )
+	validator_regex = re.compile('[a-zA-Z0-9_]{5,32}')
+	if not validator_regex.match(value):
+		raise ValidationError(
+			_('%(value)s should be valid telegram usernames (5 to 32 characters long containing numbers, letters or _)',
+			params={'value':value},
+		)
 
 
 def generate_codename():
