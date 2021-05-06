@@ -15,7 +15,14 @@ Feature: Admins can register new members
 
   Scenario: Member confirms registration
       Given Mo Member has been registered as a member
-      And has received a message containing <Welcome to imok!>
+      And has received a message containing
+      """
+      You've been invited to join %(server name)!
+
+      Would you like to register for this service?
+
+      Reply YES to join.
+      """
       And Mo Member's signing center is Government Facility
       When Mo Member replies <Y> at "1999-10-10 05:10:10"
       Then Mo Member's registration is confirmed
