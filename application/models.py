@@ -59,7 +59,7 @@ class Member(models.Model):
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)
-    telegram_username = models.CharField(default='', unique=True, validators=[validate_telegram_username], blank=True, max_length=50, help_text="Without the initial '@'")
+    telegram_username = models.CharField(default='', unique=True, validators=[validate_telegram_username], blank=True, max_length=32, help_text="Without the initial '@'")
     telegram_chat_id = models.BigIntegerField(default=0)
     preferred_channel = models.CharField(choices=SUPPORTED_CHANNELS, default=settings.PREFERRED_CHANNEL, max_length=8,
                                          help_text="Which channel should the app contact the user via?")
