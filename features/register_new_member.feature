@@ -15,9 +15,9 @@ Feature: Admins can register new members
 
   Scenario: Member confirms registration
       Given Mo Member has been registered as a member
-      And has received a message containing
+      And Mo Member has been welcomed with:
       """
-      You've been invited to join %(server name)!
+      You've been invited to join imok development!
 
       Would you like to register for this service?
 

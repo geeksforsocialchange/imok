@@ -8,8 +8,9 @@ from django.http import HttpResponse
 import csv
 
 
-def send_invite(obj, user):
-    message = _("Welcome to %(servername)s! Your number has been added by %(admin)s. Would you like to register for this service? \n\nReply YES if so" % {'admin': user, 'servername': settings.SERVER_NAME})
+def send_invite(obj):
+    message = _("You've been invited to join %(server name)s!\n\nWould you like to register for this "
+                "service?\n\nReply YES to join." % {'server name': settings.SERVER_NAME})
     obj.send_message(message)
     return message
 
@@ -50,7 +51,7 @@ class MemberAdmin(admin.ModelAdmin):
 
     def resend_invite(self, request, queryset):
         for member in queryset:
-            send_invite(member, request.user.username)
+            send_invite(member)
         print("sent invite")
 
     def save_model(self, request, obj, form, change):
@@ -62,7 +63,7 @@ class MemberAdmin(admin.ModelAdmin):
             if not settings.REQUIRE_INVITE:
                 obj.registered = True
             obj.registered_by = request.user
-            send_invite(obj, request.user.username)
+            send_invite(obj)
         if 'is_ok' in form.changed_data:
             obj.send_message(_("An admin has marked you as %(status)s" % {'status': obj.ok_status()}))
         translation.activate(cur_language)
