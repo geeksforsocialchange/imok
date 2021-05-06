@@ -52,11 +52,12 @@ def twilio_receive(request, member):
     return HttpResponse(resp)
 
 
-def twilio_send(phone_number, message):
+def twilio_send(phone_number, text):
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     message = client.messages.create(
-        body=message,
+        body=text,
         from_=settings.TWILIO_FROM_NUMBER,
         to=phone_number
     )
     print(message.sid)
+    return text

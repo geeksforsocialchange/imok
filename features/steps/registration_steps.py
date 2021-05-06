@@ -1,17 +1,14 @@
 from behave import given, when, then
 from django.db import transaction
+from django.conf import settings
 from django.core import mail
 from django.contrib.auth.models import User
-from faker import Faker
-import phonenumbers
+from dateutil import parser
+from freezegun import freeze_time
+import pytz
 
-from application.models import Member, Checkin
 
-
-def random_phone_number():
-    fake = Faker(['en_GB'])
-    number = phonenumbers.parse(fake.cellphone_number(), region='GB')
-    return phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
+from application.models import Member
 
 
 @given(u'email is configured')
@@ -36,14 +33,31 @@ def step_impl(context, username):
 
 @given(u'{membername} has been registered as a member')
 def step_impl(context, membername):
-    member = Member(name=membername, phone_number=random_phone_number())
+    member = Member(name=membername, phone_number='+447740000000')
     member.save()
     context.members[membername] = member
+
+@given(u'{membername}\'s signing center is {location}')
+def step_impl(context, membername, location):
+    context.members[membername].signing_center = location
+    context.members[membername].save()
 
 
 @given(u'has received a message containing <Welcome to imok!>')
 def step_impl(context):
     pass
+
+
+@when(u'{membername} replies <{text}> at "{time}"')
+def step_impl(context, membername, text, time):
+    dt = parser.parse(time).astimezone(tz=pytz.timezone(settings.TIME_ZONE))
+    with freeze_time(dt):
+        member = context.members[membername]
+        member.refresh_from_db()
+        with transaction.atomic():
+            context.response = context.test.client.post('/application/twilio',
+                                                        {'From': member.phone_number, 'Body': text})
+            context.test.assertEqual(context.response.status_code, 200)
 
 
 @when(u'{membername} replies <{text}>')
@@ -76,7 +90,7 @@ def step_impl(context, membername):
         context.members[membername].registered = True
         context.members[membername].save()
     else:
-        member = Member(name=membername, phone_number=random_phone_number())
+        member = Member(name=membername, phone_number='+447740000000')
         member.registered = True
         member.save()
         context.members[membername] = member
@@ -91,7 +105,7 @@ def step_impl(context, username, membername):
 @given(u'An unknown number messages the imok number <{text}>')
 def step_impl(context, text):
     with transaction.atomic():
-        context.response = context.test.client.post('/application/twilio', {'From': random_phone_number(), 'Body': text})
+        context.response = context.test.client.post('/application/twilio', {'From': '+447740000001', 'Body': text})
         context.test.assertEqual(context.response.status_code, 404)
 
 
@@ -105,3 +119,15 @@ def step_impl(context):
 def step_impl(context):
     context.test.assertEqual(len(mail.outbox), 1)
     context.test.assertEqual(mail.outbox[0].subject, "SMS From Unknown Number")
+
+
+@then(u'{member} receives a message containing')
+def step_impl(context, member):
+    content = str(context.response.content, 'utf-8')
+    context.test.assertIn(context.text, content)
+
+
+@then(u'{admin} recieves a message in a Telegram group containing: "{content}"')
+def step_impl(context, admin, content):
+    context.test.assertEqual(len(mail.outbox), 1)
+    context.test.assertIn(content, mail.outbox[0].body)

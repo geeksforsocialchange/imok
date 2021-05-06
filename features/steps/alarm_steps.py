@@ -6,8 +6,10 @@ from freezegun import freeze_time
 from dateutil import parser
 from application.management.commands.healthcheck import healthcheck
 import pytz
+from django.conf import settings
 
 from application.models import Member, Checkin
+from unittest import mock
 
 
 def time_within(timestamp, timedelta):
@@ -17,7 +19,7 @@ def time_within(timestamp, timedelta):
 
 @when(u'I create a new member')
 def step_impl(context):
-    member = Member(phone_number='+12025550483', name="Fake User")
+    member = Member(phone_number='+12025550483', name="Fake User", preferred_channel='TWILIO')
     member.save()
     context.member = member
 
@@ -41,7 +43,8 @@ def step_impl(context):
 
 @when(u'I send "{text}" via twilio at "{time}"')
 def step_impl(context, text, time):
-    with freeze_time(time):
+    dt = parser.parse(time).astimezone(tz=pytz.timezone(settings.TIME_ZONE))
+    with freeze_time(dt):
         with transaction.atomic():
             context.response = context.test.client.post('/application/twilio',
                                                         {'From': context.member.phone_number, 'Body': text})
@@ -81,6 +84,12 @@ def step_impl(context):
     context.member.save()
 
 
+@given(u'my signing center is "{location}"')
+def step_impl(context, location):
+    context.member.signing_center = location
+    context.member.save()
+
+
 @then(u'I am checked in')
 def step_impl(context):
     with transaction.atomic():
@@ -109,6 +118,22 @@ def step_impl(context, message):
     context.test.assertIn(message, content)
 
 
+@then(u'I receive a message containing')
+def step_impl(context):
+    content = str(context.response.content, 'utf-8')
+    context.test.assertIn(context.text, content)
+
+
+@then(u'this message only uses {number} SMS messages to send')
+def step_impl(context, number):
+    from xml.etree import ElementTree
+    from math import ceil
+    content = str(context.response.content, 'utf-8')
+    tree = ElementTree.fromstring(content)
+    no_tags = ElementTree.tostring(tree, encoding='utf8', method='text')
+    context.test.assertEqual(ceil(len(no_tags)/160), int(number))
+
+
 @given(u'I am not checked in')
 def step_impl(context):
     try:
@@ -119,9 +144,9 @@ def step_impl(context):
 
 @then(u'the check in time is "{time}"')
 def step_impl(context, time):
-    time = parser.parse(time).replace(tzinfo=pytz.timezone('UTC'))
+    time = parser.parse(time).astimezone(tz=pytz.timezone(settings.TIME_ZONE))
     checkin = Checkin.objects.get(member=context.member)
-    context.test.assertEqual(checkin.time_stamp, time)
+    context.test.assertEqual(timezone.localtime(checkin.time_stamp).astimezone(pytz.timezone(settings.TIME_ZONE)), time)
 
 
 @given(u'I am checked in at "{time}"')
@@ -134,8 +159,17 @@ def step_impl(context, time):
 
 @when(u'the healthchecker runs at "{time}"')
 def step_impl(context, time):
-    with freeze_time(time):
-        context.healthchecker = healthcheck()
+    with mock.patch('application.twilio.twilio_send') as send:
+        with freeze_time(time):
+            send.start()
+            context.healthchecker = healthcheck()
+            send.stop()
+            context.message = send.return_value
+
+
+@then(u'I am sent')
+def step_impl(context):
+    context.test.assertIn(context.text, context.message)
 
 
 @then(u'there are {some} overdue checkins')
@@ -172,3 +206,65 @@ def step_impl(context):
 def step_impl(context):
     context.test.assertEqual(len(mail.outbox), 1)
     context.test.assertEqual(mail.outbox[0].subject, "[IMOK] Fake User is not ok")
+
+
+@given(u'{member} signed in at "{time}"')
+def step_impl(context, member, time):
+    member_object = getattr(context, "member", None)
+    if not member_object:
+        context.member = Member(name=member)
+    with freeze_time(time):
+        context.member.sign_in()
+
+
+@given(u'{member} didn\'t sign out at "{time}"')
+def step_impl(context, member, time):
+    pass
+
+
+@then(u'the admins receive a message containing')
+def step_impl(context):
+    context.test.assertEqual(len(mail.outbox), 1)
+    context.test.assertIn(context.text, mail.outbox[0].body)
+
+
+@then(u'the admins receive a message containing {message}')
+def step_impl(context, message):
+    context.test.assertEqual(len(mail.outbox), 1)
+    context.test.assertIn(message, mail.outbox[0].body)
+
+
+@given(u'{member} has notes {notes}')
+def step_impl(context, member, notes):
+    member_object = getattr(context, "member", None)
+    if not member_object:
+        context.member = Member(name=member)
+    if notes == 'None':
+        notes = ""
+    context.member.notes = notes
+    context.member.save()
+
+
+@given(u'{member} raises the alarm at "{time}"')
+def step_impl(context, member, time):
+    dt = parser.parse(time).astimezone(tz=pytz.timezone(settings.TIME_ZONE))
+    with freeze_time(dt):
+        context.member.handle_sos()
+
+
+@given(u'{member} has a signing center of "{location}"')
+def step_impl(context, member, location):
+    member_object = getattr(context, "member", None)
+    if not member_object:
+        context.member = Member(name=member)
+    context.member.signing_center = location
+    context.member.save()
+
+
+@given(u'{member} has a phone number of "{phone_number}"')
+def step_impl(context, member, phone_number):
+    member_object = getattr(context, "member", None)
+    if not member_object:
+        context.member = Member(name=member)
+    context.member.phone_number = phone_number
+    context.member.save()
