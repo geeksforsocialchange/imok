@@ -13,7 +13,7 @@ def handle_command(message, member):
         return checkin(member)
     elif command == 'NAME':
         return name(member, params)
-    elif command == 'SOS' or command == 'HELP':
+    elif command == 'SOS':
         return sos(member)
     elif command == 'O' or command == 'OUT':
         return checkout(member)
