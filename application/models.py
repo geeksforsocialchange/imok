@@ -33,11 +33,11 @@ def validate_telegram_username(value):
             params={'value': value},
         )
 	validator_regex = re.compile('[a-zA-Z0-9_]{5,32}')
-	if not validator_regex.match(value):
-		raise ValidationError(
-			_('%(value)s should be valid telegram usernames (5 to 32 characters long containing numbers, letters or _)',
-			params={'value':value},
-		)
+    if not validator_regex.match(value):
+        raise ValidationError(
+            _('%(value)s should be valid telegram usernames (5 to 32 characters long containing numbers, letters or _)',
+            params={'value':value},
+            )
 
 
 def generate_codename():
@@ -57,7 +57,7 @@ class Member(models.Model):
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)
-    telegram_username = models.CharField(default='', validators=[validate_telegram_username], blank=True, max_length=50, help_text="Without the initial '@'")
+    telegram_username = models.CharField(default='', unique=True, validators=[validate_telegram_username], blank=True, max_length=50, help_text="Without the initial '@'")
     telegram_chat_id = models.BigIntegerField(default=0)
     preferred_channel = models.CharField(choices=SUPPORTED_CHANNELS, default=settings.PREFERRED_CHANNEL, max_length=8, help_text="Which channel should the app contact the user via?")
 
