@@ -1,3 +1,4 @@
+import pytz
 from django.db import models
 from django.conf import settings
 from phonenumber_field.modelfields import PhoneNumberField
@@ -53,13 +54,15 @@ class Member(models.Model):
     registered_at = models.DateTimeField(auto_now_add=True)
     language = models.CharField(max_length=5, choices=LANGUAGES, default='en_gb')
     registered = models.BooleanField(default=False)
-    phone_number = PhoneNumberField(max_length=20, unique=True, null=True, blank=True, help_text="Enter a valid phone number (e.g. 0121 234 5678) or a number with an international call prefix.")
+    phone_number = PhoneNumberField(max_length=20, unique=True, null=True, blank=True,
+                                    help_text="Enter a valid phone number (e.g. 0121 234 5678) or a number with an international call prefix.")
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
     is_ok = models.BooleanField(null=True)
     is_warning = models.BooleanField(null=False, default=False)
     telegram_username = models.CharField(default='', unique=True, validators=[validate_telegram_username], blank=True, max_length=50, help_text="Without the initial '@'")
     telegram_chat_id = models.BigIntegerField(default=0)
-    preferred_channel = models.CharField(choices=SUPPORTED_CHANNELS, default=settings.PREFERRED_CHANNEL, max_length=8, help_text="Which channel should the app contact the user via?")
+    preferred_channel = models.CharField(choices=SUPPORTED_CHANNELS, default=settings.PREFERRED_CHANNEL, max_length=8,
+                                         help_text="Which channel should the app contact the user via?")
 
     def __str__(self):
         return self.name
@@ -89,13 +92,16 @@ class Member(models.Model):
         self.save()
         checkin, created = Checkin.objects.update_or_create(member=self, defaults={'time_stamp': in_time})
         if created:
-            response = " ".join([
-                _("You were checked in at %(center)s at %(time)s") % {'center': self.signing_center,
-                                                                      'time': str(in_time.time().strftime('%X'))},
-                _("We will alert our team if we don’t hear from you by %(time)s") % {'time': out_time.strftime('%X')}
-            ])
+            response = _("Your check in time at %(center)s is %(in time)s.\n\nI will raise the alarm if you don't "
+                         "check out by %(out time)s.\n\nI will update your check in time if you message IN again." % {
+                             "center": self.signing_center,
+                             "in time": str(in_time.time().strftime('%X')),
+                             "out time": out_time.strftime('%X')
+                         })
         else:
-            response = _("You were already checked in. Your check in time has been updated")
+            response = _("You were already checked in.\n\nI updated your check in time to %(time)s." % {
+                "time": in_time.time().strftime('%X')
+            })
         return response
 
     def sign_out(self):
@@ -106,11 +112,14 @@ class Member(models.Model):
         try:
             checkin = Checkin.objects.get(member=self)
         except Checkin.DoesNotExist:
-            return _("You were not checked in. To check in message IN")
+            # Translators: the uppercase commands need to remain in English
+            return _("You were not checked in.\n\nTo check in, message IN.\n\nTo raise the alarm, message SOS.")
         checkin.delete()
-        return _("You were checked out at %(center)s at %(time)s") % {'center': self.signing_center,
-                                                                      'time': str(timezone.localtime().time().strftime(
-                                                                          '%H:%M:%S'))}
+        # Translators: feel free to change this to a similar sentiment in your culture
+        return _("Your check out time from %(center)s is %(time)s.\n\nI hope you have a lovely day!") % {
+            'center': self.signing_center,
+            'time': str(timezone.localtime().time().strftime(
+                '%H:%M:%S'))}
 
     def handle_sos(self):
         # Expression cannot be simplified as this is actually Optional[boolean]
@@ -122,10 +131,16 @@ class Member(models.Model):
         self.save()
 
         # send notifications
+        time = timezone.localtime()
         subject = f"[IMOK] {self.name} sent an SOS"
-        body = f"{self.name} sent an SOS from {self.signing_center}.  Here are their notes:\n\n{self.notes}."
+        if self.notes == "":
+            notes = "There are no notes saved for this member"
+        else:
+            notes = f"Notes: {self.notes}"
+        body = f"{self.name} ({self.phone_number}) sent an SOS at {self.signing_center}.\n\nThey raised it at {time.strftime('%H:%M')} on {time.strftime('%d/%m/%Y')}.\n\n{notes}."
         notify_admins(subject, body)
-        return _("Thanks for letting us know, our staff have been notified")
+        return _("Thank you for letting me know.\n\nI notified the admins at %(time)s." % {
+            "time": timezone.localtime().time().strftime('%X')})
 
     def send_message(self, message):
         if self.preferred_channel == 'TELEGRAM':
@@ -157,7 +172,9 @@ class Checkin(models.Model):
             self.member.is_warning = True
             self.member.save()
 
-            self.member.send_message(_("Are you OK? The alarm is about to be raised. Text OUT if you’re OK."))
+            self.member.send_message(_("Have you forgotten to sign out? I am about to notify the admins.\n\nPlease "
+                                       "send OUT if you have left %(signing center)s" % {
+                                           "signing center": self.member.signing_center}))
 
     def timeout(self):
         # Have we already handled this timeout?
@@ -173,10 +190,14 @@ class Checkin(models.Model):
         self.member.save()
 
         subject = f"[IMOK] {self.member.name} is not ok"
-        body = f"{self.member.name} failed to sign out at {self.member.signing_center}. They signed in at {self.time_stamp.strftime('%Y-%m-%d %H:%M:%S')}. Here are their notes:\n\n{self.member.notes}."
+        if self.member.notes == "":
+            notes = "There are no notes saved for this member"
+        else:
+            notes = f"Notes: {self.member.notes}"
+        body = f"{self.member.name} ({self.member.phone_number}) didn't sign out of {self.member.signing_center}.\n\nThey signed in at {self.time_stamp.strftime('%H:%M on %d/%m/%Y')}.\n\n{notes}."
         print(body)
         notify_admins(subject, body)
-        self.member.send_message(_("You have failed to sign out, the admins have been notified"))
+        self.member.send_message(_("You didn't check out of Government Facility.\n\nI notified the admins at %(time)s." % {"time": timezone.localtime().time().strftime('%X')}))
 
     def save(self, *args, **kwargs):
         increment_hourly_metric('checkin', self.member.signing_center)
@@ -185,4 +206,3 @@ class Checkin(models.Model):
     def delete(self, *args, **kwargs):
         increment_hourly_metric('checkout', self.member.signing_center)
         super(Checkin, self).delete()
-

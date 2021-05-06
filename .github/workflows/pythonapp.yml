@@ -30,4 +30,6 @@ jobs:
     - name: Run migrations
       run: python manage.py migrate
     - name: Run tests
+      env:
+          SERVER_NAME: imok development
       run: python manage.py behave --simple

@@ -24,7 +24,6 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
         And my check in record is deleted
         And I might be ok
 
-
     Scenario: Checking in twice updates the timestamp
         When I send "IN" via telegram at "1983-07-08 20:15:00"
         And I send "IN" via telegram at "1983-07-08 20:20:00"
