@@ -24,7 +24,7 @@ Feature: Admins can register new members
       Reply YES to join.
       """
       And Mo Member's signing center is Government Facility
-      When Mo Member replies <Y> at "1999-10-10 05:10:10"
+      When Mo Member replies <YES> at "1999-10-10 05:10:10"
       Then Mo Member's registration is confirmed
       And Mo Member's registration time does not change
       And Mo Member receives a message containing:
