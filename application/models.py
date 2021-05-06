@@ -35,7 +35,7 @@ def validate_telegram_username(value):
     validator_regex = re.compile('[a-zA-Z0-9_]{5,32}')
     if not validator_regex.match(value):
         raise ValidationError(
-            _('%(value)s should be valid telegram usernames (5 to 32 characters long containing numbers, letters or _)'),
+            _('%(value)s is not a valid telegram username, valid usernames are 5 to 32 characters long containing letters, numers or _'),
             params={'value':value},
          )
 
