@@ -205,7 +205,7 @@ LOCALE_PATHS = (os.path.join(SITE_ROOT, 'locale'), )
 LANGUAGE_CODE = 'en-gb'
 LANGUAGES = (
     ('en-gb', 'English'),
-    ('cy-gb', 'Welsh')
+    ('de-de', 'German')
 )
 
 TIME_ZONE = 'Europe/London'

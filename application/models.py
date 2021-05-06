@@ -22,7 +22,7 @@ import re
 
 logger = logging.getLogger(__name__)
 
-LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
+LANGUAGES = [('en_gb', 'English'), ('de_de', 'German')]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
 SUPPORTED_CHANNELS = list(map(lambda c: (c, c.title()), settings.SUPPORTED_CHANNELS))
 
