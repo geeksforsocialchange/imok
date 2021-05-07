@@ -6,12 +6,13 @@ from django.utils import translation
 from .models import Checkin, Member, MetricHour
 from django.http import HttpResponse
 import csv
+from .twilio import twilio_send
 
 
 def send_invite(obj):
     message = _("You've been invited to join %(server name)s!\n\nWould you like to register for this "
                 "service?\n\nReply YES to join." % {'server name': settings.SERVER_NAME})
-    obj.send_message(message)
+    twilio_send(obj.phone_number.as_e164, message)
     return message
 
 
