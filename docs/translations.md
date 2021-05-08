@@ -10,24 +10,31 @@ We will periodically add new translations to the project. If this isn't fast eno
 
 ## New Languages
 
-To integrate additional languages into imok requires a number of steps.  The documentation below describes the steps for Welsh.
+To integrate additional languages into imok requires a number of steps.  If you are unable to follow these steps then feel free to raise a GitHub issue requesting the new language.  The documentation below describes the steps for Welsh.
 
-1. `django-admin makemessages -l cy_GB` to create the PO files
-2. Optionally import this into poeditor to let people provide and edit translations
-3. Edit the generated `locale/cy_GB/LC_MESSAGES/django.po` file, either directly or from an export from poeditor
-4. Run `django-admin compilemessages` to generate a machine-friendly version
-5. Edit `imok/settings.py` to add `('cy-gb', 'Welsh')` to LANGUAGES
-6. Edit `application/models.py` to add `('cy_GB', 'Welsh')` to LANGUAGES
-7. Run `docker-compose run web python manage.py makemigrations` to list Welsh as an option in the admin screen
-8. Run `docker-compose run web python manage.py migrate` to apply the migration created above
+1. `django-admin makemessages -l cy_GB --ignore venv` to create the PO file
+2. Add the language to POEditor if you have access
+2. If you can provide translations, do so by either editing the generated `locale/cy_GB/LC_MESSAGES/django.po` file directly or by copying across the exported PO file from POEditor
+3. Edit `imok/settings.py` to add `('cy-gb', 'Welsh')` to LANGUAGES
+4. Edit `application/models.py` to add `('cy_GB', 'Welsh')` to LANGUAGES
+5. Run `docker-compose run web python manage.py makemigrations` to list Welsh as an option in the admin screen
+6. Run `docker-compose run web python manage.py migrate` to apply the migration created above
+7. Raise a pull request for this new language, and request it be added to POEditor if it hasn't already
 
 You should now be able to select Welsh as an option in the admin panel.
 
-## Editing existing languages
+## New (or changed) strings to be translated
 
-If you need to change or improve the translations then you can do so by following a subset of the above instructions.  These instructions again assume Welsh, change the codes as required.
+1. `django-admin makemessages -l en_GB --ignore venv` to update the reference translation.
+2. Import the generated `locale/en_GB/LC_MESSAGES/django.po` file into POEditor
+3. Update the English translation in POEditor and export back to `locale/en_GB/LC_MESSAGES/django.po`
+4. Raise a pull request with this new string, and (optionally) notify translators that there are new strings to translate
 
-1. `django-admin makemessages -l cy_GB` to update the PO file with any newly missing strings
-2. Optionally import this into poeditor to let people provide the missing translations
-3. Edit the generated `locale/cy_GB/LC_MESSAGES/django.po` file, either directly or from an export from poeditor
-4. Run `django-admin compilemessages` to generate a machine-friendly version
+## Improving existing translations
+
+You can provide improved translations through [POEditor](https://poeditor.com/join/project?hash=p2lHT7RFE5) and then either raise a GitHub issue requesting it be imported or raise a pull request yourself:
+
+1. Submit the changes via POEditor
+2. Export the language as a PO file
+3. Copy this PO file over the top of the appropriate file in the repository
+4. Raise a pull request
