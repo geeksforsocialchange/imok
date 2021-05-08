@@ -54,7 +54,7 @@ dokku config:set --no-restart imok DJANGO_SECRET_KEY=`pwgen 64 1`
 # Configure Telegram using the information you created above.
 dokku config:set --no-restart imok TELEGRAM_TOKEN="${BOT_TOKEN}"
 # Configure imok to send admin notifications to a telegram group
-dokku config:set imok TELEGRAM_GROUP="example-group"
+dokku config:set imok --no-restart TELEGRAM_GROUP="example-group"
 
 # Allow HTTP requests to use the server IP address
 dokku config:set imok ALLOWED_HOSTS=$(curl https://icanhazip.com)

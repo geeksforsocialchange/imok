@@ -42,6 +42,8 @@ Feature: Admins can register new members
       SOS: Raise the alarm
 
       INFO: Get this message again
+
+      You can also message me on Telegram: None
       """
       And this message only uses 2 SMS messages to send
       Then Admin Angela recieves a message in a Telegram group containing: "Mo Member (+447740000000) successfully activated their account at 05:10:10 on 1999-10-10."

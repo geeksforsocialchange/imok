@@ -10,7 +10,8 @@ from os import getenv
 import re
 
 from .twilio import validate_twilio_request, twilio_receive
-from .telegram import telegram_receive, telegram_reply, get_me
+from .telegram import telegram_receive, telegram_reply
+from .telegram_botinfo import get_me
 from .models import Member, TelegramGroup
 from .contact_admins import notify_admins
 from imok.settings import TELEGRAM_GROUP
@@ -63,7 +64,7 @@ def varz(request):
                     {'key': 'TWILIO_ACCOUNT_SID', 'value': redact(settings.TWILIO_ACCOUNT_SID), 'validation': len(settings.TWILIO_ACCOUNT_SID) == 34},
                     {'key': 'TWILIO_AUTH_TOKEN', 'value': redact(settings.TWILIO_AUTH_TOKEN), 'validation': None},
                     {'key': 'TELEGRAM_TOKEN', 'value': redact(settings.TELEGRAM_TOKEN), 'validation': get_me()['ok']},
-                    {'key': 'TELEGRAM_GROUP', 'value': redact(settings.TELEGRAM_TOKEN), 'validation': None},
+                    {'key': 'TELEGRAM_GROUP', 'value': redact(settings.TELEGRAM_GROUP), 'validation': None},
                     {'key': 'DOKKU_LETSENCRYPT_EMAIL', 'value': getenv('DOKKU_LETSENCRYPT_EMAIL'), 'validation': getenv('DOKKU_LETSENCRYPT_EMAIL') is not None},
                     {'key': 'NOTIFY_EMAIL', 'value': getenv('NOTIFY_EMAIL'), 'validation': getenv('NOTIFY_EMAIL') is not None},
                     {'key': 'MAIL_FROM', 'value': getenv('MAIL_FROM'), 'validation': getenv('MAIL_FROM') is not None},

@@ -1,7 +1,10 @@
-from django.utils.translation import gettext as _
 from django.conf import settings
 from django.utils import timezone
+from django.utils.translation import gettext as _
+
 from .contact_admins import notify_admins
+from .telegram_botinfo import bot_link
+
 
 def handle_command(message, member):
     command = message.split(' ')[0].upper()
@@ -56,11 +59,17 @@ def sos(member):
 
 
 def info(member):
-    return _("Welcome to %(server)s, %(member name)s!\n\nYou can send me the following commands, "
-             "or text %(imok phone number)s:\n\nIN: Check in to %(signing center)s\n\nOUT: Check out (after check "
-             "in)\n\nNAME: Update your name\n\nSOS: Raise the alarm\n\nINFO: Get this message again" % {
+    return _("Welcome to %(server)s, %(member name)s!\n\n"
+             "You can send me the following commands, or text %(imok phone number)s:\n\n"
+             "IN: Check in to %(signing center)s\n\n"
+             "OUT: Check out (after check in)\n\n"
+             "NAME: Update your name\n\n"
+             "SOS: Raise the alarm\n\n"
+             "INFO: Get this message again\n\n"
+             "You can also message me on Telegram: %(telegram link)s" % {
                  "server": settings.SERVER_NAME,
                  "member name": member.name,
                  "imok phone number": settings.TWILIO_FROM_NUMBER,
-                 "signing center": member.signing_center
+                 "signing center": member.signing_center,
+                 "telegram link": bot_link()
              })
