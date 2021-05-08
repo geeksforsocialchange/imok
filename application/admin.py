@@ -1,24 +1,28 @@
-from django.contrib import admin
-from django.conf import settings
-from django.utils.translation import gettext as _
-import django.utils.timezone as timezone
-from django.utils import translation
-from .models import Checkin, Member, MetricHour
-from django.http import HttpResponse
 import csv
+
+from django.conf import settings
+from django.contrib import admin, messages
+from django.http import HttpResponse
+from django.utils import timezone
+from django.utils import translation
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
+
+from .models import Checkin, Member, MetricHour
 from .twilio import twilio_send
+from .telegram_botinfo import bot_link
 
 
 def send_invite(obj):
-    message = _("You've been invited to join %(server name)s!\n\nWould you like to register for this "
-                "service?\n\nReply YES to join." % {'server name': settings.SERVER_NAME})
-    twilio_send(obj.phone_number.as_e164, message)
-    return message
+    if obj.phone_number is not None:
+        message = _("You've been invited to join %(server name)s!\n\nWould you like to register for this "
+                    "service?\n\nReply YES to join." % {'server name': settings.SERVER_NAME})
+        twilio_send(obj.phone_number.as_e164, message)
+        return message
 
 
 class ExportCsvMixin:
     def export_as_csv(self, request, queryset):
-
         meta = self.model._meta
         field_names = [field.name for field in meta.fields]
 
@@ -38,7 +42,7 @@ class ExportCsvMixin:
 class MemberAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Member', {
-            'fields': ('codename', 'name', 'notes', 'language',  'signing_center'),
+            'fields': ('codename', 'name', 'notes', 'language', 'signing_center'),
             'description': ""
         }),
         ('Contact Details', {
@@ -52,6 +56,8 @@ class MemberAdmin(admin.ModelAdmin):
 
     def resend_invite(self, request, queryset):
         for member in queryset:
+            if member.phone_number is None:
+                messages.error(request, f"{member.name} has no phone number configured, couldn't send SMS")
             send_invite(member)
         print("sent invite")
 
@@ -65,6 +71,16 @@ class MemberAdmin(admin.ModelAdmin):
                 obj.registered = True
             obj.registered_by = request.user
             send_invite(obj)
+            if obj.phone_number is None:
+                messages.warning(request, "Couldn't send an sms invite because the member has no phone number. Either "
+                                          "send them a link to the telegram bot or add a phone number and re-send the"
+                                          " invite.  Suggested text:")
+                messages.warning(request, mark_safe(_("You've been invited to join %(server name)s!<br/>"
+                                                      "Would you like to register for this service?<br/>"
+                                                      "If so, go to this link: %(signup_url)s<br/>"
+                                                      "Then, send INFO to get a command list." % {
+                                                          "server name": settings.SERVER_NAME,
+                                                          "signup_url": bot_link()})))
         if 'is_ok' in form.changed_data:
             obj.send_message(_("An admin has marked you as %(status)s" % {'status': obj.ok_status()}))
         translation.activate(cur_language)
@@ -76,7 +92,8 @@ class MemberAdmin(admin.ModelAdmin):
 
 
 class CheckinAdmin(admin.ModelAdmin):
-    list_display = ['checkin_user', 'checkin_phone_number', 'checkin_telegram_username', 'time_stamp', 'overdue', 'is_ok']
+    list_display = ['checkin_user', 'checkin_phone_number', 'checkin_telegram_username', 'time_stamp', 'overdue',
+                    'is_ok']
     list_filter = ['member__is_ok']
     list_select_related = True
     search_fields = ['member__name', 'member__phone_number', 'member__telegram_username']
