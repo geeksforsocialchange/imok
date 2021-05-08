@@ -25,7 +25,7 @@ You should now be able to select Welsh as an option in the admin panel.
 
 ## New (or changed) strings to be translated
 
-1. `django-admin makemessages -l en_GB --ignore venv` to update the reference translation.
+1. `django-admin makemessages -l en_GB --ignore venv --no-obsolete` to update the reference translation.
 2. Import the generated `locale/en_GB/LC_MESSAGES/django.po` file into POEditor
 3. Update the English translation in POEditor and export back to `locale/en_GB/LC_MESSAGES/django.po`
 4. Raise a pull request with this new string, and (optionally) notify translators that there are new strings to translate
