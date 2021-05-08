@@ -30,13 +30,13 @@ SUPPORTED_CHANNELS = list(map(lambda c: (c, c.title()), settings.SUPPORTED_CHANN
 def validate_telegram_username(value):
     if value.startswith("@"):
         raise ValidationError(
-            _('%(value)s should not include the "@"'),
+            '%(value)s should not include the "@"',
             params={'value': value},
         )
     validator_regex = re.compile('[a-zA-Z0-9_]{5,32}')
     if not validator_regex.match(value):
         raise ValidationError(
-            _('%(value)s is not a valid telegram username, valid usernames are 5 to 32 characters long containing letters, numers or _'),
+            '%(value)s is not a valid telegram username, valid usernames are 5 to 32 characters long containing letters, numers or _',
             params={'value':value},
          )
 
@@ -77,9 +77,9 @@ class Member(models.Model):
 
     def ok_status(self):
         state = {
-            None: _("Maybe ok"),
-            True: _("OK"),
-            False: _("Not OK")
+            None: "Maybe ok",
+            True: "OK",
+            False: "Not OK"
         }
         return state[self.is_ok]
 
