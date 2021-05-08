@@ -197,7 +197,7 @@ class Checkin(models.Model):
         body = f"{self.member.name} ({self.member.phone_number}) didn't sign out of {self.member.signing_center}.\n\nThey signed in at {self.time_stamp.strftime('%H:%M on %d/%m/%Y')}.\n\n{notes}."
         print(body)
         notify_admins(subject, body)
-        self.member.send_message(_("You didn't check out of Government Facility.\n\nI notified the admins at %(time)s." % {"time": timezone.localtime().time().strftime('%X')}))
+        self.member.send_message(_("You didn't check out of %(location)s.\n\nI notified the admins at %(time)s." % {"location": self.member.signing_center,"time": timezone.localtime().time().strftime('%X')}))
 
     def save(self, *args, **kwargs):
         increment_hourly_metric('checkin', self.member.signing_center)
