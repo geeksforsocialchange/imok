@@ -9,7 +9,7 @@ install:
 
 .PHONY: test
 test:
-	docker-compose run web python manage.py behave
+	docker-compose run web python manage.py behave --simple --failfast
 
 .PHONY: superuser
 superuser:

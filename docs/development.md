@@ -27,7 +27,7 @@ Tests are written using BDD in the features directory.
 
 To run the tests:
 
-`docker-compose run web python manage.py behave --simple`
+`docker-compose run web python manage.py behave --simple --failfast` or `make test`
 
 We also provide twilio_mock.py for use with manual testing of the Twilio webhooks.  It allows you to send a message to the system as follows:
 
