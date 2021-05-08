@@ -1,0 +1,166 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: imok\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-05-08 11:32+0100\n"
+"PO-Revision-Date: 2021-05-08 12:44\n"
+"Last-Translator: \n"
+"Language-Team: Tigrinya\n"
+"Language: ti\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: imok\n"
+"X-Crowdin-Project-ID: 455174\n"
+"X-Crowdin-Language: ti\n"
+"X-Crowdin-File: /[geeksforsocialchange.imok] main/locale/cy_GB/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 12\n"
+
+#: application/admin.py:18
+#| msgid ""
+#| "Welcome to imok! Your number has been added by %(admin)s. Would you like "
+#| "to register for this service? \n"
+#| "\n"
+#| "Reply YES if so"
+msgid "You've been invited to join %(server name)s!\n\n"
+"Would you like to register for this service?\n\n"
+"Reply YES to join."
+msgstr ""
+
+#: application/admin.py:78
+#, python-format
+msgid "You've been invited to join %(server name)s!<br/>Would you like to register for this service?<br/>If so, go to this link: %(signup_url)s<br/>Then, send INFO to get a command list."
+msgstr ""
+
+#: application/admin.py:85
+#| msgid "An admin has marked you as {self.ok_status}"
+msgid "An admin has marked you as %(status)s"
+msgstr ""
+
+#: application/commands.py:26
+msgid "Sorry, I didn't understand that message.\n\n"
+"Send INFO for a list of commands I understand."
+msgstr ""
+
+#: application/commands.py:42
+#, python-format
+msgid "You have set your name to %(name)s"
+msgstr ""
+
+#: application/commands.py:62
+#, python-format
+msgid "Welcome to %(server)s, %(member name)s!\n\n"
+"You can send me the following commands, or text %(imok phone number)s:\n\n"
+"IN: Check in to %(signing center)s\n\n"
+"OUT: Check out (after check in)\n\n"
+"NAME: Update your name\n\n"
+"SOS: Raise the alarm\n\n"
+"INFO: Get this message again\n\n"
+"You can also message me on Telegram: %(telegram link)s"
+msgstr ""
+
+#: application/models.py:33
+#, python-format
+msgid "%(value)s should not include the \"@\""
+msgstr ""
+
+#: application/models.py:39
+#, python-format
+msgid "%(value)s is not a valid telegram username, valid usernames are 5 to 32 characters long containing letters, numers or _"
+msgstr ""
+
+#: application/models.py:80
+msgid "Maybe ok"
+msgstr ""
+
+#: application/models.py:81
+msgid "OK"
+msgstr ""
+
+#: application/models.py:82
+msgid "Not OK"
+msgstr ""
+
+#: application/models.py:95
+#, python-format
+msgid "Your check in time at %(center)s is %(in time)s.\n\n"
+"I will raise the alarm if you don't check out by %(out time)s.\n\n"
+"I will update your check in time if you message IN again."
+msgstr ""
+
+#: application/models.py:102
+#| msgid "You were already checked in. Your check in time has been updated"
+msgid "You were already checked in.\n\n"
+"I updated your check in time to %(time)s."
+msgstr ""
+
+#. Translators: the uppercase commands need to remain in English
+#: application/models.py:116
+#| msgid "You were not checked in. To check in message IN"
+msgid "You were not checked in.\n\n"
+"To check in, message IN.\n\n"
+"To raise the alarm, message SOS."
+msgstr ""
+
+#. Translators: feel free to change this to a similar sentiment in your culture
+#: application/models.py:119
+#, python-format
+msgid "Your check out time from %(center)s is %(time)s.\n\n"
+"I hope you have a lovely day!"
+msgstr ""
+
+#: application/models.py:142
+#, python-format
+msgid "Thank you for letting me know.\n\n"
+"I notified the admins at %(time)s."
+msgstr ""
+
+#: application/models.py:175
+#, python-format
+msgid "Have you forgotten to sign out? I am about to notify the admins.\n\n"
+"Please send OUT if you have left %(signing center)s"
+msgstr ""
+
+#: application/models.py:200
+#, python-format
+msgid "You didn't check out of Government Facility.\n\n"
+"I notified the admins at %(time)s."
+msgstr ""
+
+#, python-format
+#~ msgid "Thanks for registering, %(name)s!"
+#~ msgstr "Diolch am gofrestru, %(name)s!"
+
+#~ msgid "To sign in, text IN or I to this number."
+#~ msgstr "I fewngofnodi, tecstiwch IN neu I i'r rhif hwn."
+
+#~ msgid "To correct your name, text NAME followed by your name."
+#~ msgstr "I gywiro'ch enw, tecstiwch NAME ac yna'ch enw."
+
+#~ msgid "To get emergency help, text SOS or HELP."
+#~ msgstr "I gael cymorth brys, tecstiwch SOS neu HELP."
+
+#~ msgid "You were checked in at %(center)s at %(time)s"
+#~ msgstr "Fe'ch gwiriwyd i mewn yn %(center)s ar %(time)s"
+
+#~ msgid "We will alert our team if we don’t hear from you by %(time)s"
+#~ msgstr ""
+#~ "Byddwn yn rhybuddio ein tîm os na fyddwn yn clywed gennych gan %(time)s"
+
+#~ msgid "You were checked out at %(center)s at %(time)s"
+#~ msgstr "Fe'ch gwiriwyd ar %(center)s ar %(time)s"
+
+#~ msgid "Thanks for letting us know, our staff have been notified"
+#~ msgstr "Diolch am roi gwybod i ni, mae ein staff wedi cael eu hysbysu"
+
+#~ msgid "Are you OK? The alarm is about to be raised. Text OUT if you’re OK."
+#~ msgstr ""
+#~ "Wyt ti'n iawn? Mae'r larwm ar fin cael ei godi. Tecstiwch OUT os ydych "
+#~ "chi'n iawn."
+
+#~ msgid "You have failed to sign out, the admins have been notified"
+#~ msgstr ""
+#~ "Rydych wedi methu â llofnodi allan, mae'r edmygwyr wedi cael eu hysbysu"
+
