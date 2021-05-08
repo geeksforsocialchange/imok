@@ -18,5 +18,5 @@ def bot_link():
             telegram_link = f"https://t.me/{r['result']['username']}"
             cache.set('telegram_link', telegram_link, 3600)
         except KeyError:
-            telegram_link = None
+            telegram_link = "Telegram not configured!"
     return telegram_link
