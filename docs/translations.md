@@ -1,6 +1,6 @@
 # Translations
 
-We welcome additional translations.
+We welcome additional translations for messages sent to members. Please note we are not currently translating admin messages until reaching a stable version of imok, as this also requires a significant review of Django's available translations. This means that the admin interface is English
 
 You can provide these in your browser using [POEditor](https://poeditor.com/join/project?hash=p2lHT7RFE5).
 
