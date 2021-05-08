@@ -57,7 +57,7 @@ class MemberAdmin(admin.ModelAdmin):
     def resend_invite(self, request, queryset):
         for member in queryset:
             if member.phone_number is None:
-                messages.error(request, f"{member.name} has no phone number configured, couldn't send SMS")
+                messages.error(request, f"{member.name} has no phone number configured, so I couldn't an send SMS")
             send_invite(member)
         print("sent invite")
 
@@ -72,15 +72,15 @@ class MemberAdmin(admin.ModelAdmin):
             obj.registered_by = request.user
             send_invite(obj)
             if obj.phone_number is None:
-                messages.warning(request, "Couldn't send an sms invite because the member has no phone number. Either "
-                                          "send them a link to the telegram bot or add a phone number and re-send the"
-                                          " invite.  Suggested text:")
-                messages.warning(request, mark_safe(_("You've been invited to join %(server name)s!<br/>"
-                                                      "Would you like to register for this service?<br/>"
-                                                      "If so, go to this link: %(signup_url)s<br/>"
-                                                      "Then, send INFO to get a command list." % {
-                                                          "server name": settings.SERVER_NAME,
-                                                          "signup_url": bot_link()})))
+                messages.warning(request, "I couldn't invite this person by SMS because they have no phone number stored."
+                                          "You can add a phone number and try again, or manually send them a Telegram invite.")
+                messages.info(request, mark_safe("<strong>Suggested Telegram invite message:</strong><br><br>"
+                                                 "You've been invited to join %(server name)s!<br>"
+                                                 "Would you like to register for this service?<br>"
+                                                 "If so, go to this link: %(signup_url)s<br>"
+                                                 "Then, send INFO to get a command list." % {
+                                                      "server name": settings.SERVER_NAME,
+                                                      "signup_url": bot_link()}))
         if 'is_ok' in form.changed_data:
             obj.send_message(_("An admin has marked you as %(status)s" % {'status': obj.ok_status()}))
         translation.activate(cur_language)
