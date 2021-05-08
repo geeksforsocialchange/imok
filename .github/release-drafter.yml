@@ -10,7 +10,16 @@ categories:
         labels:
             - 'bug'
     -   title: '🧰 Maintenance'
-        label: 'chore'
+        labels:
+            - 'chore'
+    -   title: '🌍 Translations'
+        labels:
+            - 'translation'
+            - 'i18n'
+    -   title: '📚 Documentation'
+        labels:
+            - 'documentation'
+            - 'docs'
 version-resolver:
     major:
         labels:
