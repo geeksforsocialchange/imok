@@ -135,7 +135,7 @@ def step_impl(context, member):
     context.test.assertIn(context.text, content)
 
 
-@then(u'{admin} recieves a message in a Telegram group containing: "{content}"')
+@then(u'{admin} receives a message in a Telegram group containing: "{content}"')
 def step_impl(context, admin, content):
     context.test.assertEqual(len(mail.outbox), 1)
     context.test.assertIn(content, mail.outbox[0].body)

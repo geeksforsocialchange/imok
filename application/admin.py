@@ -8,6 +8,7 @@ from django.utils import translation
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
+from .contact_admins import notify_admins
 from .models import Checkin, Member, MetricHour
 from .twilio import twilio_send
 from .telegram_botinfo import bot_link
@@ -49,17 +50,40 @@ class MemberAdmin(admin.ModelAdmin):
             'fields': ('phone_number', 'telegram_username', 'preferred_channel')
         })
     )
-    readonly_fields = ('codename',)
+    readonly_fields = ('codename', 'warning_message_sent_at', 'overdue_message_sent_at', 'sos_alert_received_at')
     search_fields = ['codename', 'name', 'phone_number', 'telegram_username']
-    list_display = ('codename', 'name', 'phone_number', 'telegram_username', 'registered', 'is_ok')
+    list_display = ('codename', 'name', 'phone_number', 'telegram_username', 'registered', 'is_ok', 'warning_message_sent_at', 'overdue_message_sent_at', 'sos_alert_received_at')
     list_filter = ('is_ok', 'registered', 'language', 'signing_center')
+    actions = ["mark_ok", "resend_invite", "delete_checkin"]
 
+    @admin.action(description="Resend SMS invite to selected members")
     def resend_invite(self, request, queryset):
         for member in queryset:
             if member.phone_number is None:
                 messages.error(request, f"{member.name} has no phone number configured, so I couldn't an send SMS")
             send_invite(member)
         print("sent invite")
+
+    @admin.action(description="Mark selected members as ok")
+    def mark_ok(self, request, queryset):
+        for member in queryset:
+            member.is_ok = True
+            member.warning_message_sent_at = None
+            member.overdue_message_sent_at = None
+            member.sos_alert_received_at = None
+            member.save()
+            notify_admins("Member Marked OK", f"{member.name} marked as OK by {request.user}")
+            messages.success(request, f"Marked {member.name} as OK")
+
+    @admin.action(description="Delete member's checkin")
+    def delete_checkin(self, request, queryset):
+        for member in queryset:
+            try:
+                member.checkin.delete()
+            except Checkin.DoesNotExist:
+                pass
+        messages.success(request, "Deleted checkins for selected members")
+
 
     def save_model(self, request, obj, form, change):
         cur_language = translation.get_language()
@@ -81,14 +105,8 @@ class MemberAdmin(admin.ModelAdmin):
                                                  "Then, send INFO to get a command list." % {
                                                       "server name": settings.SERVER_NAME,
                                                       "signup_url": bot_link()}))
-        if 'is_ok' in form.changed_data:
-            obj.send_message(_("An admin has marked you as %(status)s" % {'status': obj.ok_status()}))
         translation.activate(cur_language)
         obj.save()
-
-    if settings.REQUIRE_INVITE:
-        resend_invite.short_description = "Re-send SMS Invite"
-        actions = ["resend_invite"]
 
 
 class CheckinAdmin(admin.ModelAdmin):

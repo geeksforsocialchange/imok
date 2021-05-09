@@ -57,8 +57,10 @@ class Member(models.Model):
     phone_number = PhoneNumberField(max_length=20, unique=True, null=True, blank=True,
                                     help_text="Enter a valid phone number (e.g. 0121 234 5678) or a number with an international call prefix.")
     signing_center = models.CharField(choices=SIGNING_CENTERS, default='dallas court', max_length=50)
-    is_ok = models.BooleanField(null=True)
-    is_warning = models.BooleanField(null=False, default=False)
+    is_ok = models.BooleanField("Is safe", default=True)
+    warning_message_sent_at = models.DateTimeField(null=True)
+    overdue_message_sent_at = models.DateTimeField(null=True)
+    sos_alert_received_at = models.DateTimeField(null=True)
     telegram_username = models.CharField(default='', unique=True, validators=[validate_telegram_username], blank=True, max_length=32, help_text="Without the initial '@'")
     telegram_chat_id = models.BigIntegerField(default=0)
     preferred_channel = models.CharField(choices=SUPPORTED_CHANNELS, default=settings.PREFERRED_CHANNEL, max_length=8,
@@ -77,9 +79,8 @@ class Member(models.Model):
 
     def ok_status(self):
         state = {
-            None: "Maybe ok",
-            True: "OK",
-            False: "Not OK"
+            True: "safe",
+            False: "not safe"
         }
         return state[self.is_ok]
 
@@ -88,7 +89,6 @@ class Member(models.Model):
         out_time = in_time + settings.CHECKIN_TTL
 
         self.is_ok = True
-        self.is_warning = False
         self.save()
         checkin, created = Checkin.objects.update_or_create(member=self, defaults={'time_stamp': in_time})
         if created:
@@ -105,8 +105,7 @@ class Member(models.Model):
         return response
 
     def sign_out(self):
-        self.is_ok = None
-        self.is_warning = False
+        self.is_ok = True
         self.save()
 
         try:
@@ -122,12 +121,8 @@ class Member(models.Model):
                 '%H:%M:%S'))}
 
     def handle_sos(self):
-        # Expression cannot be simplified as this is actually Optional[boolean]
-        if self.is_ok == False:
-            return
-
-        # Flag the member as not ok
         self.is_ok = False
+        self.sos_alert_received_at = timezone.now()
         self.save()
 
         # send notifications
@@ -159,37 +154,24 @@ class Checkin(models.Model):
     time_stamp = models.DateTimeField(auto_now_add=True)
 
     def warn(self):
-        # Don't send a warning if the member is already not ok
-        # This may look like it can be simplified, but it can't
-        if self.member.is_ok == False:
-            return
+        self.member.warning_message_sent_at = timezone.now()
+        self.member.save()
 
-        # Only send a warning if we haven't already done so:
-        if not self.member.is_warning:
-            user_language = self.member.language
-            translation.activate(user_language)
-
-            self.member.is_warning = True
-            self.member.save()
-
-            self.member.send_message(_("Have you forgotten to sign out? I am about to notify the admins.\n\nPlease "
-                                       "send OUT if you have left %(signing center)s" % {
-                                           "signing center": self.member.signing_center}))
+        user_language = self.member.language
+        translation.activate(user_language)
+        self.member.send_message(_("Have you forgotten to sign out? I am about to notify the admins.\n\nPlease "
+                                   "send OUT if you have left %(signing center)s" % {
+                                       "signing center": self.member.signing_center}))
 
     def timeout(self):
-        # Have we already handled this timeout?
-        # Your IDE may say we can simplify this, but we can't
-        if self.member.is_ok == False:
-            return
+        self.member.overdue_message_sent_at = timezone.now()
+        self.member.is_ok = False
+        self.member.save()
 
         user_language = self.member.language
         translation.activate(user_language)
 
-        self.member.is_ok = False
-        self.member.is_warning = False
-        self.member.save()
-
-        subject = f"[IMOK] {self.member.name} is not ok"
+        subject = f"[IMOK] {self.member.name} is not safe"
         if self.member.notes == "":
             notes = "There are no notes saved for this member"
         else:
