@@ -19,8 +19,8 @@ jobs:
            [
            {"keywords":["chore", "fix", "refactor"], "labels": ["chore", "patch"]},
            {"keywords":["docs", "documentation"], "labels": ["docs", "patch"]},
-           {"keywords":["bug", "fix"], "labels": ["bug", "patch"]}
-           {"keywords":["translation", "i18n"], "labels": ["translation", "patch"]}
+           {"keywords":["bug", "fix"], "labels": ["bug", "patch"]},
+           {"keywords":["translation", "i18n"], "labels": ["translation", "patch"]},
            {"keywords":["feat"], "labels": ["enhancement", "minor"]},
            {"keywords":["breaking", "BREAKING CHANGE"], "labels": ["major"]}
            ]
