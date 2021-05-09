@@ -23,7 +23,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
 
           I will update your check in time if you message IN again.
           """
-        And I am ok
+        And I am safe
 
     Scenario: I check out after checking in
         Given my signing center is "Processing Facility"
@@ -37,8 +37,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
 
           I hope you have a lovely day!
           """
-        # TODO: Shouldn't this be "ok"?
-        And I might be ok
+        And I am safe
 
     Scenario: Checking in twice updates the timestamp
         When I send "IN" via twilio at "1983-07-08 20:15:00"
@@ -51,8 +50,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
          I updated your check in time to 20:20:00.
          """
         And the check in time is "1983-07-08 20:20:00"
-        # TODO: Shouldn't this be "maybe ok"?
-        And I am ok
+        And I am safe
 
     Scenario: I can't check out without checking in first
         Given I am not checked in
@@ -80,8 +78,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
 #
 #        Please send OUT if you have left Government Facility.
 #        """
-        # TODO: Shouldn't this be "maybe ok"?
-        And I am ok
+        And I am safe
         And there are 1 warning checkins
 
     Scenario: When time is up, alert the admin team
@@ -96,7 +93,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
 #
 #        I notified the admins at 11:00.
 #        """
-        And I am not ok
+        And I am not safe
         Then an admin is contacted
 
     Scenario: I manually raise the alarm
@@ -107,7 +104,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
 
           I notified the admins at 08:10
           """
-        And I am not ok
+        And I am not safe
 
     Scenario: I send an invalid command
         When I send "Asdasdf" via twilio

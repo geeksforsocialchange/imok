@@ -29,8 +29,8 @@ def handle_command(message, member):
 def register(member):
     member.registered = True
     member.save()
-    time = timezone.localtime().time()
-    date = timezone.localtime().date()
+    time = timezone.localtime().strftime('%X')
+    date = timezone.localtime().strftime('%x')
     notify_admins("New Member",
                   f"{member.name} ({member.phone_number}) successfully activated their account at {time} on {date}.")
     return info(member)

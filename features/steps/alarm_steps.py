@@ -184,28 +184,22 @@ def step_impl(context, some):
     context.test.assertEqual(str(count[1]), some)
 
 
-@then(u'I am not ok')
+@then(u'I am not safe')
 def step_impl(context):
     context.member.refresh_from_db()
     context.test.assertEqual(context.member.is_ok, False)
 
 
-@then(u'I am ok')
+@then(u'I am safe')
 def step_impl(context):
     context.member.refresh_from_db()
     context.test.assertTrue(context.member.is_ok)
 
 
-@then(u'I might be ok')
-def step_impl(context):
-    context.member.refresh_from_db()
-    context.test.assertIn(context.member.is_ok, [True, None])
-
-
 @then(u'an admin is contacted')
 def step_impl(context):
     context.test.assertEqual(len(mail.outbox), 1)
-    context.test.assertEqual(mail.outbox[0].subject, "[IMOK] Fake User is not ok")
+    context.test.assertEqual(mail.outbox[0].subject, "[IMOK] Fake User is not safe")
 
 
 @given(u'{member} signed in at "{time}"')

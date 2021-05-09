@@ -107,10 +107,10 @@ def step_impl(context):
     context.test.client.login(username='alice', password='password')
     data = model_to_dict(Member())
     data['_save'] = 'save'
-    data['registered_by'] = context.adminuser
+    data['registered_by'] = 'root'
     data['phone_number'] = ''
     data['is_ok'] = True
-    response = context.test.client.post("/ruok/application/member/add/", data)
+    response = context.test.client.post("/ruok/application/member/add/", data, content_type="application/json")
     context.test.assertEqual(response.status_code, 403)
 
 
@@ -145,10 +145,10 @@ def step_impl(context):
     context.test.client.login(username='alice', password='password')
     data = model_to_dict(Member())
     data['_save'] = 'save'
-    data['registered_by'] = context.adminuser
+    data['registered_by'] = 'root'
     data['phone_number'] = ''
     data['is_ok'] = True
-    response = context.test.client.post("/ruok/application/member/add/", data)
+    response = context.test.client.post("/ruok/application/member/add/", data, content_type="application/json")
     context.test.assertEqual(response.status_code, 200)
 
 
