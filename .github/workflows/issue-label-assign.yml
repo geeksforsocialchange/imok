@@ -18,7 +18,7 @@ jobs:
           parameters: >
            [
            {"keywords":["chore", "fix", "refactor"], "labels": ["chore", "patch"]},
-           {"keywords":["docs"], "labels": ["docs", "patch"]},
+           {"keywords":["docs", "documentation"], "labels": ["docs", "patch"]},
            {"keywords":["bug", "fix"], "labels": ["bug", "patch"]}
            {"keywords":["translation", "i18n"], "labels": ["translation", "patch"]}
            {"keywords":["feat"], "labels": ["enhancement", "minor"]},

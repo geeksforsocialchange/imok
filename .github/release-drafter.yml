@@ -15,10 +15,8 @@ categories:
     -   title: '🌍 Translations'
         labels:
             - 'translation'
-            - 'i18n'
     -   title: '📚 Documentation'
         labels:
-            - 'documentation'
             - 'docs'
 version-resolver:
     major:
