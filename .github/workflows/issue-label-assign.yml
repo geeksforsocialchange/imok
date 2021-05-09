@@ -17,9 +17,10 @@ jobs:
           title-or-body: 'title'
           parameters: >
            [
-           {"keywords":["chore", "fix"],"labels":["chore", "patch"]},
-           {"keywords":["docs"],"labels":["patch", "documentation"]},
-           {"keywords":["refactor"],"labels":["patch"]},
-           {"keywords":["feat"],"labels":["enhancement", "minor"]},
-           {"keywords":["breaking", "BREAKING CHANGE"],"labels":["major"]}
+           {"keywords":["chore", "fix", "refactor"], "labels": ["chore", "patch"]},
+           {"keywords":["docs", "documentation"], "labels": ["docs", "patch"]},
+           {"keywords":["bug", "fix"], "labels": ["bug", "patch"]}
+           {"keywords":["translation", "i18n"], "labels": ["translation", "patch"]}
+           {"keywords":["feat"], "labels": ["enhancement", "minor"]},
+           {"keywords":["breaking", "BREAKING CHANGE"], "labels": ["major"]}
            ]
