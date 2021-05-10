@@ -19,7 +19,7 @@ from django.urls import include, path
 
 admin.site.site_header = f"{settings.SERVER_NAME} admin"
 admin.site.site_title = f"{settings.SERVER_NAME} admin"
-admin.site.index_title = f"Welcome to the ${settings.SERVER_NAME} admin interface!"
+admin.site.index_title = f"Welcome to the {settings.SERVER_NAME} admin interface!"
 
 urlpatterns = [
     path('application/', include('application.urls')),
