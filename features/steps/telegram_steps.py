@@ -40,6 +40,30 @@ def step_impl(context, message):
         context.test.assertEqual(context.response.status_code, 200)
 
 
+@when(u'I validate telegram username {username}')
+def step_impl(context, username):
+    from application.models import validate_telegram_username
+    try:
+        validate_telegram_username(username)
+        context.validationerror = 'None'
+    except Exception as e:
+        context.validationerror = str(type(e))
+
+
+@when(u'I create a member with a duplicate telegram username')
+def step_impl(context):
+    Member(telegram_username='testuserabc123').save()
+    try:
+        Member(telegram_username='testuserabc123').save()
+    except Exception as e:
+        context.validationerror = str(type(e))
+
+
+@then(u'I see the error {error}')
+def step_impl(context, error):
+    context.test.assertEqual(error, context.validationerror)
+
+
 def telegram_message(message, username='test_user', chat_id=1):
     body = {
         "update_id": 12345678,
