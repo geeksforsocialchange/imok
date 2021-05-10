@@ -66,10 +66,10 @@ def info(member):
              "NAME: Update your name\n\n"
              "SOS: Raise the alarm\n\n"
              "INFO: Get this message again\n\n"
-             "You can also message me on Telegram: %(telegram link)s" % {
+             "You can also message me on Telegram: %(telegram link)s") % {
                  "server": settings.SERVER_NAME,
                  "member name": member.name,
                  "imok phone number": settings.TWILIO_FROM_NUMBER,
                  "signing center": member.signing_center,
                  "telegram link": bot_link()
-             })
+             }
