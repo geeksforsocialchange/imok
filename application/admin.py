@@ -84,29 +84,30 @@ class MemberAdmin(admin.ModelAdmin):
                 pass
         messages.success(request, "Deleted checkins for selected members")
 
-
     def save_model(self, request, obj, form, change):
-        cur_language = translation.get_language()
-        user_language = obj.language
-        translation.activate(user_language)
-
         if obj.registered_by is None:
             if not settings.REQUIRE_INVITE:
                 obj.registered = True
             obj.registered_by = request.user
-            send_invite(obj)
-            if obj.phone_number is None:
-                messages.warning(request, "I couldn't invite this person by SMS because they have no phone number stored."
-                                          "You can add a phone number and try again, or manually send them a Telegram invite.")
-                messages.info(request, mark_safe("<strong>Suggested Telegram invite message:</strong><br><br>"
-                                                 "You've been invited to join %(server name)s!<br>"
-                                                 "Would you like to register for this service?<br>"
-                                                 "If so, go to this link: %(signup_url)s<br>"
-                                                 "Then, send INFO to get a command list." % {
-                                                      "server name": settings.SERVER_NAME,
-                                                      "signup_url": bot_link()}))
-        translation.activate(cur_language)
-        obj.save()
+
+            user_language = obj.language
+            cur_language = translation.get_language()
+            try:
+                translation.activate(user_language)
+                send_invite(obj)
+                if obj.phone_number is None:
+                    messages.warning(request, "I couldn't invite this person by SMS because they have no phone number stored."
+                                              "You can add a phone number and try again, or manually send them a Telegram invite.")
+                    messages.info(request, mark_safe("<strong>Suggested Telegram invite message:</strong><br><br>"
+                                                     "You've been invited to join %(server name)s!<br>"
+                                                     "Would you like to register for this service?<br>"
+                                                     "If so, go to this link: %(signup_url)s<br>"
+                                                     "Then, send INFO to get a command list.") % {
+                                                          "server name": settings.SERVER_NAME,
+                                                          "signup_url": bot_link()})
+            finally:
+                translation.activate(cur_language)
+            obj.save()
 
 
 class CheckinAdmin(admin.ModelAdmin):

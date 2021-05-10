@@ -15,6 +15,7 @@ Adding additional languages requires a number of steps. If you are unable to fol
 1. `django-admin makemessages -l cy_GB --ignore venv` to create the PO file
 1. Add the language to POEditor if you have access
 1. If you can provide translations, do so by either editing the generated `locale/cy_GB/LC_MESSAGES/django.po` file directly or by copying across the exported PO file from POEditor
+1. Run `docker-compose run web python manage.py compilemessages` to compile the translation file
 1. Edit `imok/settings.py` to add `('cy-gb', 'Welsh')` to LANGUAGES
 1. Edit `application/models.py` to add `('cy_GB', 'Welsh')` to LANGUAGES
 1. Run `docker-compose run web python manage.py makemigrations` to list Welsh as an option in the admin screen
@@ -30,6 +31,7 @@ You can provide improved translations through [POEditor](https://poeditor.com/jo
 1. Submit the changes via POEditor
 1. Export the language as a PO file
 1. Copy this PO file over the top of the appropriate file in the repository
+1. Run `docker-compose run web python manage.py compilemessages` to compile the translation file
 1. Raise a pull request
 
 ## How to update the reference translation when imok is updated
@@ -39,4 +41,5 @@ When new strings are added or edited to the base project, the base (English) tra
 1. `django-admin makemessages -l en_GB --ignore venv --no-obsolete` to update the reference translation.
 1. Import the generated `locale/en_GB/LC_MESSAGES/django.po` file into POEditor
 1. Update the English translation in POEditor and export back to `locale/en_GB/LC_MESSAGES/django.po`
+1. Run `docker-compose run web python manage.py compilemessages` to compile the translation file
 1. Raise a pull request with this new string, and (optionally) notify translators that there are new strings to translate

@@ -22,7 +22,7 @@ import re
 
 logger = logging.getLogger(__name__)
 
-LANGUAGES = [('en_gb', 'English'), ('cy_GB', 'Welsh')]
+LANGUAGES = [('en_GB', 'English'), ('fr_FR', 'French')]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
 SUPPORTED_CHANNELS = list(map(lambda c: (c, c.title()), settings.SUPPORTED_CHANNELS))
 
@@ -92,16 +92,15 @@ class Member(models.Model):
         self.save()
         checkin, created = Checkin.objects.update_or_create(member=self, defaults={'time_stamp': in_time})
         if created:
-            response = _("Your check in time at %(center)s is %(in time)s.\n\nI will raise the alarm if you don't "
-                         "check out by %(out time)s.\n\nI will update your check in time if you message IN again." % {
+            response = _("Your check in time at %(center)s is %(in time)s.\n\nI will raise the alarm if you don't check out by %(out time)s.\n\nI will update your check in time if you message IN again.") % {
                              "center": self.signing_center,
                              "in time": str(in_time.time().strftime('%X')),
                              "out time": out_time.strftime('%X')
-                         })
+                         }
         else:
-            response = _("You were already checked in.\n\nI updated your check in time to %(time)s." % {
+            response = _("You were already checked in.\n\nI updated your check in time to %(time)s.") % {
                 "time": in_time.time().strftime('%X')
-            })
+            }
         return response
 
     def sign_out(self):
@@ -134,8 +133,8 @@ class Member(models.Model):
             notes = f"Notes: {self.notes}"
         body = f"{self.name} ({self.phone_number}) sent an SOS at {self.signing_center}.\n\nThey raised it at {time.strftime('%H:%M')} on {time.strftime('%d/%m/%Y')}.\n\n{notes}."
         notify_admins(subject, body)
-        return _("Thank you for letting me know.\n\nI notified the admins at %(time)s." % {
-            "time": timezone.localtime().time().strftime('%X')})
+        return _("Thank you for letting me know.\n\nI notified the admins at %(time)s.") % {
+            "time": timezone.localtime().time().strftime('%X')}
 
     def send_message(self, message):
         if self.preferred_channel == 'TELEGRAM':
@@ -160,8 +159,8 @@ class Checkin(models.Model):
         user_language = self.member.language
         translation.activate(user_language)
         self.member.send_message(_("Have you forgotten to sign out? I am about to notify the admins.\n\nPlease "
-                                   "send OUT if you have left %(signing center)s" % {
-                                       "signing center": self.member.signing_center}))
+                                   "send OUT if you have left %(signing center)s") % {
+                                       "signing center": self.member.signing_center})
 
     def timeout(self):
         self.member.overdue_message_sent_at = timezone.now()
@@ -179,7 +178,7 @@ class Checkin(models.Model):
         body = f"{self.member.name} ({self.member.phone_number}) didn't sign out of {self.member.signing_center}.\n\nThey signed in at {self.time_stamp.strftime('%H:%M on %d/%m/%Y')}.\n\n{notes}."
         print(body)
         notify_admins(subject, body)
-        self.member.send_message(_("You didn't check out of %(location)s.\n\nI notified the admins at %(time)s." % {"location": self.member.signing_center,"time": timezone.localtime().time().strftime('%X')}))
+        self.member.send_message(_("You didn't check out of %(location)s.\n\nI notified the admins at %(time)s.") % {"location": self.member.signing_center,"time": timezone.localtime().time().strftime('%X')})
 
     def save(self, *args, **kwargs):
         increment_hourly_metric('checkin', self.member.signing_center)
