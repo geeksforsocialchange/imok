@@ -17,6 +17,7 @@ Feature: translation support
         | language | locale |
         | English  | en_GB  |
         | French   | fr_FR  |
+        | German   | de_DE  |
 
     Scenario: locale files are the same length
         Given the reference locale en_GB

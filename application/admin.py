@@ -89,11 +89,8 @@ class MemberAdmin(admin.ModelAdmin):
             if not settings.REQUIRE_INVITE:
                 obj.registered = True
             obj.registered_by = request.user
-
-            user_language = obj.language
-            cur_language = translation.get_language()
-            try:
-                translation.activate(user_language)
+            obj.save()
+            with translation.override(obj.language, deactivate=True):
                 send_invite(obj)
                 if obj.phone_number is None:
                     messages.warning(request, "I couldn't invite this person by SMS because they have no phone number stored."
@@ -102,12 +99,10 @@ class MemberAdmin(admin.ModelAdmin):
                                                      "You've been invited to join %(server name)s!<br>"
                                                      "Would you like to register for this service?<br>"
                                                      "If so, go to this link: %(signup_url)s<br>"
-                                                     "Then, send INFO to get a command list.") % {
+                                                     "Then, send INFO to get a command list." % {
                                                           "server name": settings.SERVER_NAME,
-                                                          "signup_url": bot_link()})
-            finally:
-                translation.activate(cur_language)
-            obj.save()
+                                                          "signup_url": bot_link()}))
+        obj.save()
 
 
 class CheckinAdmin(admin.ModelAdmin):

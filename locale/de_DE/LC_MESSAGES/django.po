@@ -1,0 +1,132 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: imok - a simple bot to support people doing risky activities\n"
+"Language: de\n"
+
+#: application/commands.py:42
+msgid "You have set your name to %(name)s"
+msgstr "Ihr Name wurde zu %(name)s geändert"
+
+#: application/commands.py:26
+msgid "Sorry, I didn't understand that message.\n"
+"\n"
+"Send INFO for a list of commands I understand."
+msgstr "Entschuldigung, das habe ich nicht verstanden. \n"
+"\n"
+"Schicken Sie eine SMS mit INFO um eine Liste mit Anweisungen zu bekommen."
+
+#: application/models.py:95
+msgid "Your check in time at %(center)s is %(in time)s.\n"
+"\n"
+"I will raise the alarm if you don't check out by %(out time)s.\n"
+"\n"
+"I will update your check in time if you message IN again."
+msgstr "Ihre Anmeldezeit bei %(center)s ist %(in time)s.\n"
+"\n"
+"Ich werde das Team benachrichtigen, falls Sie sich nicht um %(out time)s abgemeldet haben.\n"
+"\n"
+"Ich werde die Anmeldezeit aktualisieren, wenn Sie wieder eine SMS mit IN schicken."
+
+#: application/models.py:101
+msgid "You were already checked in.\n"
+"\n"
+"I updated your check in time to %(time)s."
+msgstr "Sie sind schon angemeldet.\n"
+"\n"
+"Ich habe Ihre Anmeldezeit auf %(time)s aktualisiert."
+
+#. Translators: the uppercase commands need to remain in English
+#: application/models.py:114
+msgid "You were not checked in.\n"
+"\n"
+"To check in, message IN.\n"
+"\n"
+"To raise the alarm, message SOS."
+msgstr "Sie wurden nicht angemeldet.\n"
+"\n"
+"Um sich anzumelde, schicken Sie eine SMS mit IN.\n"
+"\n"
+"Um Alarm zu geben, schicken Sie eine SMS mit SOS."
+
+#. Translators: feel free to change this to a similar sentiment in your culture
+#: application/models.py:117
+msgid "Your check out time from %(center)s is %(time)s.\n"
+"\n"
+"I hope you have a lovely day!"
+msgstr "Ihre Abmeldezeit aus %(center)s ist %(time)s.\n"
+"\n"
+"Haben Sie noch einen schönen Tag!"
+
+#. This is missing the time in the output
+#: application/models.py:136
+msgid "Thank you for letting me know.\n"
+"\n"
+"I notified the admins at %(time)s."
+msgstr "Vielen Dank für Ihre Nachricht. \n"
+"\n"
+"Ich habe den Administratoren um %(time)s Bescheid gegeben."
+
+#: application/models.py:161
+msgid "Have you forgotten to sign out? I am about to notify the admins.\n"
+"\n"
+"Please send OUT if you have left %(signing center)s"
+msgstr "Haben Sie vergessen, sich abzumelden? Ich werde in Kürze die Administratoren benachrichtigen. \n"
+"\n"
+"Bitte schicken Sie eine SMS mit OUT falls Sie %(signing center)s verlassen haben."
+
+#: application/admin.py:19
+msgid "You've been invited to join %(server name)s!\n"
+"\n"
+"Would you like to register for this service?\n"
+"\n"
+"Reply YES to join."
+msgstr "Sie sind zum Server %(server name)s eingeladen worden. \n"
+"\n"
+"Möchten Sie sich bei diesem Dienst anmelden?\n"
+"\n"
+"Schicken Sie eine SMS mit YES, um sich anzumelden."
+
+#: application/commands.py:62
+msgid "Welcome to %(server)s, %(member name)s!\n"
+"\n"
+"You can send me the following commands, or text %(imok phone number)s:\n"
+"\n"
+"IN: Check in to %(signing center)s\n"
+"\n"
+"OUT: Check out (after check in)\n"
+"\n"
+"NAME: Update your name\n"
+"\n"
+"SOS: Raise the alarm\n"
+"\n"
+"INFO: Get this message again\n"
+"\n"
+"You can also message me on Telegram: %(telegram link)s"
+msgstr "Willkommen bei %(server)s, %(member name)s!\n"
+"\n"
+"Sie können folgende Anweisungen hier auf dem Server, oder per SMS an  schicken %(imok phone number)s:\n"
+"\n"
+"IN: Sie melden sich bei %(signing center)s an\n"
+"\n"
+"OUT: Sie melden sich bei (after check in) ab\n"
+"\n"
+"NAME: Aktualisieren Sie Ihren Namen\n"
+"\n"
+"SOS: Geben Sie Alarm\n"
+"\n"
+"INFO: Erhalten Sie diese Nachricht noch einmal\n"
+"\n"
+"Sie können mir auch bei Telegram Nachrichten schicken: %(telegram link)s"
+
+#: application/models.py:181
+msgid "You didn't check out of %(location)s.\n"
+"\n"
+"I notified the admins at %(time)s."
+msgstr "Sie haben sich bei %(location)s nicht abgemeldet. \n"
+"\n"
+"Ich habe die Administratoren um %(time)s. benachrichtigt."
+
