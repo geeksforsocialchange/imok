@@ -139,3 +139,12 @@ def step_impl(context, member):
 def step_impl(context, admin, content):
     context.test.assertEqual(len(mail.outbox), 1)
     context.test.assertIn(content, mail.outbox[0].body)
+
+
+@when(u'I create a member with a duplicate phone_number')
+def step_impl(context):
+    Member(phone_number='+15005550000').save()
+    try:
+        Member(phone_number='+15005550000').save()
+    except Exception as e:
+        context.validationerror = str(type(e))

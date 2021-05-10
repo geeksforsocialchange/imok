@@ -53,3 +53,22 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
     Scenario: I manually raise the alarm
         When I send "SOS" via telegram
         Then I am not safe
+
+
+    Scenario Outline: Telegram usernames are validated
+        When I validate telegram username <username>
+        Then I see the error <return>
+
+        Examples:
+        | username | return |
+        | bob      | <class 'django.core.exceptions.ValidationError'> |
+        | @bob     | <class 'django.core.exceptions.ValidationError'> |
+        | alice    | None            |
+        | @alice   | <class 'django.core.exceptions.ValidationError'> |
+        | f45c54dd41cf3c1ebb3ec935b943a104  | None |
+        | f45c54dd41cf3c1ebb3ec935b943a104a | <class 'django.core.exceptions.ValidationError'> |
+        | @f45c54dd41cf3c1ebb3ec935b943a104 | <class 'django.core.exceptions.ValidationError'> |
+
+    Scenario: Duplicate telegram usernames are not allowed
+        When I create a member with a duplicate telegram username
+        Then I see the error <class 'django.db.utils.IntegrityError'>

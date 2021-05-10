@@ -135,3 +135,7 @@ Feature: Members can check in and out, and an alarm is raised if they don't chec
         INFO: Get this message again
         """
         And this message only uses 2 SMS messages to send
+
+    Scenario: Duplicate phone numbers are not allowed
+        When I create a member with a duplicate phone_number
+        Then I see the error <class 'django.db.utils.IntegrityError'>

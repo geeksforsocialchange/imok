@@ -33,7 +33,7 @@ def validate_telegram_username(value):
             '%(value)s should not include the "@"',
             params={'value': value},
         )
-    validator_regex = re.compile('[a-zA-Z0-9_]{5,32}')
+    validator_regex = re.compile('^[a-zA-Z0-9_]{5,32}$')
     if not validator_regex.match(value):
         raise ValidationError(
             '%(value)s is not a valid telegram username, valid usernames are 5 to 32 characters long containing letters, numers or _',
@@ -61,7 +61,7 @@ class Member(models.Model):
     warning_message_sent_at = models.DateTimeField(null=True)
     overdue_message_sent_at = models.DateTimeField(null=True)
     sos_alert_received_at = models.DateTimeField(null=True)
-    telegram_username = models.CharField(default='', unique=True, validators=[validate_telegram_username], blank=True, max_length=32, help_text="Without the initial '@'")
+    telegram_username = models.CharField(default='', null=True, unique=True, validators=[validate_telegram_username], blank=True, max_length=32, help_text="Without the initial '@'")
     telegram_chat_id = models.BigIntegerField(default=0)
     preferred_channel = models.CharField(choices=SUPPORTED_CHANNELS, default=settings.PREFERRED_CHANNEL, max_length=8,
                                          help_text="Which channel should the app contact the user via?")
@@ -75,6 +75,8 @@ class Member(models.Model):
             self.codename = generate_codename()
             while Member.objects.filter(codename=self.codename).exists():
                 self.codename = generate_codename()
+        if not self.telegram_username:
+            self.telegram_username = None
         super(Member, self).save()
 
     def ok_status(self):
