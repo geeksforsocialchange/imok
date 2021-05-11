@@ -70,7 +70,7 @@ See [development.md](docs/development.md) for how to set up a development enviro
 
 ### Translations
 
-Imok allows language selection for users. Currently available translations are in the [locales](locales) directory. We welcome translation into other languages.
+Imok allows language selection for users. Currently available translations are in the [locale](locale) directory. We welcome translation into other languages.
 
 Please note server commands in caps ('YES', 'IN', 'OUT' etc.) are not currently translatable. Please leave these in English in your translations.
 
