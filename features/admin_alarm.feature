@@ -13,9 +13,9 @@ Feature: An admin telegram group gets updated when there is an alert
         Then there are 1 overdue checkins
         And the admins receive a message containing:
         """
-        Mo Member (+447740000000) didn't sign out of Government Facility.
+        ⚠️ Mo Member (+447740000000) didn't sign out of Government Facility.
 
-        They signed in at 09:00 on 17/07/1936.
+        ⏰ They signed in at 09:00 on 17/07/1936.
         """
         And the admins receive a message containing <output>
         Examples:
@@ -32,9 +32,9 @@ Feature: An admin telegram group gets updated when there is an alert
         And Mo Member raises the alarm at "2020-10-01 23:12:12"
         Then the admins receive a message containing:
         """
-        Mo Member (+447740000000) sent an SOS at Government Facility.
+        ⚠️ Mo Member (+447740000000) sent an SOS at Government Facility.
 
-        They raised it at 23:12 on 01/10/2020.
+        ⏰ They raised it at 23:12 on 01/10/2020.
         """
         And the admins receive a message containing <output>
         Examples:
