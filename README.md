@@ -86,7 +86,7 @@ We can also set up an installation for you for a fee. All funds raised go toward
 
 ## Donations
 
-Imok has been developed entirely by volunteers in the Geeks for Social Change collective. If you'd like to support development, please consider sending us a one-off or regular donation.
+Imok has been developed entirely by volunteers in the [Geeks for Social Change](https://gfsc.studio/) collective. If you'd like to support development, please consider sending us a one-off or regular donation.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M43THUM)
 
