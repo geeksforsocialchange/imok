@@ -20,8 +20,8 @@ Feature: An admin telegram group gets updated when there is an alert
         And the admins receive a message containing <output>
         Examples:
         | notes | output |
-        | None  | There are no notes saved for this member |
-        | My emergency contact is Mum Member on +447740000000 | My emergency contact is Mum Member on +447740000000 |
+        | None  | 📝 No notes saved for this member |
+        | My emergency contact is Mum Member on +447740000000 | 📝 My emergency contact is Mum Member on +447740000000 |
 
 
 
@@ -39,5 +39,5 @@ Feature: An admin telegram group gets updated when there is an alert
         And the admins receive a message containing <output>
         Examples:
         | notes | output |
-        | None  | There are no notes saved for this member |
-        | My emergency contact is Mum Member on +447740000000 | My emergency contact is Mum Member on +447740000000 |
+        | None  | 📝 No notes saved for this member |
+        | My emergency contact is Mum Member on +447740000000 | 📝 My emergency contact is Mum Member on +447740000000 |

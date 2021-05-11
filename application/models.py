@@ -135,10 +135,10 @@ class Member(models.Model):
         time = timezone.localtime()
         subject = f"[IMOK] {self.name} sent an SOS"
         if self.notes == "":
-            notes = "There are no notes saved for this member"
+            notes = "No notes saved for this member"
         else:
-            notes = f"Notes: {self.notes}"
-        body = f"⚠️ {self.name} ({self.phone_number}) sent an SOS at {self.signing_center}.\n\n⏰ They raised it at {time.strftime('%H:%M')} on {time.strftime('%d/%m/%Y')}.\n\n{notes}."
+            notes = f"{self.notes}"
+        body = f"⚠️ {self.name} ({self.phone_number}) sent an SOS at {self.signing_center}.\n\n⏰ They raised it at {time.strftime('%H:%M')} on {time.strftime('%d/%m/%Y')}.\n\n📝 {notes}."
         notify_admins(subject, body)
         return _("Thank you for letting me know.\n\nI notified the admins at %(time)s.") % {
             "time": timezone.localtime().time().strftime('%X')}
@@ -179,10 +179,10 @@ class Checkin(models.Model):
 
         subject = f"[IMOK] {self.member.name} is not safe"
         if self.member.notes == "":
-            notes = "There are no notes saved for this member"
+            notes = "No notes saved for this member"
         else:
-            notes = f"Notes: {self.member.notes}"
-        body = f"⚠️ {self.member.name} ({self.member.phone_number}) didn't sign out of {self.member.signing_center}.\n\n⏰ They signed in at {self.time_stamp.strftime('%H:%M on %d/%m/%Y')}.\n\n{notes}."
+            notes = f"{self.member.notes}"
+        body = f"⚠️ {self.member.name} ({self.member.phone_number}) didn't sign out of {self.member.signing_center}.\n\n⏰ They signed in at {self.time_stamp.strftime('%H:%M on %d/%m/%Y')}.\n\n📝 {notes}."
         print(body)
         notify_admins(subject, body)
         self.member.send_message(_("You didn't check out of %(location)s.\n\nI notified the admins at %(time)s.") % {"location": self.member.signing_center,"time": timezone.localtime().time().strftime('%X')})
