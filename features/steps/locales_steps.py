@@ -1,4 +1,5 @@
 import os
+import re
 
 from behave import given, when, then
 from django.conf import settings
@@ -37,7 +38,7 @@ def step_impl(context, locale):
 
 @then(u'the language {language} maps to {locale} in settings.py')
 def step_impl(context, language, locale):
-    context.test.assertIn((lower_dashed_locale(locale), language), settings.LANGUAGES)
+    context.test.assertIn((translation.to_language(locale), language), settings.LANGUAGES)
 
 
 @then(u'the language {language} maps to {locale} in the members model')
@@ -49,13 +50,6 @@ def step_impl(context, language, locale):
 @then(u'the locale {locale} can be activated')
 def step_impl(context, locale):
     translation.activate(locale)
-
-
-@then(u'the {locale} mo file is newer than the po file')
-def step_impl(context, locale):
-    po_file = Path(os.path.join(settings.BASE_DIR, "locale", locale, "LC_MESSAGES", "django.po"))
-    mo_file = Path(os.path.join(settings.BASE_DIR, "locale", locale, "LC_MESSAGES", "django.mo"))
-    context.test.assertTrue(mo_file.stat().st_mtime >= po_file.stat().st_mtime)
 
 
 @given(u'the reference locale {locale}')
@@ -76,5 +70,22 @@ def step_impl(context):
         context.test.assertEqual(len(polib.mofile(mo_file)), len(context.reference_mo))
 
 
-def lower_dashed_locale(locale):
-    return locale.lower().replace('_', '-')
+@then(u'the locale {locale} is not missing any tokens')
+def step_impl(context, locale):
+    po_file = Path(os.path.join(settings.BASE_DIR, "locale", locale, "LC_MESSAGES", "django.po"))
+    po = polib.pofile(po_file)
+    for string in po:
+        regexp = re.compile(r'(%\(.+?\)[a-z])')
+        source_tokens = re.findall(regexp, string.msgid)
+        translation_tokens = re.findall(regexp, string.msgstr)
+
+        # Assert that each token in the source can also be found in the translation
+        for t in source_tokens:
+            context.test.assertIn(t, string.msgstr)
+
+        # Assert that each token in the translation can also be found in the source
+        for t in translation_tokens:
+            context.test.assertIn(t, string.msgid)
+
+        # Assert that the number of tokens in the source and translation are the same
+        context.test.assertEqual(len(source_tokens), len(translation_tokens))

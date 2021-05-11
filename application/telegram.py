@@ -44,8 +44,7 @@ def telegram_receive(request, member):
         member.telegram_chat_id = chat_id
         member.save()
 
-        user_language = member.language
-        translation.activate(user_language)
-        response = handle_command(message_text, member)
-        telegram_reply(chat_id, response)
+        with translation.override(member.language):
+            response = handle_command(message_text, member)
+            telegram_reply(chat_id, response)
     return HttpResponse('{}')
