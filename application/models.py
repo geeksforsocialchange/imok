@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Leave English first so it gets selected by default, then add the rest in alphabetical order
 LANGUAGES = [('en_GB', 'English'),
-             ('---', '---'),
+             (None, '---'),
              ('ar', 'Arabic'),
              ('fr_FR', 'French'),
              ('de_DE', 'German')]
