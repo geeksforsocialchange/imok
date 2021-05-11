@@ -204,6 +204,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__name__))
 LOCALE_PATHS = (os.path.join(SITE_ROOT, 'locale'), )
 LANGUAGE_CODE = 'en-gb'
 LANGUAGES = (
+    ('ar', 'Arabic'),
     ('en-gb', 'English'),
     ('fr-fr', 'French'),
     ('de-de', 'German')
