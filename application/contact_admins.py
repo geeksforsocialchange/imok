@@ -8,7 +8,9 @@ from .telegram_group import TelegramGroup
 
 def notify_admins(subject, message):
     if settings.TELEGRAM_GROUP != '':
-        telegram_admins(subject + ":" + message)
+        # @TODO: Consolidate email and Telegram outputs
+        # telegram_admins(subject + ":" + message)
+        telegram_admins(message)
     if settings.NOTIFY_EMAIL != '':
         mail_admins(subject, message)
 

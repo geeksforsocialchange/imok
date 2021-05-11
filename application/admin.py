@@ -72,7 +72,8 @@ class MemberAdmin(admin.ModelAdmin):
             member.overdue_message_sent_at = None
             member.sos_alert_received_at = None
             member.save()
-            notify_admins("Member Marked OK", f"{member.name} marked as OK by {request.user}")
+            msg = f"✅ {member.name} was marked safe by {request.user}"
+            notify_admins(msg, msg)
             messages.success(request, f"Marked {member.name} as OK")
 
     @admin.action(description="Delete member's checkin")
