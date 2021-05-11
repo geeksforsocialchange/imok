@@ -10,7 +10,7 @@ We will periodically add new translations to the project. If this isn't fast eno
 
 ## How to add new translations
 
-Adding additional languages for the first time requires a number of steps. If you are unable to follow these steps then feel free to raise a GitHub issue requesting the new language, or join our [Discord server](https://discord.gg/4JKak6aymM). The documentation below describes how you would add a Welsh translation as an example.
+Adding additional languages for the first time requires a number of steps. If you are unable to follow these steps then feel free to raise a GitHub issue requesting the new language, or join our [Discord server](https://discord.gg/4JKak6aymM). The documentation below describes how you would add a Welsh translation (language code `cy_GB`) as an example.
 
 1. Run `django-admin makemessages -l cy_GB --ignore venv` to create the folder structure and put a PO folder in the right place.
 1. You can then either use POEditor, or edit this file manually
