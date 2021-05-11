@@ -14,8 +14,8 @@ Adding additional languages for the first time requires a number of steps. If yo
 
 1. Run `django-admin makemessages -l cy_GB --ignore venv` to create the folder structure and put a PO folder in the right place.
 1. You can then either use POEditor, or edit this file manually
-  1. **POEditor:** add or edit the language you want, then download the language file using the 'Export' button. Replace the `django.po` file in the imok repository with the file you downloaded.
-  1. **Manually:** edit the `locale/cy_GB/LC_MESSAGES/django.po` file directly. There are a number of free tools to do this with such as [poedit](https://poedit.net/).
+    1. **POEditor:** add or edit the language you want, then download the language file using the 'Export' button. Replace the `django.po` file in the imok repository with the file you downloaded.
+    1. **Manually:** edit the `locale/cy_GB/LC_MESSAGES/django.po` file directly. There are a number of free tools to do this with such as [poedit](https://poedit.net/).
 1. Run `docker-compose run web python manage.py compilemessages` to compile the translation file.
 1. Edit `imok/settings.py` and add `('cy-gb', 'Welsh')` to LANGUAGES
 1. Edit `application/models.py` and add `('cy_GB', 'Welsh')` to LANGUAGES
