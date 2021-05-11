@@ -11,13 +11,14 @@ Feature: translation support
         And the language <language> maps to <locale> in settings.py
         And the language <language> maps to <locale> in the members model
         And the locale <locale> can be activated
-        And the <locale> mo file is newer than the po file
+        And the locale <locale> is not missing any tokens
 
         Examples:
         | language | locale |
         | English  | en_GB  |
         | French   | fr_FR  |
         | German   | de_DE  |
+        | Arabic   | ar     |
 
     Scenario: locale files are the same length
         Given the reference locale en_GB
