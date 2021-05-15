@@ -7,7 +7,7 @@ The bot lets users 'check in' to the service with an SMS or messaging app. If us
 Example use cases are:
 
 - Supporting protestors at risk of arrest or kidnapping
-- Supporting women and gender minorities walking home at night, or going on dates
+- Supporting women and LGBTQ+ people walking home at night, or going on dates
 - Supporting journalists or medical staff in warzones
 - Supporting asylum seekers through 'signing in' processes (see #AbolishReporting on Twitter).
 
@@ -16,6 +16,8 @@ Imok is currently optimised for the latter use case. It is a collaboration betwe
 We do not currently offer a public instance of imok, and so you will need to set up your own server to use it. The target audience is therefore local mutual aid and community support groups with the capacity and confidence to run a web service.
 
 We currently support SMS and Telegram. WhatsApp is theoretically supported but requires a [WhatsApp Business API account](https://www.whatsapp.com/business/api/?lang=en), which we do not have.
+
+Please note that imok is currently **beta quality software** and has not yet been tested in a "real life" setting. We will be making rapid improvements over the coming months.
 
 ## How it works
 

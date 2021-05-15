@@ -40,16 +40,12 @@ def validate_twilio_request(f):
 
 def twilio_receive(request, member):
     message = request.POST
-
-    user_language = member.language
-    translation.activate(user_language)
-
-    message_body = message['Body']
-    reply = handle_command(message_body, member)
-
-    resp = MessagingResponse()
-    resp.message(reply)
-    return HttpResponse(resp)
+    with translation.override(member.language, deactivate=True):
+        message_body = message['Body']
+        reply = handle_command(message_body, member)
+        resp = MessagingResponse()
+        resp.message(reply)
+        return HttpResponse(resp)
 
 
 def twilio_send(phone_number, text):

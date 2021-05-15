@@ -98,17 +98,18 @@ class Member(models.Model):
         self.is_ok = True
         self.save()
         checkin, created = Checkin.objects.update_or_create(member=self, defaults={'time_stamp': in_time})
-        if created:
-            response = _("Your check in time at %(center)s is %(in time)s.\n\nI will raise the alarm if you don't check out by %(out time)s.\n\nI will update your check in time if you message IN again.") % {
-                             "center": self.signing_center,
-                             "in time": str(in_time.time().strftime('%X')),
-                             "out time": out_time.strftime('%X')
-                         }
-        else:
-            response = _("You were already checked in.\n\nI updated your check in time to %(time)s.") % {
-                "time": in_time.time().strftime('%X')
-            }
-        return response
+        with translation.override(self.language, deactivate=True):
+            if created:
+                response = _("Your check in time at %(center)s is %(in time)s.\n\nI will raise the alarm if you don't check out by %(out time)s.\n\nI will update your check in time if you message IN again.") % {
+                                 "center": self.signing_center,
+                                 "in time": str(in_time.time().strftime('%X')),
+                                 "out time": out_time.strftime('%X')
+                             }
+            else:
+                response = _("You were already checked in.\n\nI updated your check in time to %(time)s.") % {
+                    "time": in_time.time().strftime('%X')
+                }
+            return response
 
     def sign_out(self):
         self.is_ok = True
@@ -117,14 +118,16 @@ class Member(models.Model):
         try:
             checkin = Checkin.objects.get(member=self)
         except Checkin.DoesNotExist:
-            # Translators: the uppercase commands need to remain in English
-            return _("You were not checked in.\n\nTo check in, message IN.\n\nTo raise the alarm, message SOS.")
+            with translation.override(self.language, deactivate=True):
+                # Translators: the uppercase commands need to remain in English
+                return _("You were not checked in.\n\nTo check in, message IN.\n\nTo raise the alarm, message SOS.")
         checkin.delete()
-        # Translators: feel free to change this to a similar sentiment in your culture
-        return _("Your check out time from %(center)s is %(time)s.\n\nI hope you have a lovely day!") % {
-            'center': self.signing_center,
-            'time': str(timezone.localtime().time().strftime(
-                '%H:%M:%S'))}
+        with translation.override(self.language, deactivate=True):
+            # Translators: feel free to change this to a similar sentiment in your culture
+            return _("Your check out time from %(center)s is %(time)s.\n\nI hope you have a lovely day!") % {
+                'center': self.signing_center,
+                'time': str(timezone.localtime().time().strftime(
+                    '%H:%M:%S'))}
 
     def handle_sos(self):
         self.is_ok = False
@@ -135,13 +138,14 @@ class Member(models.Model):
         time = timezone.localtime()
         subject = f"[IMOK] {self.name} sent an SOS"
         if self.notes == "":
-            notes = "There are no notes saved for this member"
+            notes = "No notes saved for this member"
         else:
-            notes = f"Notes: {self.notes}"
-        body = f"⚠️ {self.name} ({self.phone_number}) sent an SOS at {self.signing_center}.\n\n⏰ They raised it at {time.strftime('%H:%M')} on {time.strftime('%d/%m/%Y')}.\n\n{notes}."
+            notes = f"{self.notes}"
+        body = f"⚠️ {self.name} ({self.phone_number}) sent an SOS at {self.signing_center}.\n\n⏰ They raised it at {time.strftime('%H:%M')} on {time.strftime('%d/%m/%Y')}.\n\n📝 {notes}."
         notify_admins(subject, body)
-        return _("Thank you for letting me know.\n\nI notified the admins at %(time)s.") % {
-            "time": timezone.localtime().time().strftime('%X')}
+        with translation.override(self.language, deactivate=True):
+            return _("Thank you for letting me know.\n\nI notified the admins at %(time)s.") % {
+                "time": timezone.localtime().time().strftime('%X')}
 
     def send_message(self, message):
         if self.preferred_channel == 'TELEGRAM':
@@ -163,10 +167,9 @@ class Checkin(models.Model):
         self.member.warning_message_sent_at = timezone.now()
         self.member.save()
 
-        user_language = self.member.language
-        translation.activate(user_language)
-        self.member.send_message(_("Have you forgotten to sign out? I am about to notify the admins.\n\nPlease "
-                                   "send OUT if you have left %(signing center)s") % {
+        with translation.override(self.member.language, deactivate=True):
+            self.member.send_message(_("Have you forgotten to sign out? I am about to notify the admins.\n\nPlease "
+                                       "send OUT if you have left %(signing center)s") % {
                                        "signing center": self.member.signing_center})
 
     def timeout(self):
@@ -174,18 +177,16 @@ class Checkin(models.Model):
         self.member.is_ok = False
         self.member.save()
 
-        user_language = self.member.language
-        translation.activate(user_language)
-
         subject = f"[IMOK] {self.member.name} is not safe"
         if self.member.notes == "":
-            notes = "There are no notes saved for this member"
+            notes = "No notes saved for this member"
         else:
-            notes = f"Notes: {self.member.notes}"
-        body = f"⚠️ {self.member.name} ({self.member.phone_number}) didn't sign out of {self.member.signing_center}.\n\n⏰ They signed in at {self.time_stamp.strftime('%H:%M on %d/%m/%Y')}.\n\n{notes}."
+            notes = f"{self.member.notes}"
+        body = f"⚠️ {self.member.name} ({self.member.phone_number}) didn't sign out of {self.member.signing_center}.\n\n⏰ They signed in at {self.time_stamp.strftime('%H:%M on %d/%m/%Y')}.\n\n📝 {notes}."
         print(body)
         notify_admins(subject, body)
-        self.member.send_message(_("You didn't check out of %(location)s.\n\nI notified the admins at %(time)s.") % {"location": self.member.signing_center,"time": timezone.localtime().time().strftime('%X')})
+        with translation.override(self.member.language, deactivate=True):
+            self.member.send_message(_("You didn't check out of %(location)s.\n\nI notified the admins at %(time)s.") % {"location": self.member.signing_center,"time": timezone.localtime().time().strftime('%X')})
 
     def save(self, *args, **kwargs):
         increment_hourly_metric('checkin', self.member.signing_center)
