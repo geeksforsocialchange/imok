@@ -29,7 +29,7 @@ def telegram_admins(message):
     group = TelegramGroup.objects.filter(title=settings.TELEGRAM_GROUP).first()
     response = {
         "chat_id": group.chat_id,
-        "text": message
+        "text": message,
     }
     message_url = bot_url + 'sendMessage'
     r = requests.post(message_url, json=response)
