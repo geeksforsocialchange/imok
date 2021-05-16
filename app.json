@@ -4,5 +4,10 @@
       "command": "python manage.py healthcheck",
       "schedule": "* * * * *"
     }
-  ]
+  ],
+    "scripts": {
+        "dokku": {
+            "postdeploy": "python manage.py release"
+        }
+    }
 }
