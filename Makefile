@@ -18,3 +18,12 @@ superuser:
 .PHONY: clean
 clean:
 	docker-compose down -v
+
+.PHONY: wiki
+wiki:
+	git submodule update --recursive --remote
+
+.PHONY: pull
+pull:
+	git pull origin main
+	git submodule update --recursive --remote
