@@ -42,43 +42,11 @@ As a member of an imok instance:
 1. If you don't, admins get notified that something is wrong
 1. If you text `SOS`, admins are immediately notified
 
-That's it! There are a few more commands that we will be listing on the project wiki in due course.
+That's it! All server commands are listed on the [imok wiki](https://github.com/geeksforsocialchange/imok/wiki/Server-commands).
 
-## Deployment
+## Installation and deployment
 
-Getting this up and running in the real world requires at least one person comfortable with setting up a server, and a few people to actually run the service on the ground.
-
-### Setting up a server
-
-Setting up imok currently requires a little bit of technical know-how. You'll need to be comfortable setting up a VPS, running terminal commands, and deploying web applications. To support SMS you'll also need to register for a Twilio account and set up an API key.
-
-By default imok uses Telegram as it is secure and free to send messages on. For a real world installation you will want to set up SMS using Twilio. However, this can get expensive: SMS messages cost about $0.04 at the time of writing. With a few dozen users using it several times per day this can quickly add up. If your intended users are able to access this entirely through Telegram the cost is nearly zero.
-
-See [installation.md](docs/installation.md) for more information.
-
-### Running the service
-
-Running a service like imok for a vulnerable group is not a task to be taken lightly. It can be argued that running a bad service is worse than running no service: it can potentially give people false hope, and undermine the work of your group. Imok has been primarily designed to help improve the work of existing groups. If you do not currently operate this kind of service then it's important to have a think about what kind of service you can promise, what the protocol for responding to alerts is, and who picks up the pieces when things go wrong.
-
-We've provided some hints and tips in [deployment.md](docs/deployment.md), and welcome contributions to this guide.
-
-## Contributing
-
-### Software development
-
-We welcome contributors to help with this project. Imok is written in Django.
-
-See [development.md](docs/development.md) for how to set up a development environment.
-
-### Translations
-
-Imok allows language selection for users. Currently available translations are in the [locale](locale) directory. We welcome translation into other languages.
-
-Please note server commands in caps ('YES', 'IN', 'OUT' etc.) are not currently translatable. Please leave these in English in your translations.
-
-[Sign up on POEditor](https://poeditor.com/projects/view?id=428751) to submit a translation.
-
-Translations will be periodically reviewed and added to the project. If you'd like to add translations yourself see [translation.md](docs/translation.md).
+To find out how to install imok, set up a development environment or provide translations check out the [imok wiki on GitHub](https://github.com/geeksforsocialchange/imok/wiki).
 
 ## Support
 
