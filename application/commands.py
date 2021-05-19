@@ -4,6 +4,9 @@ from django.utils.translation import gettext as _
 
 from .contact_admins import notify_admins
 from .telegram_botinfo import bot_link
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def handle_command(message, member):
@@ -31,8 +34,11 @@ def register(member):
     member.save()
     time = timezone.localtime().strftime('%X')
     date = timezone.localtime().strftime('%x')
-    notify_admins(f"🎉 {member.name} activated their account!",
-                  f"🎉 {member.name} ({member.phone_number}) successfully activated their account at {time} on {date}!")
+    try:
+        notify_admins(f"🎉 {member.name} activated their account!",
+                      f"🎉 {member.name} ({member.phone_number}) successfully activated their account at {time} on {date}!")
+    except:
+        logger.warning("Failed to notify admins of a new member")
     return info(member)
 
 
