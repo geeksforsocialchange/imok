@@ -1,3 +1,4 @@
+from django.db.utils import ProgrammingError
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -59,12 +60,14 @@ def twilio(request):
 
 
 def varz(request):
+    chat_id = telegram_group_chat_id()
     if request.user.is_superuser:
         response = [{'key': 'ALLOWED_HOSTS', 'value': settings.ALLOWED_HOSTS, 'validation': None},
                     {'key': 'TWILIO_ACCOUNT_SID', 'value': redact(settings.TWILIO_ACCOUNT_SID), 'validation': len(settings.TWILIO_ACCOUNT_SID) == 34},
                     {'key': 'TWILIO_AUTH_TOKEN', 'value': redact(settings.TWILIO_AUTH_TOKEN), 'validation': None},
                     {'key': 'TELEGRAM_TOKEN', 'value': redact(settings.TELEGRAM_TOKEN), 'validation': get_me()['ok']},
-                    {'key': 'TELEGRAM_GROUP', 'value': redact(settings.TELEGRAM_GROUP), 'validation': None},
+                    {'key': 'TELEGRAM_GROUP', 'value': settings.TELEGRAM_GROUP, 'validation': None},
+                    {'key': 'Telegram Group chat_id', 'value': chat_id, 'validation': type(chat_id) == int, 'solution': "" if type(chat_id) == int else "re-add the bot to the group"},
                     {'key': 'DOKKU_LETSENCRYPT_EMAIL', 'value': getenv('DOKKU_LETSENCRYPT_EMAIL'), 'validation': getenv('DOKKU_LETSENCRYPT_EMAIL') is not None},
                     {'key': 'NOTIFY_EMAIL', 'value': getenv('NOTIFY_EMAIL'), 'validation': getenv('NOTIFY_EMAIL') is not None},
                     {'key': 'MAIL_FROM', 'value': getenv('MAIL_FROM'), 'validation': getenv('MAIL_FROM') is not None},
@@ -100,6 +103,17 @@ def varz(request):
         return HttpResponse(template.render(context, request))
     else:
         return HttpResponseForbidden('{"ERROR": "Not authenticated"}')
+
+
+def telegram_group_chat_id():
+    try:
+        return TelegramGroup.objects.get().chat_id
+    except TelegramGroup.DoesNotExist:
+        return "unknown"
+    except ProgrammingError:
+        return "database error"
+    except:
+        return "unknown error"
 
 
 def redact(string):
