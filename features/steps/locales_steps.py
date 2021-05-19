@@ -62,14 +62,6 @@ def step_impl(context, locale):
     context.test.assertEqual(len(context.reference_po), len(context.reference_mo))
 
 
-@then(u'the other language files should be the same length')
-def step_impl(context):
-    for po_file in glob.glob(os.path.join(settings.BASE_DIR, 'locale', '*_*', 'LC_MESSAGES', 'django.po')):
-        context.test.assertEqual(len(polib.pofile(po_file)), len(context.reference_po))
-    for mo_file in glob.glob(os.path.join(settings.BASE_DIR, 'locale', '*_*', 'LC_MESSAGES', 'django.mo')):
-        context.test.assertEqual(len(polib.mofile(mo_file)), len(context.reference_mo))
-
-
 @then(u'the locale {locale} is not missing any tokens')
 def step_impl(context, locale):
     po_file = Path(os.path.join(settings.BASE_DIR, "locale", locale, "LC_MESSAGES", "django.po"))

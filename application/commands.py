@@ -43,10 +43,17 @@ def register(member):
 
 
 def name(member, params):
-    member.name = params
-    member.save()
-    response = _("You have set your name to %(name)s") % {'name': params}
-    return response
+    if len(params) > 0:
+        member.name = params
+        member.save()
+        response = _("You have set your name to %(name)s") % {'name': params}
+        return response
+    else:
+        response = _("To change your name, send NAME followed by your name")
+        response = response + "\n"
+        # Translators: you can generate a random name for a suitable region using https://www.behindthename.com/random/
+        response = response + _("For example: 'NAME  Jabir Reem'")
+        return response
 
 
 def checkin(member):

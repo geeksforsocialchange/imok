@@ -12,3 +12,8 @@ Feature: Members can edit their profile information
     Then My name is "alice"
     And I receive a message containing "alice"
     And My registration time does not change
+
+  Scenario:
+      When I send "NAME" via twilio
+      Then I receive a message containing "To change your name, send NAME followed by your name"
+      And My name does not change
