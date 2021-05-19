@@ -1,4 +1,5 @@
 import csv
+from twilio.base.exceptions import TwilioRestException
 
 from django.conf import settings
 from django.contrib import admin, messages
@@ -61,7 +62,10 @@ class MemberAdmin(admin.ModelAdmin):
         for member in queryset:
             if member.phone_number is None:
                 messages.error(request, f"{member.name} has no phone number configured, so I couldn't an send SMS")
-            send_invite(member)
+            try:
+                send_invite(member)
+            except TwilioRestException as e:
+                messages.warning(request, f"Couldn't send an SMS to {member.name}, {e}")
         print("sent invite")
 
     @admin.action(description="Mark selected members as ok")
@@ -92,7 +96,10 @@ class MemberAdmin(admin.ModelAdmin):
             obj.registered_by = request.user
             obj.save()
             with translation.override(obj.language, deactivate=True):
-                send_invite(obj)
+                try:
+                    send_invite(obj)
+                except TwilioRestException as e:
+                    messages.warning(request, f"Couldn't send SMS invite to {obj.name}")
                 if obj.phone_number is None:
                     messages.warning(request, "I couldn't invite this person by SMS because they have no phone number stored."
                                               "You can add a phone number and try again, or manually send them a Telegram invite.")
