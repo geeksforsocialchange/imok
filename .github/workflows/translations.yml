@@ -1,0 +1,17 @@
+on:
+  push:
+    branches:
+    - poeditor
+
+jobs:
+  pull-request:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: pull-request
+      uses: repo-sync/pull-request@v2
+      with:
+        destination_branch: "main"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        pr_title: "translation: sync translations from POEditor"
+        pr_body: "An automated PR from GitHub Actions"
