@@ -78,6 +78,12 @@ def step_impl(context, name):
     context.test.assertEqual(name, member.name)
 
 
+@then(u'My name does not change')
+def step_impl(context):
+    member = Member.objects.get(id=context.member.id)
+    context.test.assertEqual(member.name, context.member.name)
+
+
 @given(u'My registration is confirmed')
 def step_impl(context):
     context.member.registered = True

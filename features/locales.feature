@@ -19,7 +19,3 @@ Feature: translation support
         | French   | fr_FR  |
         | German   | de_DE  |
         | Arabic   | ar     |
-
-    Scenario: locale files are the same length
-        Given the reference locale en_GB
-        Then the other language files should be the same length
