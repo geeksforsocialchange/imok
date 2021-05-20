@@ -207,7 +207,8 @@ LANGUAGES = (
     ('ar', 'Arabic'),
     ('en-gb', 'English'),
     ('fr-fr', 'French'),
-    ('de-de', 'German')
+    ('de-de', 'German'),
+    ('es', 'Spanish')
 )
 
 TIME_ZONE = 'Europe/London'
