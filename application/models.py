@@ -23,11 +23,14 @@ import re
 logger = logging.getLogger(__name__)
 
 # Leave English first so it gets selected by default, then add the rest in alphabetical order
-LANGUAGES = [('en_GB', 'English'),
-             (None, '---'),
-             ('ar', 'Arabic'),
-             ('fr_FR', 'French'),
-             ('de_DE', 'German')]
+LANGUAGES = [
+                 ('en_GB', 'English'),
+                 (None, '---'),
+                 ('ar', 'Arabic'),
+                 ('fr_FR', 'French'),
+                 ('de_DE', 'German'),
+                 ('es', 'Spanish')
+             ]
 SIGNING_CENTERS = [('dallas court', 'Dallas Court')]
 SUPPORTED_CHANNELS = list(map(lambda c: (c, c.title()), settings.SUPPORTED_CHANNELS))
 
