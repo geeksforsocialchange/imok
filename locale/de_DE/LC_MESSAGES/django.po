@@ -61,7 +61,6 @@ msgstr "Ihre Abmeldezeit aus %(center)s ist %(time)s.\n"
 "\n"
 "Haben Sie noch einen schönen Tag!"
 
-#. This is missing the time in the output
 #: application/models.py:136
 msgid "Thank you for letting me know.\n"
 "\n"
