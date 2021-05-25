@@ -2,7 +2,7 @@ from django.db.utils import ProgrammingError
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.template import loader
 import json
 import logging
@@ -15,7 +15,6 @@ from .telegram import telegram_receive, telegram_reply
 from .telegram_botinfo import get_me
 from .models import Member, TelegramGroup
 from .contact_admins import notify_admins
-from imok.settings import TELEGRAM_GROUP
 
 logger = logging.getLogger(__name__)
 
@@ -26,20 +25,29 @@ def telegram(request):
     print(request.body)
     body = json.loads(request.body)
     if 'my_chat_member' in body.keys():
-        if body['my_chat_member']['chat']['title'] == TELEGRAM_GROUP and TelegramGroup.objects.count() == 0:
-            TelegramGroup.objects.create(chat_id=body['my_chat_member']['chat']['id'], title=TELEGRAM_GROUP)
+        # The bot was added/removed from a group (or blocked/unblocked by someone)
+        if TelegramGroup.objects.count() == 0:
+            # Register the chat_id of the group that the bot just got added to
+            # but only if the bot isn't already in a group
+            TelegramGroup.objects.create(chat_id=body['my_chat_member']['chat']['id'], title='admin')
             return HttpResponse('{}')
         else:
-            logger.error("Somebody invited the Telegram bot into an unknown group")
-            return HttpResponseBadRequest('{"error": "bad telegram group"}')
+            logger.warning("Received a group membership event, but we already have a group saved")
+            return HttpResponse('{"error": "bad telegram group"}')
     try:
+        # Try and get a username from the Telegram event
         username = body['message']['from']['username']
     except (TypeError, KeyError):
+        # If there's no username and it's not a join event, then it's not something we care about
         return HttpResponse()
     try:
+        # Find the member with this telegram username
         member = Member.objects.get(telegram_username=username)
+        # Pass the event through to telegram_receive() and do something with it
         return telegram_receive(request, member)
     except(Member.DoesNotExist):
+        # If we've got this far then the Telegram event is probably from a member that we don't know about
+        # @TODO we should create the member here if registrations aren't required
         telegram_reply(body['message']['chat']['id'], "Your username is not registered with imok")
         return HttpResponse('{}')
 
@@ -66,7 +74,6 @@ def varz(request):
                     {'key': 'TWILIO_ACCOUNT_SID', 'value': redact(settings.TWILIO_ACCOUNT_SID), 'validation': len(settings.TWILIO_ACCOUNT_SID) == 34},
                     {'key': 'TWILIO_AUTH_TOKEN', 'value': redact(settings.TWILIO_AUTH_TOKEN), 'validation': None},
                     {'key': 'TELEGRAM_TOKEN', 'value': redact(settings.TELEGRAM_TOKEN), 'validation': get_me()['ok']},
-                    {'key': 'TELEGRAM_GROUP', 'value': settings.TELEGRAM_GROUP, 'validation': None},
                     {'key': 'Telegram Group chat_id', 'value': chat_id, 'validation': type(chat_id) == int, 'solution': "" if type(chat_id) == int else "re-add the bot to the group"},
                     {'key': 'DOKKU_LETSENCRYPT_EMAIL', 'value': getenv('DOKKU_LETSENCRYPT_EMAIL'), 'validation': getenv('DOKKU_LETSENCRYPT_EMAIL') is not None},
                     {'key': 'NOTIFY_EMAIL', 'value': getenv('NOTIFY_EMAIL'), 'validation': getenv('NOTIFY_EMAIL') is not None},
