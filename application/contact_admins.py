@@ -1,16 +1,19 @@
 import requests
+import logging
 
 from django.core.mail import send_mail
 from django.conf import settings
 
 from .telegram_group import TelegramGroup
 
+logger = logging.getLogger(__name__)
+
 
 def notify_admins(subject, message):
-    if settings.TELEGRAM_GROUP != '':
-        # @TODO: Consolidate email and Telegram outputs
-        # telegram_admins(subject + ":" + message)
+    try:
         telegram_admins(message)
+    except:
+        logger.warning("Failed to send notification to Telegram group")
     if settings.NOTIFY_EMAIL != '':
         mail_admins(subject, message)
 
@@ -26,7 +29,7 @@ def mail_admins(subject, message):
 # This looks suspiciously like telegram.telegram_reply() but using that would introduce a circular dependency
 def telegram_admins(message):
     bot_url = f'https://api.telegram.org/bot{settings.TELEGRAM_TOKEN}/'
-    group = TelegramGroup.objects.filter(title=settings.TELEGRAM_GROUP).first()
+    group = TelegramGroup.objects.first()
     response = {
         "chat_id": group.chat_id,
         "text": message,
