@@ -17,8 +17,15 @@ from .telegram_botinfo import bot_link
 
 def send_invite(obj):
     if obj.phone_number is not None:
-        message = _("You've been invited to join %(server name)s!\n\nWould you like to register for this "
-                    "service?\n\nReply YES to join." % {'server name': settings.SERVER_NAME})
+        if not obj.registered:
+            message = _("You've been invited to join %(server name)s!") % {'server name': settings.SERVER_NAME}
+            message = message + "\n\n"
+            message = message + _("Would you like to register for this service?")
+            message = message + "\n\n"
+            message = message + _("Reply YES to join.")
+        else:
+            message = _("You are already registered on %(server name)s.") % {'server name': settings.SERVER_NAME}
+            message = message + _("Send INFO for a list of commands")
         twilio_send(obj.phone_number.as_e164, message)
         return message
 
@@ -53,7 +60,9 @@ class MemberAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('codename', 'warning_message_sent_at', 'overdue_message_sent_at', 'sos_alert_received_at')
     search_fields = ['codename', 'name', 'phone_number', 'telegram_username']
-    list_display = ('codename', 'name', 'phone_number', 'telegram_username', 'registered', 'is_ok', 'warning_message_sent_at', 'overdue_message_sent_at', 'sos_alert_received_at')
+    list_display = (
+        'codename', 'name', 'phone_number', 'telegram_username', 'registered', 'is_ok', 'warning_message_sent_at',
+        'overdue_message_sent_at', 'sos_alert_received_at')
     list_filter = ('is_ok', 'registered', 'language', 'signing_center')
     actions = ["mark_ok", "resend_invite", "delete_checkin"]
 
@@ -101,15 +110,22 @@ class MemberAdmin(admin.ModelAdmin):
                 except TwilioRestException as e:
                     messages.warning(request, f"Couldn't send SMS invite to {obj.name}")
                 if obj.phone_number is None:
-                    messages.warning(request, "I couldn't invite this person by SMS because they have no phone number stored."
-                                              "You can add a phone number and try again, or manually send them a Telegram invite.")
+                    if obj.telegram_username:
+                        messages.warning(request,
+                                         mark_safe(
+                                             "I couldn't invite this person by SMS because they have no phone number stored."
+                                             f"You can add a phone number and try again, or manually send them a <a href='https://t.me/{obj.telegram_username}'>Telegram invite</a>."))
+                    else:
+                        messages.warning(request,
+                                         "I couldn't invite this person by SMS because they have no phone number stored."
+                                         "You can add a phone number and try again, or manually send them a Telegram invite.")
                     messages.info(request, mark_safe("<strong>Suggested Telegram invite message:</strong><br><br>"
                                                      "You've been invited to join %(server name)s!<br>"
                                                      "Would you like to register for this service?<br>"
                                                      "If so, go to this link: %(signup_url)s<br>"
                                                      "Then, send INFO to get a command list." % {
-                                                          "server name": settings.SERVER_NAME,
-                                                          "signup_url": bot_link()}))
+                                                         "server name": settings.SERVER_NAME,
+                                                         "signup_url": bot_link()}))
         obj.save()
 
 

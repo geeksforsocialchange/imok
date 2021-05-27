@@ -1,96 +1,65 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: imok - a simple bot to support people doing risky "
+"activities\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-06-09 18:16+0100\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: imok - a simple bot to support people doing risky activities\n"
-"Language: ar\n"
 
-#: application/commands.py:42
-msgid "You have set your name to %(name)s"
-msgstr "الاسم %(name)s"
+#: application/admin.py:21
+#, python-format
+msgid "You've been invited to join %(server name)s!"
+msgstr ""
 
-#: application/commands.py:26
-msgid "Sorry, I didn't understand that message.\n"
+#: application/admin.py:23
+msgid "Would you like to register for this service?"
+msgstr ""
+
+#: application/admin.py:25
+msgid "Reply YES to join."
+msgstr ""
+
+#: application/admin.py:27
+#, python-format
+msgid "You are already registered on %(server name)s."
+msgstr ""
+
+#: application/admin.py:28
+msgid "Send INFO for a list of commands"
+msgstr ""
+
+#: application/commands.py:29
+msgid ""
+"Sorry, I didn't understand that message.\n"
 "\n"
 "Send INFO for a list of commands I understand."
-msgstr "أعتذر،لم أفهم.\n"
+msgstr ""
+"أعتذر،لم أفهم.\n"
 "\n"
 "أرسل(ي) INFO لاستلام قائمة طلبات اكثر وضوحا"
 
-#: application/models.py:95
-msgid "Your check in time at %(center)s is %(in time)s.\n"
-"\n"
-"I will raise the alarm if you don't check out by %(out time)s.\n"
-"\n"
-"I will update your check in time if you message IN again."
-msgstr "وقت وصولك(ي) مسجل خلال %(in time)s في المركز %(center)s\n"
-" \n"
-"سأرفع جرس الإنذار إذا لم تغادر(ي) المركز من هنا في غضون %(out time)s\n"
-"\n"
-"سأقوم بتحديث وقت تسجيلك(ي) إذا قمت(ي) بترك(ي) رسالة IN للمرة الثانية"
+#: application/commands.py:50
+#, python-format
+msgid "You have set your name to %(name)s"
+msgstr "الاسم %(name)s"
 
-#: application/models.py:101
-msgid "You were already checked in.\n"
-"\n"
-"I updated your check in time to %(time)s."
-msgstr "أنت مسجل(ة) مسبقاً في المركز\n"
-"\n"
-"لقد تم تحديت وقت تسجيلك(ي) ل %(time)s"
+#: application/commands.py:53
+msgid "To change your name, send NAME followed by your name"
+msgstr ""
 
-#. Translators: the uppercase commands need to remain in English
-#: application/models.py:114
-msgid "You were not checked in.\n"
-"\n"
-"To check in, message IN.\n"
-"\n"
-"To raise the alarm, message SOS."
-msgstr "لم يتم تسجيلك\n"
-"\n"
-"لتسجيل وصولك،إبعث(ي) رسالة ل IN\n"
-"\n"
-"لرفع جرس الإنذا,أرسل SOS"
+#. Translators: you can generate a random name for a suitable region using https://www.behindthename.com/random/
+#: application/commands.py:56
+msgid "For example: 'NAME  Jabir Reem'"
+msgstr ""
 
-#. Translators: feel free to change this to a similar sentiment in your culture
-#: application/models.py:117
-msgid "Your check out time from %(center)s is %(time)s.\n"
-"\n"
-"I hope you have a lovely day!"
-msgstr "وقت مغادرتك لل المركز %(center)s هو %(time)s\n"
-"\n"
-"أتنمى لك يومًا سعيد"
-
-#: application/models.py:136
-msgid "Thank you for letting me know.\n"
-"\n"
-"I notified the admins at %(time)s."
-msgstr " شكرًا لإخباري بذلك\n"
-"\n"
-"لقد تم إشعار المسؤولين في %(time)s"
-
-#: application/models.py:161
-msgid "Have you forgotten to sign out? I am about to notify the admins.\n"
-"\n"
-"Please send OUT if you have left %(signing center)s"
-msgstr "هل نسيت(ي) تسجيل الخروج؟ انا بصدد إشعار المسؤولين\n"
-"\n"
-"أرسل OUT إذا غادرت(ي) المركز %(signing center)s"
-
-#: application/admin.py:19
-msgid "You've been invited to join %(server name)s!\n"
-"\n"
-"Would you like to register for this service?\n"
-"\n"
-"Reply YES to join."
-msgstr "لقد تمت دعوتك(ي) للانضمام  ل %(server name)s\n"
-"\n"
-"هل ترغب(ي) الإنخراط في هذه الخدمة؟\n"
-"\n"
-"أجب نعم، للإنخراط"
-
-#: application/commands.py:62
-msgid "Welcome to %(server)s, %(member name)s!\n"
+#: application/commands.py:76
+#, python-format
+msgid ""
+"Welcome to %(server)s, %(member name)s!\n"
 "\n"
 "You can send me the following commands, or text %(imok phone number)s:\n"
 "\n"
@@ -105,9 +74,11 @@ msgid "Welcome to %(server)s, %(member name)s!\n"
 "INFO: Get this message again\n"
 "\n"
 "You can also message me on Telegram: %(telegram link)s"
-msgstr " مرحبا %(member name)s في, %(server)s\n"
+msgstr ""
+" مرحبا %(member name)s في, %(server)s\n"
 "\n"
-"يمكنك أن ترسل(ي) لي طلبات التالية, او ارسل(ي) رسالة إلى %(imok phone number)s:\n"
+"يمكنك أن ترسل(ي) لي طلبات التالية, او ارسل(ي) رسالة إلى "
+"%(imok phone number)s:\n"
 "\n"
 " ارسل(ي)  IN  عند وصولك(ي) إلى مركز %(signing center)s\n"
 "\n"
@@ -121,11 +92,88 @@ msgstr " مرحبا %(member name)s في, %(server)s\n"
 "\n"
 "يمكنك أيضًا مراسلتي عبر تطبيق تلغرام : %(telegram link)s"
 
-#: application/models.py:181
-msgid "You didn't check out of %(location)s.\n"
+#: application/models.py:106
+#, python-format
+msgid ""
+"Your check in time at %(center)s is %(in time)s.\n"
+"\n"
+"I will raise the alarm if you don't check out by %(out time)s.\n"
+"\n"
+"I will update your check in time if you message IN again."
+msgstr ""
+"وقت وصولك(ي) مسجل خلال %(in time)s في المركز %(center)s\n"
+" \n"
+"سأرفع جرس الإنذار إذا لم تغادر(ي) المركز من هنا في غضون %(out time)s\n"
+"\n"
+"سأقوم بتحديث وقت تسجيلك(ي) إذا قمت(ي) بترك(ي) رسالة IN للمرة الثانية"
+
+#: application/models.py:112
+#, python-format
+msgid ""
+"You were already checked in.\n"
+"\n"
+"I updated your check in time to %(time)s."
+msgstr ""
+"أنت مسجل(ة) مسبقاً في المركز\n"
+"\n"
+"لقد تم تحديت وقت تسجيلك(ي) ل %(time)s"
+
+#. Translators: the uppercase commands need to remain in English
+#: application/models.py:126
+msgid ""
+"You were not checked in.\n"
+"\n"
+"To check in, message IN.\n"
+"\n"
+"To raise the alarm, message SOS."
+msgstr ""
+"لم يتم تسجيلك\n"
+"\n"
+"لتسجيل وصولك،إبعث(ي) رسالة ل IN\n"
+"\n"
+"لرفع جرس الإنذا,أرسل SOS"
+
+#. Translators: feel free to change this to a similar sentiment in your culture
+#: application/models.py:130
+#, python-format
+msgid ""
+"Your check out time from %(center)s is %(time)s.\n"
+"\n"
+"I hope you have a lovely day!"
+msgstr ""
+"وقت مغادرتك لل المركز %(center)s هو %(time)s\n"
+"\n"
+"أتنمى لك يومًا سعيد"
+
+#: application/models.py:150
+#, python-format
+msgid ""
+"Thank you for letting me know.\n"
 "\n"
 "I notified the admins at %(time)s."
-msgstr "لم تسجل(ي) جروجك من %(location)s\n"
+msgstr ""
+" شكرًا لإخباري بذلك\n"
+"\n"
+"لقد تم إشعار المسؤولين في %(time)s"
+
+#: application/models.py:174
+#, python-format
+msgid ""
+"Have you forgotten to sign out? I am about to notify the admins.\n"
+"\n"
+"Please send OUT if you have left %(signing center)s"
+msgstr ""
+"هل نسيت(ي) تسجيل الخروج؟ انا بصدد إشعار المسؤولين\n"
+"\n"
+"أرسل OUT إذا غادرت(ي) المركز %(signing center)s"
+
+#: application/models.py:192
+#, python-format
+msgid ""
+"You didn't check out of %(location)s.\n"
+"\n"
+"I notified the admins at %(time)s."
+msgstr ""
+"لم تسجل(ي) جروجك من %(location)s\n"
 "\n"
 "لقد تم إشعارالمسؤولين على الساعة %(time)s"
-

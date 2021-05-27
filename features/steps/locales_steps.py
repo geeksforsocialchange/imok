@@ -67,6 +67,10 @@ def step_impl(context, locale):
     po_file = Path(os.path.join(settings.BASE_DIR, "locale", locale, "LC_MESSAGES", "django.po"))
     po = polib.pofile(po_file)
     for string in po:
+        if len(string.msgstr) == 0:
+            continue
+        print(len(string.msgstr))
+        print(len(string.msgid))
         regexp = re.compile(r'(%\(.+?\)[a-z])')
         source_tokens = re.findall(regexp, string.msgid)
         translation_tokens = re.findall(regexp, string.msgstr)
