@@ -13,6 +13,7 @@ Feature: Admins can register new members
       Then the member is not confirmed
       And the member was created recently
 
+  @twilio
   Scenario: Member confirms registration
       Given Mo Member has been registered as a member
       And Mo Member has been welcomed with:
