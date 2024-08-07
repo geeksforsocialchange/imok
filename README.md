@@ -17,7 +17,7 @@ We do not currently offer a public instance of imok, and so you will need to set
 
 We currently support SMS and Telegram. WhatsApp is theoretically supported but requires a [WhatsApp Business API account](https://www.whatsapp.com/business/api/?lang=en), which we do not have.
 
-Please note that imok is currently **beta quality software** and has not yet been tested in a "real life" setting. We will be making rapid improvements over the coming months.
+Please note that imok is currently **beta quality software** and has not yet been tested in a "real life" setting.
 
 ## How it works
 
