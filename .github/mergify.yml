@@ -1,0 +1,29 @@
+pull_request_rules:
+
+  # ===============================================================================
+  # DEPENDABOT
+  # ===============================================================================
+
+  - name: Automatic Merge for Dependabot Minor Version Pull Requests
+    conditions:
+      - -draft
+      - author~=^dependabot(|-preview)\[bot\]$
+      - check-success='test (1.16.x, ubuntu-latest)'
+      - check-success='test (1.17.x, ubuntu-latest)'
+      - title~=bump [^\s]+ from ([\d]+)\..+ to \1\.
+    actions:
+      review:
+        type: APPROVE
+        message: Automatically approving dependabot pull request
+      merge:
+        method: rebase
+  - name: Alert on major version detection
+    conditions:
+      - author~=^dependabot(|-preview)\[bot\]$
+      - check-success='Python application / build (push)'
+      - -title~=bump [^\s]+ from ([\d]+)\..+ to \1\.
+    actions:
+      comment:
+        message: "⚠️ @wheresalice: this is a major version bump and requires your attention"
+      assign:
+        users: ["wheresalice"]
